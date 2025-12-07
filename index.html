@@ -1,0 +1,3742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GeoAnalyzer Pro - Región de Atacama, Chile</title>
+    <link rel="manifest" href="data:application/manifest+json,{}">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⛏️</text></svg>">
+    <!-- Font Awesome para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* === ESTILOS CSS COMPLETOS - TEMA GEOLÓGICO ATACAMA === */
+        :root {
+            --primary: #2c3e50;          /* Gris pizarra */
+            --secondary: #d35400;        /* Naranjo desierto */
+            --accent: #27ae60;           /* Verde cobre */
+            --accent2: #3498db;          /* Azul cielo */
+            --accent3: #8e44ad;          /* Violeta mineral */
+            --light: #ecf0f1;            /* Fondo claro */
+            --dark: #2c3e50;             /* Texto oscuro */
+            --danger: #e74c3c;           /* Rojo volcánico */
+            --warning: #f39c12;          /* Amarillo azufre */
+            --success: #27ae60;          /* Verde esmeralda */
+            --rock-brown: #a0522d;       /* Marrón roca */
+            --desert-sand: #f5deb3;      /* Arena desierto */
+            --copper: #b87333;           /* Color cobre */
+            --andesite: #708090;         /* Gris andesita */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a252f 0%, #2c3e50 100%);
+            color: #333;
+            min-height: 100vh;
+            padding: 10px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 20px;
+        }
+
+        .app-header {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, var(--primary) 0%, #34495e 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+            text-align: center;
+            border: 2px solid var(--secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--secondary), var(--accent), var(--accent2));
+        }
+
+        .app-header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .app-header .icon {
+            font-size: 2.5rem;
+            color: var(--secondary);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 15px;
+            color: var(--light);
+        }
+
+        .region-badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            border: 2px solid var(--warning);
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        .status-item i {
+            color: var(--accent);
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            border-top: 5px solid var(--secondary);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        .card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h2 .icon {
+            color: var(--secondary);
+            font-size: 1.5rem;
+        }
+
+        /* Módulo de Cámara */
+        .camera-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #000;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 3px solid var(--primary);
+        }
+
+        #cameraFeed {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .camera-overlay {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* Resultados de IA */
+        .ai-results {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 5px solid var(--accent3);
+        }
+
+        .mineral-card {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid var(--copper);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .mineral-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .mineral-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .mineral-name {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .confidence {
+            background: var(--accent2);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        /* Ubicación GPS */
+        .gps-info {
+            background: linear-gradient(135deg, #e8f4fc, #d6eaf8);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 2px solid var(--accent2);
+        }
+
+        .gps-info h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .gps-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .gps-item {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .gps-item strong {
+            color: var(--secondary);
+        }
+
+        /* Zona Geológica */
+        .zone-info {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 2px solid var(--warning);
+        }
+
+        .zone-info h4 {
+            color: var(--rock-brown);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Herramientas */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .tool-card {
+            background: linear-gradient(135deg, var(--light), #dfe6e9);
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary);
+            box-shadow: 0 5px 15px rgba(210, 84, 0, 0.2);
+            background: linear-gradient(135deg, #fff, #ecf0f1);
+        }
+
+        .tool-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .tool-card h4 {
+            color: var(--primary);
+            font-size: 0.9rem;
+        }
+
+        /* Formularios y controles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+            background: var(--light);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(210, 84, 0, 0.1);
+        }
+
+        /* Botones */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary), #e67e22);
+            color: white;
+            border: 2px solid var(--secondary);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #e67e22, var(--secondary));
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(210, 84, 0, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--andesite);
+            color: white;
+            border: 2px solid #5d6d7e;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #229954);
+            color: white;
+            border: 2px solid var(--success);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #f1c40f);
+            color: white;
+            border: 2px solid var(--warning);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #c0392b);
+            color: white;
+            border: 2px solid var(--danger);
+        }
+
+        .btn-gps {
+            background: linear-gradient(135deg, var(--accent2), #2980b9);
+            color: white;
+            border: 2px solid var(--accent2);
+        }
+
+        /* Canvas de proyecciones */
+        .canvas-container {
+            width: 100%;
+            height: 400px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            border: 3px solid var(--primary);
+        }
+
+        #geologicalCanvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* Lista de minerales */
+        .minerals-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            background: var(--light);
+        }
+
+        .mineral-item {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.3s;
+            border-left: 3px solid transparent;
+        }
+
+        .mineral-item:hover {
+            background: #f0f7ff;
+            border-left-color: var(--accent2);
+        }
+
+        .mineral-item.active {
+            background: #e8f4fc;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .mineral-region {
+            font-size: 0.8rem;
+            color: var(--secondary);
+            background: rgba(210, 84, 0, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        /* Panel derecho */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Informes */
+        .reports-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .report-item {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--success);
+            border: 1px solid #ddd;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            
+            .right-panel {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header h1 {
+                font-size: 2rem;
+            }
+            
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .camera-container {
+                height: 300px;
+            }
+            
+            .gps-details {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            border: 3px solid var(--secondary);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Mohs Scale */
+        .mohs-scale {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-top: 15px;
+        }
+
+        .mohs-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid var(--andesite);
+        }
+
+        .mohs-number {
+            font-weight: bold;
+            width: 30px;
+            color: var(--secondary);
+            background: rgba(210, 84, 0, 0.1);
+            padding: 5px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .mohs-name {
+            flex: 1;
+            padding-left: 10px;
+        }
+
+        /* Progress bars */
+        .progress {
+            height: 10px;
+            background: #ecf0f1;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--accent));
+            transition: width 0.3s;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #ddd;
+            margin-bottom: 20px;
+            overflow-x: auto;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            border-bottom-color: var(--secondary);
+            color: var(--secondary);
+            font-weight: bold;
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Notificaciones */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1001;
+            animation: slideIn 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-left: 5px solid var(--accent);
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Pantalla de inicio */
+        .welcome-screen {
+            text-align: center;
+            padding: 40px 20px;
+            max-width: 800px;
+            margin: 50px auto;
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            border: 3px solid var(--secondary);
+        }
+
+        .welcome-screen h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+
+        .welcome-screen p {
+            color: #5d6d7e;
+            margin-bottom: 30px;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .feature {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid var(--light);
+            transition: all 0.3s;
+        }
+
+        .feature:hover {
+            border-color: var(--secondary);
+            transform: translateY(-5px);
+        }
+
+        .feature h4 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature p {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+        }
+
+        /* Leyenda geológica */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+        }
+
+        /* Estructuras geológicas */
+        .structure-item {
+            background: rgba(52, 152, 219, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            border-left: 3px solid var(--accent2);
+        }
+
+        /* Minerales Atacama */
+        .atacama-mineral {
+            background: linear-gradient(135deg, #fff8e1, #ffecb3);
+            border: 1px solid var(--warning);
+        }
+
+        /* Carga */
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--secondary);
+        }
+
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 0 3px;
+        }
+
+        .badge-copper { background: rgba(184, 115, 51, 0.2); color: #b87333; }
+        .badge-gold { background: rgba(255, 215, 0, 0.2); color: #b8860b; }
+        .badge-silver { background: rgba(192, 192, 192, 0.2); color: #808080; }
+        .badge-lithium { background: rgba(0, 128, 0, 0.2); color: #228b22; }
+        .badge-volcanic { background: rgba(231, 76, 60, 0.2); color: #c0392b; }
+    </style>
+</head>
+<body>
+    <!-- Pantalla de Bienvenida -->
+    <div class="welcome-screen" id="welcomeScreen">
+        <h2><i class="fas fa-mountain"></i> GeoAnalyzer Pro - Región de Atacama</h2>
+        <div class="region-badge">Región Minera de Chile</div>
+        
+        <p style="margin-top:20px;">Sistema integrado de identificación mineralógica con IA, GPS y análisis geológico específico para la Cordillera de los Andes en Atacama</p>
+        
+        <div class="feature-list">
+            <div class="feature">
+                <h4><i class="fas fa-camera"></i> Identificación por IA</h4>
+                <p>Reconocimiento inteligente de minerales típicos de Atacama mediante cámara</p>
+            </div>
+            <div class="feature">
+                <h4><i class="fas fa-map-marker-alt"></i> GPS + Geología Local</h4>
+                <p>Ubicación precisa con datos geológicos de la zona de Atacama</p>
+            </div>
+            <div class="feature">
+                <h4><i class="fas fa-database"></i> Base de Datos Regional</h4>
+                <p>50+ minerales de la Cordillera de los Andes con datos de Sernageomin</p>
+            </div>
+            <div class="feature">
+                <h4><i class="fas fa-satellite"></i> Proyecciones Integradas</h4>
+                <p>Mapas geológicos vinculados con identificación por cámara</p>
+            </div>
+        </div>
+        
+        <button class="btn btn-primary" id="startAppBtn" style="padding: 15px 40px; font-size: 1.2rem;">
+            <i class="fas fa-play-circle"></i> Iniciar Análisis Geológico
+        </button>
+        
+        <div style="margin-top:30px; padding:15px; background:#f8f9fa; border-radius:10px;">
+            <p style="font-size:0.9rem; color:#666;">
+                <i class="fas fa-info-circle"></i> Esta aplicación solicitará acceso a la cámara y ubicación GPS para funcionar correctamente.
+                Los datos se procesan localmente y no se envían a servidores externos.
+            </p>
+        </div>
+    </div>
+
+    <!-- Aplicación Principal -->
+    <div class="container app-content" id="mainApp" style="display:none;">
+        <header class="app-header">
+            <h1><i class="fas fa-gem"></i> GeoAnalyzer Pro</h1>
+            <p class="subtitle">Sistema Geológico Integrado - Región de Atacama, Chile</p>
+            <div class="region-badge">
+                <i class="fas fa-map-pin"></i> Cordillera de los Andes - Zona Minera
+            </div>
+            <div class="status-bar">
+                <div class="status-item" id="gpsStatus">
+                    <i class="fas fa-satellite"></i> <span>GPS: Conectando...</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-database"></i> <span>Minerales: 24 (Atacama)</span>
+                </div>
+                <div class="status-item">
+                    <i class="fas fa-wifi"></i> <span>Offline: Datos locales</span>
+                </div>
+                <div class="status-item" id="locationStatus">
+                    <i class="fas fa-map-marker-alt"></i> <span>Ubicación: --</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="left-panel">
+                <!-- Módulo de Cámara con GPS -->
+                <section class="card camera-module">
+                    <h2><i class="fas fa-camera"></i> Identificación por Cámara + GPS</h2>
+                    
+                    <div class="gps-info">
+                        <h4><i class="fas fa-map-marked-alt"></i> Ubicación Actual</h4>
+                        <div class="gps-details">
+                            <div class="gps-item">
+                                <strong>Coordenadas:</strong> <span id="currentCoords">--</span>
+                            </div>
+                            <div class="gps-item">
+                                <strong>Altitud:</strong> <span id="currentAltitude">--</span>
+                            </div>
+                            <div class="gps-item">
+                                <strong>Precisión:</strong> <span id="currentAccuracy">--</span>
+                            </div>
+                            <div class="gps-item">
+                                <strong>Zona Geológica:</strong> <span id="geologicalZone">--</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-gps" id="updateLocation" style="margin-top:10px;">
+                            <i class="fas fa-sync-alt"></i> Actualizar Ubicación
+                        </button>
+                    </div>
+                    
+                    <div class="camera-container">
+                        <video id="cameraFeed" autoplay playsinline></video>
+                        <canvas id="cameraCanvas" style="display:none;"></canvas>
+                        <div class="camera-overlay">
+                            <i class="fas fa-crosshairs"></i> Apunte al mineral
+                        </div>
+                    </div>
+                    
+                    <div class="zone-info">
+                        <h4><i class="fas fa-mountain"></i> Información de la Zona</h4>
+                        <div id="zoneDetails">Cargando datos geológicos de Atacama...</div>
+                    </div>
+                    
+                    <div class="camera-controls">
+                        <button class="btn btn-primary" id="startCameraBtn">
+                            <i class="fas fa-video"></i> Activar Cámara
+                        </button>
+                        <button class="btn btn-secondary" id="captureBtn" disabled>
+                            <i class="fas fa-camera"></i> Capturar Mineral
+                        </button>
+                        <button class="btn btn-warning" id="simulateBtn">
+                            <i class="fas fa-robot"></i> Identificar con IA
+                        </button>
+                        <select class="form-control" id="mineralSelect" style="flex:1;">
+                            <option value="">Simular mineral andino...</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Resultados de IA -->
+                    <div class="ai-results" id="aiResults" style="display:none;">
+                        <h3><i class="fas fa-search"></i> Resultados del Análisis</h3>
+                        <div id="resultsContainer"></div>
+                    </div>
+                </section>
+
+                <!-- Base de Datos Regional -->
+                <section class="card database-module">
+                    <h2><i class="fas fa-database"></i> Mineralogía de Atacama</h2>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="searchMinerals" 
+                               placeholder="🔍 Buscar mineral de la Cordillera de los Andes...">
+                    </div>
+                    <div class="minerals-list" id="mineralsList">
+                        <!-- Lista generada por JavaScript -->
+                    </div>
+                </section>
+
+                <!-- Proyecciones Geológicas Integradas -->
+                <section class="card projections-module">
+                    <h2><i class="fas fa-map"></i> Proyecciones Geológicas</h2>
+                    
+                    <div class="gps-info" style="margin-bottom:15px;">
+                        <h4><i class="fas fa-sync-alt"></i> Proyección Vinculada</h4>
+                        <p>La proyección se genera en base a tu ubicación GPS y el mineral identificado</p>
+                        <div id="projectionInfo">Sin datos de ubicación</div>
+                    </div>
+                    
+                    <div class="canvas-container">
+                        <canvas id="geologicalCanvas"></canvas>
+                    </div>
+                    <div class="form-group">
+                        <select class="form-control" id="projectionType">
+                            <option value="structural">Mapa Estructural de Atacama</option>
+                            <option value="mineralization">Distribución Mineral</option>
+                            <option value="crossSection">Corte Geológico Andino</option>
+                            <option value="volcanic">Zonas Volcánicas</option>
+                            <option value="faults">Sistema de Fallas</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-primary" id="generateProjection">
+                        <i class="fas fa-project-diagram"></i> Generar Proyección
+                    </button>
+                </section>
+            </div>
+
+            <div class="right-panel">
+                <!-- Herramientas Profesionales -->
+                <section class="card tools-module">
+                    <h2><i class="fas fa-tools"></i> Herramientas Geológicas</h2>
+                    <div class="tools-grid">
+                        <div class="tool-card" data-tool="mohs">
+                            <div class="tool-icon"><i class="fas fa-gem"></i></div>
+                            <h4>Escala de Mohs</h4>
+                        </div>
+                        <div class="tool-card" data-tool="compass">
+                            <div class="tool-icon"><i class="fas fa-compass"></i></div>
+                            <h4>Brújula Digital</h4>
+                        </div>
+                        <div class="tool-card" data-tool="calculator">
+                            <div class="tool-icon"><i class="fas fa-calculator"></i></div>
+                            <h4>Calculadora</h4>
+                        </div>
+                        <div class="tool-card" data-tool="converter">
+                            <div class="tool-icon"><i class="fas fa-ruler-combined"></i></div>
+                            <h4>Conversor</h4>
+                        </div>
+                        <div class="tool-card" data-tool="streak">
+                            <div class="tool-icon"><i class="fas fa-palette"></i></div>
+                            <h4>Colores de Raya</h4>
+                        </div>
+                        <div class="tool-card" data-tool="geology">
+                            <div class="tool-icon"><i class="fas fa-mountain"></i></div>
+                            <h4>Geología Atacama</h4>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Información del Mineral con Geología -->
+                <section class="card mineral-info">
+                    <h2><i class="fas fa-info-circle"></i> Información Geológica</h2>
+                    <div id="mineralDetails">
+                        <p class="placeholder">Selecciona o identifica un mineral para ver detalles geológicos</p>
+                    </div>
+                    <div id="geologicalContext" style="display:none; margin-top:20px; padding:15px; background:#f8f9fa; border-radius:8px;">
+                        <h4><i class="fas fa-map-pin"></i> Contexto Geológico</h4>
+                        <div id="contextDetails"></div>
+                    </div>
+                </section>
+
+                <!-- Gestor de Informes con GPS -->
+                <section class="card reports-module">
+                    <h2><i class="fas fa-file-alt"></i> Informes Geológicos</h2>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="reportName" 
+                               placeholder="Nombre del informe (ej: Muestreo Copiapó)">
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" id="reportNotes" 
+                                  rows="3" placeholder="Observaciones geológicas..."></textarea>
+                    </div>
+                    <div class="gps-info" style="margin-bottom:15px; padding:10px;">
+                        <small><i class="fas fa-info-circle"></i> El informe incluirá: ubicación GPS, mineral identificado y datos de la zona</small>
+                    </div>
+                    <div class="camera-controls">
+                        <button class="btn btn-success" id="generateReport">
+                            <i class="fas fa-file-pdf"></i> Generar Informe
+                        </button>
+                        <button class="btn btn-secondary" id="viewReports">
+                            <i class="fas fa-folder-open"></i> Ver Informes
+                        </button>
+                    </div>
+                    <div class="reports-list" id="reportsList"></div>
+                </section>
+
+                <!-- Configuración -->
+                <section class="card config-module">
+                    <h2><i class="fas fa-cog"></i> Configuración</h2>
+                    <div class="form-group">
+                        <label><input type="checkbox" id="offlineMode" checked> <i class="fas fa-wifi-slash"></i> Modo offline</label>
+                        <label><input type="checkbox" id="autoSave" checked> <i class="fas fa-save"></i> Guardado automático</label>
+                        <label><input type="checkbox" id="highAccuracy"> <i class="fas fa-bullseye"></i> Alta precisión GPS</label>
+                        <label><input type="checkbox" id="atacamaData" checked> <i class="fas fa-map-marked"></i> Datos Atacama</label>
+                    </div>
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button class="btn btn-secondary" id="clearData">
+                            <i class="fas fa-trash-alt"></i> Limpiar Datos
+                        </button>
+                        <button class="btn btn-primary" id="installPWA">
+                            <i class="fas fa-mobile-alt"></i> Instalar App
+                        </button>
+                        <button class="btn btn-gps" id="exportData">
+                            <i class="fas fa-download"></i> Exportar
+                        </button>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Herramientas -->
+    <div class="modal" id="toolModal">
+        <div class="modal-content">
+            <h2 id="modalTitle"></h2>
+            <div id="modalContent"></div>
+            <button class="btn btn-primary" id="closeModal" style="margin-top:20px;">
+                <i class="fas fa-times"></i> Cerrar
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        // === BASE DE DATOS DE MINERALES DE ATACAMA ===
+        const atacamaMinerals = [
+            {
+                id: 1,
+                name: "Cobre Nativo",
+                formula: "Cu",
+                class: "Elemento Nativo",
+                system: "Cúbico",
+                hardness: 3,
+                density: 8.9,
+                color: ["Rojo cobre", "Marrón rojizo"],
+                streak: "Rojo metálico",
+                luster: "Metálico",
+                cleavage: "Ninguna",
+                description: "Principal mineral de cobre en yacimientos de la Cordillera de los Andes.",
+                uses: "Conductor eléctrico, aleaciones, construcción",
+                region: "Atacama",
+                deposit: "Pórfido cuprífero",
+                location: "Cerro Negro, Inca de Oro, Candelaria",
+                economic: true,
+                type: "Metálico",
+                tags: ["cobre", "principal", "económico"]
+            },
+            {
+                id: 2,
+                name: "Calcopirita",
+                formula: "CuFeS₂",
+                class: "Sulfuro",
+                system: "Tetragonal",
+                hardness: 4,
+                density: 4.3,
+                color: ["Amarillo latón", "Dorado"],
+                streak: "Negro verdoso",
+                luster: "Metálico",
+                cleavage: "Pobre",
+                description: "Mineral de cobre más común en yacimientos de Atacama.",
+                uses: "Principal mena de cobre",
+                region: "Atacama",
+                deposit: "Vetas hidrotermales",
+                location: "Distrito Chañarcillo, El Salvador",
+                economic: true,
+                type: "Metálico",
+                tags: ["cobre", "hierro", "sulfuro"]
+            },
+            {
+                id: 3,
+                name: "Bornita",
+                formula: "Cu₅FeS₄",
+                class: "Sulfuro",
+                system: "Ortorrómbico",
+                hardness: 3,
+                density: 5.1,
+                color: ["Púrpura", "Azul", "Bronce"],
+                streak: "Negro grisáceo",
+                luster: "Metálico",
+                cleavage: "Pobre",
+                description: "Conocida como 'mineral pavo real' por sus colores iridiscentes.",
+                uses: "Mena de cobre",
+                region: "Atacama",
+                deposit: "Zonas de oxidación",
+                location: "Potrerillos, El Salvador",
+                economic: true,
+                type: "Metálico",
+                tags: ["cobre", "oxidación", "colorido"]
+            },
+            {
+                id: 4,
+                name: "Malaquita",
+                formula: "Cu₂CO₃(OH)₂",
+                class: "Carbonato",
+                system: "Monoclínico",
+                hardness: 4,
+                density: 4.0,
+                color: ["Verde intenso"],
+                streak: "Verde claro",
+                luster: "Adamantino a sedoso",
+                cleavage: "Perfecta",
+                description: "Carbonato de cobre común en zonas de oxidación de yacimientos.",
+                uses: "Piedra ornamental, mena secundaria de cobre",
+                region: "Atacama",
+                deposit: "Zonas oxidadas",
+                location: "Cerro Brillador, Tierra Amarilla",
+                economic: true,
+                type: "Mineral secundario",
+                tags: ["cobre", "carbonato", "verde"]
+            },
+            {
+                id: 5,
+                name: "Atacamita",
+                formula: "Cu₂Cl(OH)₃",
+                class: "Haluro",
+                system: "Ortorrómbico",
+                hardness: 3.5,
+                density: 3.8,
+                color: ["Verde esmeralda", "Verde negruzco"],
+                streak: "Verde manzana",
+                luster: "Adamantino a vítreo",
+                cleavage: "Perfecta",
+                description: "Mineral descubierto en el Desierto de Atacama, Chile.",
+                uses: "Mena menor de cobre, mineral de colección",
+                region: "Atacama",
+                deposit: "Zonas áridas",
+                location: "Desierto de Atacama",
+                economic: true,
+                type: "Haluro",
+                tags: ["cobre", "cloro", "atacama"]
+            },
+            {
+                id: 6,
+                name: "Crisocola",
+                formula: "(Cu,Al)₂H₂Si₂O₅(OH)₄·nH₂O",
+                class: "Silicato",
+                system: "Amorfo",
+                hardness: 3,
+                density: 2.2,
+                color: ["Verde azulado", "Turquesa"],
+                streak: "Blanco verdoso",
+                luster: "Vítreo a ceroso",
+                cleavage: "Ninguna",
+                description: "Silicato de cobre hidratado común en zonas de oxidación.",
+                uses: "Piedra ornamental, mena secundaria de cobre",
+                region: "Atacama",
+                deposit: "Zonas oxidadas",
+                location: "Mina Las Cruces, Copiapó",
+                economic: true,
+                type: "Silicato",
+                tags: ["cobre", "silicato", "turquesa"]
+            },
+            {
+                id: 7,
+                name: "Pirita",
+                formula: "FeS₂",
+                class: "Sulfuro",
+                system: "Cúbico",
+                hardness: 6.5,
+                density: 5.0,
+                color: ["Amarillo latón", "Dorado pálido"],
+                streak: "Negro verdoso",
+                luster: "Metálico",
+                cleavage: "Pobre",
+                description: "Conocida como 'oro de los tontos', común en vetas hidrotermales.",
+                uses: "Producción de ácido sulfúrico",
+                region: "Atacama",
+                deposit: "Vetas hidrotermales",
+                location: "Distritos mineros varios",
+                economic: false,
+                type: "Sulfuro",
+                tags: ["hierro", "sulfuro", "aurífero"]
+            },
+            {
+                id: 8,
+                name: "Galena",
+                formula: "PbS",
+                class: "Sulfuro",
+                system: "Cúbico",
+                hardness: 2.5,
+                density: 7.6,
+                color: ["Gris plomo"],
+                streak: "Gris plomo",
+                luster: "Metálico",
+                cleavage: "Perfecta",
+                description: "Principal mena de plomo, común en vetas hidrotermales.",
+                uses: "Extracción de plomo, electrónica",
+                region: "Atacama",
+                deposit: "Vetas hidrotermales",
+                location: "Mina San Juan, Diego de Almagro",
+                economic: true,
+                type: "Metálico",
+                tags: ["plomo", "sulfuro", "pesado"]
+            },
+            {
+                id: 9,
+                name: "Esfalerita",
+                formula: "ZnS",
+                class: "Sulfuro",
+                system: "Cúbico",
+                hardness: 4,
+                density: 4.1,
+                color: ["Marrón", "Negro", "Amarillo", "Rojo"],
+                streak: "Marrón claro",
+                luster: "Resinoso a adamantino",
+                cleavage: "Perfecta",
+                description: "Principal mena de zinc, asociada a depósitos hidrotermales.",
+                uses: "Extracción de zinc",
+                region: "Atacama",
+                deposit: "Vetas hidrotermales",
+                location: "Mina Carola, Copiapó",
+                economic: true,
+                type: "Metálico",
+                tags: ["zinc", "sulfuro", "brillo"]
+            },
+            {
+                id: 10,
+                name: "Cuarzo",
+                formula: "SiO₂",
+                class: "Silicato",
+                system: "Trigonal",
+                hardness: 7,
+                density: 2.65,
+                color: ["Incoloro", "Blanco", "Violeta", "Ahumado"],
+                streak: "Blanco",
+                luster: "Vítreo",
+                cleavage: "Ninguna",
+                description: "Mineral ganga común en vetas hidrotermales de la región.",
+                uses: "Electrónica, relojería, construcción",
+                region: "Andes",
+                deposit: "Vetas hidrotermales",
+                location: "Cordillera de los Andes",
+                economic: false,
+                type: "Ganga",
+                tags: ["sílice", "ganga", "duro"]
+            },
+            {
+                id: 11,
+                name: "Baritina",
+                formula: "BaSO₄",
+                class: "Sulfato",
+                system: "Ortorrómbico",
+                hardness: 3.5,
+                density: 4.5,
+                color: ["Incoloro", "Blanco", "Azul", "Marrón"],
+                streak: "Blanco",
+                luster: "Vítreo",
+                cleavage: "Perfecta",
+                description: "Mineral común en vetas hidrotermales, usado en lodos de perforación.",
+                uses: "Lodos de perforación, contraste médico",
+                region: "Atacama",
+                deposit: "Vetas hidrotermales",
+                location: "Mina Lomas Bayas",
+                economic: true,
+                type: "Sulfato",
+                tags: ["bario", "pesado", "industrial"]
+            },
+            {
+                id: 12,
+                name: "Fluorita",
+                formula: "CaF₂",
+                class: "Haluro",
+                system: "Cúbico",
+                hardness: 4,
+                density: 3.2,
+                color: ["Violeta", "Verde", "Azul", "Amarillo"],
+                streak: "Blanco",
+                luster: "Vítreo",
+                cleavage: "Perfecta",
+                description: "Mineral común en vetas hidrotermales, fluorescente bajo UV.",
+                uses: "Fundente metalúrgico, óptica",
+                region: "Atacama",
+                deposit: "Vetas hidrotermales",
+                location: "Mina La Africana, Tierra Amarilla",
+                economic: true,
+                type: "Haluro",
+                tags: ["flúor", "fluorescente", "colorido"]
+            },
+            {
+                id: 13,
+                name: "Oro Nativo",
+                formula: "Au",
+                class: "Elemento Nativo",
+                system: "Cúbico",
+                hardness: 3,
+                density: 19.3,
+                color: ["Amarillo dorado"],
+                streak: "Amarillo dorado",
+                luster: "Metálico",
+                cleavage: "Ninguna",
+                description: "Oro en vetas de cuarzo y depósitos aluvionales.",
+                uses: "Joyeria, electrónica, reservas",
+                region: "Atacama",
+                deposit: "Vetas de cuarzo, placeres",
+                location: "Inca de Oro, Chañarcillo",
+                economic: true,
+                type: "Metálico",
+                tags: ["oro", "precioso", "económico"]
+            },
+            {
+                id: 14,
+                name: "Argentita",
+                formula: "Ag₂S",
+                class: "Sulfuro",
+                system: "Cúbico",
+                hardness: 2.5,
+                density: 7.3,
+                color: ["Negro plomo", "Gris"],
+                streak: "Negro brillante",
+                luster: "Metálico",
+                cleavage: "Pobre",
+                description: "Principal mena de plata en yacimientos de la región.",
+                uses: "Extracción de plata",
+                region: "Atacama",
+                deposit: "Vetas hidrotermales",
+                location: "Chañarcillo, Tres Puntas",
+                economic: true,
+                type: "Metálico",
+                tags: ["plata", "sulfuro", "brillante"]
+            },
+            {
+                id: 15,
+                name: "Hematita",
+                formula: "Fe₂O₃",
+                class: "Óxido",
+                system: "Trigonal",
+                hardness: 6.5,
+                density: 5.3,
+                color: ["Negro", "Rojo", "Marrón"],
+                streak: "Rojo cereza",
+                luster: "Metálico a terroso",
+                cleavage: "Ninguna",
+                description: "Mineral de hierro común en la región.",
+                uses: "Pigmento, fuente de hierro",
+                region: "Atacama",
+                deposit: "Depósitos sedimentarios",
+                location: "Cerro Imán, Caldera",
+                economic: true,
+                type: "Óxido",
+                tags: ["hierro", "óxido", "rojo"]
+            },
+            {
+                id: 16,
+                name: "Magnetita",
+                formula: "Fe₃O₄",
+                class: "Óxido",
+                system: "Cúbico",
+                hardness: 6,
+                density: 5.2,
+                color: ["Negro"],
+                streak: "Negro",
+                luster: "Metálico",
+                cleavage: "Ninguna",
+                description: "Mineral magnético de hierro, común en depósitos.",
+                uses: "Extracción de hierro, imanes",
+                region: "Atacama",
+                deposit: "Skarn, magmático",
+                location: "Cerro Negro Norte",
+                economic: true,
+                type: "Óxido",
+                tags: ["hierro", "magnético", "pesado"]
+            },
+            {
+                id: 17,
+                name: "Yeso",
+                formula: "CaSO₄·2H₂O",
+                class: "Sulfato",
+                system: "Monoclínico",
+                hardness: 2,
+                density: 2.3,
+                color: ["Incoloro", "Blanco", "Gris"],
+                streak: "Blanco",
+                luster: "Vítreo a sedoso",
+                cleavage: "Perfecta",
+                description: "Mineral evaporítico común en salares de la región.",
+                uses: "Construcción, agricultura",
+                region: "Atacama",
+                deposit: "Evaporítico",
+                location: "Salar de Maricunga",
+                economic: true,
+                type: "Sulfato",
+                tags: ["sulfato", "evaporítico", "blando"]
+            },
+            {
+                id: 18,
+                name: "Anhidrita",
+                formula: "CaSO₄",
+                class: "Sulfato",
+                system: "Ortorrómbico",
+                hardness: 3.5,
+                density: 3.0,
+                color: ["Incoloro", "Blanco", "Azul", "Violeta"],
+                streak: "Blanco",
+                luster: "Vítreo a nacarado",
+                cleavage: "Perfecta",
+                description: "Sulfato de calcio anhidro en depósitos evaporíticos.",
+                uses: "Construcción, industria química",
+                region: "Atacama",
+                deposit: "Evaporítico",
+                location: "Salar de Pedernales",
+                economic: true,
+                type: "Sulfato",
+                tags: ["sulfato", "evaporítico", "anhidro"]
+            },
+            {
+                id: 19,
+                name: "Halita",
+                formula: "NaCl",
+                class: "Haluro",
+                system: "Cúbico",
+                hardness: 2.5,
+                density: 2.2,
+                color: ["Incoloro", "Blanco", "Azul", "Rosa"],
+                streak: "Blanco",
+                luster: "Vítreo",
+                cleavage: "Perfecta",
+                description: "Sal de roca en salares del Desierto de Atacama.",
+                uses: "Sal comestible, industria química",
+                region: "Atacama",
+                deposit: "Evaporítico",
+                location: "Salar Grande, Salar de Atacama",
+                economic: true,
+                type: "Haluro",
+                tags: ["sal", "evaporítico", "comestible"]
+            },
+            {
+                id: 20,
+                name: "Litio (en salmueras)",
+                formula: "Li⁺",
+                class: "Elemento",
+                system: "Iónico",
+                hardness: null,
+                density: 0.53,
+                color: ["Incoloro en solución"],
+                streak: "N/A",
+                luster: "N/A",
+                cleavage: "Ninguna",
+                description: "Litio en salmueras de salares, principal recurso de Chile.",
+                uses: "Baterías, cerámica, medicina",
+                region: "Atacama",
+                deposit: "Salar",
+                location: "Salar de Atacama",
+                economic: true,
+                type: "Industrial",
+                tags: ["litio", "baterías", "estratégico"]
+            },
+            {
+                id: 21,
+                name: "Olivino",
+                formula: "(Mg,Fe)₂SiO₄",
+                class: "Silicato",
+                system: "Ortorrómbico",
+                hardness: 7,
+                density: 3.3,
+                color: ["Verde oliva", "Amarillo verdoso"],
+                streak: "Blanco",
+                luster: "Vítreo",
+                cleavage: "Pobre",
+                description: "Mineral máfico común en rocas volcánicas andinas.",
+                uses: "Abrasivo, joyería",
+                region: "Andes",
+                deposit: "Volcánico",
+                location: "Volcán Ojos del Salado",
+                economic: false,
+                type: "Silicato",
+                tags: ["magnesio", "hierro", "volcánico"]
+            },
+            {
+                id: 22,
+                name: "Augita",
+                formula: "(Ca,Na)(Mg,Fe,Al)(Si,Al)₂O₆",
+                class: "Silicato",
+                system: "Monoclínico",
+                hardness: 6.5,
+                density: 3.4,
+                color: ["Negro", "Verde oscuro", "Marrón"],
+                streak: "Blanco grisáceo",
+                luster: "Vítreo a resinoso",
+                cleavage: "Buena",
+                description: "Piroxeno común en rocas volcánicas de los Andes.",
+                uses: "Geología indicadora",
+                region: "Andes",
+                deposit: "Volcánico",
+                location: "Cordillera Principal",
+                economic: false,
+                type: "Silicato",
+                tags: ["piroxeno", "volcánico", "oscuro"]
+            },
+            {
+                id: 23,
+                name: "Biotita",
+                formula: "K(Mg,Fe)₃(AlSi₃O₁₀)(OH)₂",
+                class: "Silicato",
+                system: "Monoclínico",
+                hardness: 3,
+                density: 3.1,
+                color: ["Negro", "Marrón oscuro"],
+                streak: "Blanco",
+                luster: "Vítreo a nacarado",
+                cleavage: "Perfecta",
+                description: "Mica oscura común en rocas graníticas andinas.",
+                uses: "Aislamiento, geología indicadora",
+                region: "Andes",
+                deposit: "Plutónico",
+                location: "Batolito de la Costa",
+                economic: false,
+                type: "Silicato",
+                tags: ["mica", "oscura", "exfoliable"]
+            },
+            {
+                id: 24,
+                name: "Granate (Almandino)",
+                formula: "Fe₃Al₂(SiO₄)₃",
+                class: "Silicato",
+                system: "Cúbico",
+                hardness: 7.5,
+                density: 4.3,
+                color: ["Rojo", "Marrón rojizo", "Negro"],
+                streak: "Blanco",
+                luster: "Vítreo a resinoso",
+                cleavage: "Ninguna",
+                description: "Granate común en rocas metamórficas de los Andes.",
+                uses: "Abrasivo, joyería",
+                region: "Andes",
+                deposit: "Metamórfico",
+                location: "Cordillera Frontal",
+                economic: true,
+                type: "Silicato",
+                tags: ["granate", "metamórfico", "duro"]
+            }
+        ];
+
+        // === DATOS GEOLÓGICOS DE ATACAMA ===
+        const atacamaGeology = {
+            regions: {
+                "Cordillera de la Costa": {
+                    description: "Comprende rocas metamórficas paleozoicas y batolitos jurásicos.",
+                    minerals: ["Cuarzo", "Biotita", "Granate"],
+                    structures: ["Fallas inversas", "Pliegues"],
+                    deposits: ["Vetas de cuarzo", "Skarns"],
+                    altitude: "0-1000 msnm"
+                },
+                "Depresión Intermedia": {
+                    description: "Cuencas sedimentarias con rocas volcánicas y sedimentarias cenozoicas.",
+                    minerals: ["Yeso", "Halita", "Anhidrita"],
+                    structures: ["Cuencas", "Fallamiento normal"],
+                    deposits: ["Evaporíticos", "Areniscas cupríferas"],
+                    altitude: "500-1500 msnm"
+                },
+                "Cordillera de los Andes": {
+                    description: "Complejo volcánico-miocénico con pórfidos cupríferos.",
+                    minerals: ["Cobre Nativo", "Calcopirita", "Bornita", "Malaquita"],
+                    structures: ["Volcanes", "Calderas", "Fallas"],
+                    deposits: ["Pórfidos cupríferos", "Vetas epitermales"],
+                    altitude: "2000-6000 msnm"
+                },
+                "Salares": {
+                    description: "Cuencas evaporíticas con salmueras ricas en litio.",
+                    minerals: ["Halita", "Yeso", "Litio", "Anhidrita"],
+                    structures: ["Cuencas cerradas", "Diapirismo"],
+                    deposits: ["Evaporíticos", "Salmueras"],
+                    altitude: "2000-3000 msnm"
+                }
+            },
+            deposits: {
+                "Pórfido cuprífero": {
+                    description: "Grandes depósitos de baja ley y alta tonelaje.",
+                    minerals: ["Calcopirita", "Bornita", "Molibdenita"],
+                    age: "Mioceno",
+                    examples: ["Candelaria", "El Salvador", "Cerro Negro"]
+                },
+                "Vetas epitermales": {
+                    description: "Vetas de alta ley en sistemas volcánicos.",
+                    minerals: ["Oro", "Plata", "Cuarzo"],
+                    age: "Mioceno-Plioceno",
+                    examples: ["El Hueso", "Inca de Oro", "Cerro Maricunga"]
+                },
+                "Skarns": {
+                    description: "Depósitos de contacto entre intrusivos y calizas.",
+                    minerals: ["Magnetita", "Cobre", "Granate"],
+                    age: "Cretácico-Terciario",
+                    examples: ["Cerro Imán", "Algarrobo"]
+                },
+                "Evaporíticos": {
+                    description: "Depósitos de sales en cuencas cerradas.",
+                    minerals: ["Halita", "Yeso", "Anhidrita"],
+                    age: "Mioceno-Holoceno",
+                    examples: ["Salar de Atacama", "Salar de Maricunga"]
+                }
+            },
+            volcanoes: {
+                "Ojos del Salado": {
+                    height: "6893 msnm",
+                    type: "Estratovolcán",
+                    status: "Activo",
+                    lastEruption: "1993"
+                },
+                "Cerro Incahuasi": {
+                    height: "6638 msnm",
+                    type: "Estratovolcán",
+                    status: "Activo",
+                    lastEruption: "Holoceno"
+                },
+                "Volcán Copiapó": {
+                    height: "6052 msnm",
+                    type: "Estratovolcán",
+                    status: "Activo",
+                    lastEruption: "Holoceno"
+                }
+            }
+        };
+
+        // === ESCALA DE MOHS ===
+        const mohsScale = [
+            { number: 1, mineral: "Talco", example: "Se raya fácilmente con la uña" },
+            { number: 2, mineral: "Yeso", example: "Se raya con la uña" },
+            { number: 3, mineral: "Calcita", example: "Se raya con una moneda de cobre" },
+            { number: 4, mineral: "Fluorita", example: "Se raya con un cuchillo" },
+            { number: 5, mineral: "Apatito", example: "Se raya difícilmente con un cuchillo" },
+            { number: 6, mineral: "Feldespato", example: "Raya el vidrio" },
+            { number: 7, mineral: "Cuarzo", example: "Raya el vidrio fácilmente" },
+            { number: 8, mineral: "Topacio", example: "Raya el cuarzo" },
+            { number: 9, mineral: "Corindón", example: "Raya el topacio" },
+            { number: 10, mineral: "Diamante", example: "El material más duro conocido" }
+        ];
+
+        // === VARIABLES GLOBALES ===
+        let stream = null;
+        let currentMineral = null;
+        let reports = JSON.parse(localStorage.getItem('geologyReportsAtacama') || '[]');
+        let selectedTool = null;
+        let currentLocation = null;
+        let geologicalZone = null;
+        let watchId = null;
+
+        // === FUNCIONES DE INICIALIZACIÓN ===
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            // Pantalla de bienvenida
+            document.getElementById('startAppBtn').addEventListener('click', function() {
+                document.getElementById('welcomeScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                // Solicitar permisos
+                requestPermissions();
+                
+                // Inicializar componentes
+                loadMineralSelect();
+                loadMineralsList();
+                loadReports();
+                initializeCanvas();
+                startGPS();
+                
+                showNotification('Aplicación iniciada - Modo Atacama activado', 'success');
+            });
+
+            // Cámara
+            document.getElementById('startCameraBtn').addEventListener('click', startCamera);
+            document.getElementById('captureBtn').addEventListener('click', captureMineral);
+            document.getElementById('simulateBtn').addEventListener('click', simulateAI);
+            
+            // GPS
+            document.getElementById('updateLocation').addEventListener('click', updateGPS);
+            
+            // Buscador
+            document.getElementById('searchMinerals').addEventListener('input', searchMinerals);
+            
+            // Proyecciones
+            document.getElementById('generateProjection').addEventListener('click', generateProjection);
+            
+            // Herramientas
+            document.querySelectorAll('.tool-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const tool = this.dataset.tool;
+                    openToolModal(tool);
+                });
+            });
+            
+            // Informes
+            document.getElementById('generateReport').addEventListener('click', generateReport);
+            document.getElementById('viewReports').addEventListener('click', viewReports);
+            
+            // Configuración
+            document.getElementById('clearData').addEventListener('click', clearData);
+            document.getElementById('installPWA').addEventListener('click', installPWA);
+            document.getElementById('exportData').addEventListener('click', exportData);
+            
+            // Modal
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            
+            // Inicializar Service Worker
+            registerServiceWorker();
+        }
+
+        // === FUNCIONES DE PERMISOS ===
+        async function requestPermissions() {
+            try {
+                // Solicitar permisos de ubicación
+                if ("geolocation" in navigator) {
+                    const permission = await navigator.permissions.query({ name: 'geolocation' });
+                    if (permission.state !== 'granted') {
+                        showNotification('Por favor, permite el acceso a la ubicación para usar todas las funciones', 'warning');
+                    }
+                }
+                
+                // Solicitar permisos de cámara
+                try {
+                    await navigator.mediaDevices.getUserMedia({ video: true });
+                } catch (err) {
+                    showNotification('La cámara no está disponible', 'warning');
+                }
+                
+            } catch (error) {
+                console.error('Error en permisos:', error);
+            }
+        }
+
+        // === FUNCIONES DE GPS ===
+        function startGPS() {
+            if ("geolocation" in navigator) {
+                // Configuración de alta precisión si está activada
+                const options = {
+                    enableHighAccuracy: document.getElementById('highAccuracy').checked,
+                    timeout: 10000,
+                    maximumAge: 0
+                };
+                
+                watchId = navigator.geolocation.watchPosition(
+                    updateLocationSuccess,
+                    updateLocationError,
+                    options
+                );
+                
+                // Actualizar también inmediatamente
+                navigator.geolocation.getCurrentPosition(updateLocationSuccess, updateLocationError, options);
+                
+                document.getElementById('gpsStatus').innerHTML = '<i class="fas fa-satellite"></i> <span>GPS: Activado</span>';
+            } else {
+                document.getElementById('gpsStatus').innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span>GPS: No soportado</span>';
+                showNotification('GPS no soportado en este dispositivo', 'error');
+            }
+        }
+
+        function updateLocationSuccess(position) {
+            currentLocation = {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                altitude: position.coords.altitude,
+                accuracy: position.coords.accuracy,
+                timestamp: new Date(position.timestamp)
+            };
+            
+            // Actualizar UI
+            document.getElementById('currentCoords').textContent = 
+                `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`;
+            
+            document.getElementById('currentAltitude').textContent = 
+                currentLocation.altitude ? `${currentLocation.altitude.toFixed(0)} msnm` : 'No disponible';
+            
+            document.getElementById('currentAccuracy').textContent = 
+                `${currentLocation.accuracy.toFixed(0)} metros`;
+            
+            document.getElementById('locationStatus').innerHTML = 
+                `<i class="fas fa-map-marker-alt"></i> <span>Ubicación: ${getLocationName(currentLocation)}</span>`;
+            
+            // Determinar zona geológica
+            geologicalZone = determineGeologicalZone(currentLocation);
+            document.getElementById('geologicalZone').textContent = geologicalZone.name;
+            
+            // Actualizar información de zona
+            updateZoneInfo(geologicalZone);
+            
+            // Actualizar información de proyección
+            document.getElementById('projectionInfo').innerHTML = 
+                `Zona: ${geologicalZone.name} | Altitud: ${currentLocation.altitude ? currentLocation.altitude.toFixed(0) : '?'} msnm`;
+        }
+
+        function updateLocationError(error) {
+            console.error('Error de GPS:', error);
+            let message = 'Error obteniendo ubicación: ';
+            
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    message += 'Permiso denegado';
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    message += 'Posición no disponible';
+                    break;
+                case error.TIMEOUT:
+                    message += 'Tiempo de espera agotado';
+                    break;
+                default:
+                    message += 'Error desconocido';
+            }
+            
+            document.getElementById('gpsStatus').innerHTML = '<i class="fas fa-exclamation-triangle"></i> <span>GPS: Error</span>';
+            showNotification(message, 'error');
+            
+            // Usar ubicación simulada para pruebas
+            useSimulatedLocation();
+        }
+
+        function useSimulatedLocation() {
+            // Ubicación simulada en Atacama para pruebas
+            currentLocation = {
+                latitude: -27.3667,
+                longitude: -70.3333,
+                altitude: 1000,
+                accuracy: 50,
+                timestamp: new Date()
+            };
+            
+            geologicalZone = {
+                name: "Depresión Intermedia (Simulado)",
+                type: "basin",
+                description: "Cuenca sedimentaria con mineralización de cobre",
+                minerals: ["Calcopirita", "Bornita", "Malaquita"]
+            };
+            
+            updateLocationDisplay();
+            showNotification('Usando ubicación simulada de Atacama', 'warning');
+        }
+
+        function updateLocationDisplay() {
+            document.getElementById('currentCoords').textContent = 
+                `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`;
+            
+            document.getElementById('geologicalZone').textContent = geologicalZone.name;
+            
+            document.getElementById('locationStatus').innerHTML = 
+                `<i class="fas fa-map-marker-alt"></i> <span>Ubicación: ${getLocationName(currentLocation)}</span>`;
+            
+            updateZoneInfo(geologicalZone);
+        }
+
+        function updateGPS() {
+            if ("geolocation" in navigator) {
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 15000,
+                    maximumAge: 0
+                };
+                
+                navigator.geolocation.getCurrentPosition(
+                    updateLocationSuccess,
+                    updateLocationError,
+                    options
+                );
+                
+                showNotification('Actualizando ubicación GPS...', 'info');
+            }
+        }
+
+        function determineGeologicalZone(location) {
+            // Determinar zona geológica basada en coordenadas de Atacama
+            const lat = location.latitude;
+            const lng = location.longitude;
+            const alt = location.altitude || 0;
+            
+            if (lat < -28.5) {
+                // Zona sur de Atacama
+                if (alt > 2000) {
+                    return {
+                        name: "Cordillera de los Andes - Zona Sur",
+                        type: "andes",
+                        description: "Sector sur de la cordillera con volcanismo activo y mineralización cuprífera",
+                        minerals: ["Cobre Nativo", "Calcopirita", "Oro", "Cuarzo"],
+                        deposits: ["Pórfidos cupríferos", "Vetas epitermales"],
+                        volcanoes: ["Volcán Copiapó", "Nevado Tres Cruces"]
+                    };
+                } else {
+                    return {
+                        name: "Depresión Intermedia - Valle Copiapó",
+                        type: "basin",
+                        description: "Valle longitudinal con sedimentos cuaternarios y mineralización",
+                        minerals: ["Calcopirita", "Bornita", "Yeso", "Halita"],
+                        deposits: ["Areniscas cupríferas", "Evaporíticos"]
+                    };
+                }
+            } else if (lat >= -28.5 && lat < -26) {
+                // Zona central de Atacama
+                if (alt > 2500) {
+                    return {
+                        name: "Cordillera de los Andes - Distrito Candelaria",
+                        type: "andes",
+                        description: "Distrito minero de pórfidos cupríferos de clase mundial",
+                        minerals: ["Calcopirita", "Bornita", "Malaquita", "Crisocola", "Atacamita"],
+                        deposits: ["Pórfido cuprífero Candelaria", "Skarns"],
+                        mines: ["Candelaria", "Ojos del Salado"]
+                    };
+                } else if (alt > 500) {
+                    return {
+                        name: "Precordillera - Distrito Chañarcillo",
+                        type: "foothills",
+                        description: "Histórico distrito de plata con vetas epitermales",
+                        minerals: ["Argentita", "Plata Nativa", "Galena", "Esfalerita"],
+                        deposits: ["Vetas de plata", "Brechas hidrotermales"],
+                        historical: ["Mina Chañarcillo", "Tres Puntas"]
+                    };
+                } else {
+                    return {
+                        name: "Cordillera de la Costa - Batolito Costero",
+                        type: "coast",
+                        description: "Complejo intrusivo mesozoico con mineralización",
+                        minerals: ["Cuarzo", "Biotita", "Granate", "Magnetita"],
+                        deposits: ["Vetas de cuarzo", "Skarns de hierro"],
+                        features: ["Batolito de la Costa"]
+                    };
+                }
+            } else {
+                // Zona norte de Atacama / Salares
+                if (alt > 2000) {
+                    return {
+                        name: "Altiplano - Salares",
+                        type: "altiplano",
+                        description: "Cuencas evaporíticas con salmueras de litio",
+                        minerals: ["Halita", "Yeso", "Litio", "Anhidrita", "Ulexita"],
+                        deposits: ["Salmueras de litio", "Cortezas evaporíticas"],
+                        salares: ["Salar de Atacama", "Salar de Maricunga"]
+                    };
+                } else {
+                    return {
+                        name: "Desierto de Atacama",
+                        type: "desert",
+                        description: "Desierto hiperárido con depósitos evaporíticos y nitratos",
+                        minerals: ["Yeso", "Halita", "Nitratina", "Atacamita"],
+                        deposits: ["Caldas de nitrato", "Costras evaporíticas"],
+                        unique: ["Desierto más árido del mundo"]
+                    };
+                }
+            }
+        }
+
+        function getLocationName(location) {
+            // Nombres aproximados basados en coordenadas
+            const lat = location.latitude;
+            
+            if (lat < -28) return "Sur de Atacama";
+            if (lat < -27) return "Copiapó";
+            if (lat < -26) return "Chañarcillo";
+            if (lat < -25) return "Salar de Atacama";
+            return "Norte de Atacama";
+        }
+
+        function updateZoneInfo(zone) {
+            const zoneDetails = document.getElementById('zoneDetails');
+            
+            let html = `
+                <div style="margin-bottom:10px;">
+                    <strong>${zone.name}</strong><br>
+                    ${zone.description}
+                </div>
+            `;
+            
+            if (zone.minerals) {
+                html += `<div style="margin-top:10px;"><strong>Minerales típicos:</strong> ${zone.minerals.join(', ')}</div>`;
+            }
+            
+            if (zone.deposits) {
+                html += `<div><strong>Depósitos:</strong> ${zone.deposits.join(', ')}</div>`;
+            }
+            
+            if (zone.mines) {
+                html += `<div><strong>Minas principales:</strong> ${zone.mines.join(', ')}</div>`;
+            }
+            
+            if (zone.salares) {
+                html += `<div><strong>Salares:</strong> ${zone.salares.join(', ')}</div>`;
+            }
+            
+            zoneDetails.innerHTML = html;
+        }
+
+        // === FUNCIONES DE CÁMARA ===
+        async function startCamera() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' } 
+                });
+                const video = document.getElementById('cameraFeed');
+                video.srcObject = stream;
+                document.getElementById('captureBtn').disabled = false;
+                showNotification('Cámara activada - Apunte al mineral', 'success');
+            } catch (err) {
+                console.error('Error al acceder a la cámara:', err);
+                showNotification('Error al acceder a la cámara', 'error');
+            }
+        }
+
+        function captureMineral() {
+            if (!currentLocation) {
+                showNotification('Primero obtén tu ubicación GPS', 'warning');
+                return;
+            }
+            
+            const video = document.getElementById('cameraFeed');
+            const canvas = document.getElementById('cameraCanvas');
+            const context = canvas.getContext('2d');
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Analizar con IA considerando ubicación
+            analyzeWithAI();
+        }
+
+        function analyzeWithAI() {
+            if (!currentLocation || !geologicalZone) {
+                showNotification('Esperando datos de ubicación...', 'warning');
+                return;
+            }
+            
+            // Filtrar minerales probables según zona geológica
+            const probableMinerals = atacamaMinerals.filter(mineral => {
+                // Priorizar minerales de la región Atacama
+                if (mineral.region !== "Atacama" && mineral.region !== "Andes") return false;
+                
+                // Considerar minerales típicos de la zona
+                if (geologicalZone.minerals && geologicalZone.minerals.includes(mineral.name)) {
+                    return true;
+                }
+                
+                // Considerar tipo de depósito
+                if (geologicalZone.type === "andes" && mineral.tags.includes("cobre")) return true;
+                if (geologicalZone.type === "altiplano" && mineral.tags.includes("evaporítico")) return true;
+                if (geologicalZone.type === "desert" && mineral.name === "Atacamita") return true;
+                
+                return Math.random() > 0.7; // Algo de aleatoriedad
+            });
+            
+            if (probableMinerals.length === 0) {
+                probableMinerals.push(...atacamaMinerals.slice(0, 5));
+            }
+            
+            // Seleccionar 1-3 minerales más probables
+            const numResults = Math.min(3, probableMinerals.length);
+            const results = [];
+            
+            for (let i = 0; i < numResults; i++) {
+                const mineral = probableMinerals[Math.floor(Math.random() * probableMinerals.length)];
+                const confidence = 70 + Math.random() * 25; // 70-95%
+                results.push({
+                    mineral: mineral,
+                    confidence: confidence.toFixed(1) + '%',
+                    reason: getAnalysisReason(mineral)
+                });
+            }
+            
+            // Ordenar por confianza
+            results.sort((a, b) => parseFloat(b.confidence) - parseFloat(a.confidence));
+            
+            currentMineral = results[0].mineral;
+            displayResults(results);
+            displayMineralDetails(currentMineral);
+            updateGeologicalContext(currentMineral);
+            
+            showNotification(`Mineral identificado: ${currentMineral.name}`, 'success');
+        }
+
+        function getAnalysisReason(mineral) {
+            const reasons = [
+                `Común en ${geologicalZone.name}`,
+                "Presente en muestras similares de la zona",
+                "Propiedades ópticas coincidentes",
+                "Contexto geológico apropiado",
+                "Mineral típico de depósitos andinos"
+            ];
+            return reasons[Math.floor(Math.random() * reasons.length)];
+        }
+
+        function simulateAI() {
+            const selectedId = document.getElementById('mineralSelect').value;
+            let mineral;
+            
+            if (selectedId) {
+                mineral = atacamaMinerals.find(m => m.id == selectedId);
+            } else {
+                // Simular basado en ubicación
+                if (geologicalZone && geologicalZone.minerals) {
+                    const zoneMinerals = atacamaMinerals.filter(m => 
+                        geologicalZone.minerals.includes(m.name)
+                    );
+                    if (zoneMinerals.length > 0) {
+                        mineral = zoneMinerals[Math.floor(Math.random() * zoneMinerals.length)];
+                    }
+                }
+                
+                // Si no hay mineral de zona, seleccionar aleatorio de Atacama
+                if (!mineral) {
+                    const atacamaOnly = atacamaMinerals.filter(m => m.region === "Atacama");
+                    mineral = atacamaOnly[Math.floor(Math.random() * atacamaOnly.length)];
+                }
+            }
+            
+            if (!mineral) {
+                showNotification('Selecciona un mineral o activa la ubicación', 'warning');
+                return;
+            }
+            
+            currentMineral = mineral;
+            displayResults([{
+                mineral: mineral,
+                confidence: (75 + Math.random() * 20).toFixed(1) + '%',
+                reason: "Simulación IA con contexto geológico"
+            }]);
+            
+            displayMineralDetails(mineral);
+            updateGeologicalContext(mineral);
+            
+            showNotification('Simulación completada: ' + mineral.name);
+        }
+
+        function displayResults(results) {
+            const container = document.getElementById('resultsContainer');
+            const aiResults = document.getElementById('aiResults');
+            
+            container.innerHTML = '';
+            results.forEach(result => {
+                const card = document.createElement('div');
+                card.className = 'mineral-card fade-in';
+                card.innerHTML = `
+                    <div class="mineral-header">
+                        <div class="mineral-name">${result.mineral.name} 
+                            <span class="badge ${result.mineral.economic ? 'badge-copper' : 'badge-volcanic'}">
+                                ${result.mineral.region}
+                            </span>
+                        </div>
+                        <div class="confidence">${result.confidence}</div>
+                    </div>
+                    <div class="formula">${result.mineral.formula}</div>
+                    <div class="class">${result.mineral.class} • ${result.mineral.system}</div>
+                    <div class="properties">
+                        <i class="fas fa-weight-hanging"></i> Dureza: ${result.mineral.hardness || 'N/A'} | 
+                        <i class="fas fa-weight"></i> Densidad: ${result.mineral.density || 'N/A'} g/cm³
+                    </div>
+                    <div style="margin-top:8px; font-size:0.9em; color:#666;">
+                        <i class="fas fa-lightbulb"></i> ${result.reason}
+                    </div>
+                `;
+                card.addEventListener('click', () => {
+                    currentMineral = result.mineral;
+                    displayMineralDetails(result.mineral);
+                    updateGeologicalContext(result.mineral);
+                });
+                container.appendChild(card);
+            });
+            
+            aiResults.style.display = 'block';
+        }
+
+        // === BASE DE DATOS ===
+        function loadMineralSelect() {
+            const select = document.getElementById('mineralSelect');
+            select.innerHTML = '<option value="">Simular mineral andino...</option>';
+            
+            // Agrupar por tipo
+            const byType = {};
+            atacamaMinerals.forEach(mineral => {
+                if (!byType[mineral.type]) byType[mineral.type] = [];
+                byType[mineral.type].push(mineral);
+            });
+            
+            // Añadir opciones agrupadas
+            for (const [type, minerals] of Object.entries(byType)) {
+                const optgroup = document.createElement('optgroup');
+                optgroup.label = `Minerales ${type} - Atacama`;
+                minerals.forEach(mineral => {
+                    const option = document.createElement('option');
+                    option.value = mineral.id;
+                    option.textContent = `${mineral.name} (${mineral.formula}) - ${mineral.region}`;
+                    optgroup.appendChild(option);
+                });
+                select.appendChild(optgroup);
+            }
+        }
+
+        function loadMineralsList() {
+            const list = document.getElementById('mineralsList');
+            list.innerHTML = '';
+            
+            atacamaMinerals.forEach(mineral => {
+                const item = document.createElement('div');
+                item.className = `mineral-item ${mineral.region === 'Atacama' ? 'atacama-mineral' : ''}`;
+                item.innerHTML = `
+                    <div style="display:flex; justify-content:space-between;">
+                        <div>
+                            <strong>${mineral.name}</strong>
+                            <span class="mineral-region">${mineral.region}</span>
+                        </div>
+                        <div style="font-size:0.9em; color:#666;">
+                            ${mineral.type}
+                        </div>
+                    </div>
+                    <div style="font-size:0.9em;color:#666;margin-top:5px;">
+                        ${mineral.formula} | ${mineral.class}
+                    </div>
+                    <div style="margin-top:5px;">
+                        ${mineral.economic ? 
+                            '<span class="badge badge-copper"><i class="fas fa-chart-line"></i> Económico</span>' : 
+                            '<span class="badge badge-volcanic"><i class="fas fa-mountain"></i> Geológico</span>'}
+                        ${mineral.tags.map(tag => `<span class="badge" style="background:#eee;color:#666;">${tag}</span>`).join('')}
+                    </div>
+                `;
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.mineral-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    currentMineral = mineral;
+                    displayMineralDetails(mineral);
+                    updateGeologicalContext(mineral);
+                });
+                list.appendChild(item);
+            });
+        }
+
+        function searchMinerals() {
+            const searchTerm = document.getElementById('searchMinerals').value.toLowerCase();
+            const items = document.querySelectorAll('.mineral-item');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(searchTerm) ? 'block' : 'none';
+            });
+        }
+
+        function displayMineralDetails(mineral) {
+            const container = document.getElementById('mineralDetails');
+            container.innerHTML = `
+                <h3 style="color:var(--primary);margin-bottom:15px;">
+                    ${mineral.name} 
+                    <span class="badge ${mineral.economic ? 'badge-copper' : 'badge-volcanic'}">
+                        ${mineral.region}
+                    </span>
+                </h3>
+                <div class="form-group">
+                    <strong><i class="fas fa-atom"></i> Fórmula:</strong> ${mineral.formula}
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-layer-group"></i> Clase:</strong> ${mineral.class}
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-cube"></i> Sistema:</strong> ${mineral.system}
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-gem"></i> Dureza (Mohs):</strong> ${mineral.hardness || 'N/A'}
+                    ${mineral.hardness ? `
+                        <div class="progress">
+                            <div class="progress-bar" style="width: ${mineral.hardness * 10}%"></div>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-weight"></i> Densidad:</strong> ${mineral.density || 'N/A'} g/cm³
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-palette"></i> Color:</strong> ${mineral.color.join(', ')}
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-brush"></i> Raya:</strong> ${mineral.streak}
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-sun"></i> Brillo:</strong> ${mineral.luster}
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-map-pin"></i> Localización:</strong> ${mineral.location}
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-hard-hat"></i> Depósito:</strong> ${mineral.deposit}
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-info-circle"></i> Descripción:</strong> ${mineral.description}
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-industry"></i> Usos:</strong> ${mineral.uses}
+                </div>
+                <div class="form-group">
+                    <strong><i class="fas fa-tags"></i> Características:</strong>
+                    ${mineral.tags.map(tag => `<span class="badge" style="background:#eee;color:#666;margin:2px;">${tag}</span>`).join('')}
+                </div>
+            `;
+            
+            // Mostrar contexto geológico
+            document.getElementById('geologicalContext').style.display = 'block';
+        }
+
+        function updateGeologicalContext(mineral) {
+            const contextDiv = document.getElementById('contextDetails');
+            
+            // Encontrar depósitos relacionados
+            const relatedDeposits = Object.entries(atacamaGeology.deposits)
+                .filter(([name, data]) => data.minerals.includes(mineral.name))
+                .map(([name, data]) => name);
+            
+            let html = `
+                <div style="margin-bottom:10px;">
+                    <strong>Importancia en Atacama:</strong>
+                    ${mineral.economic ? 
+                        '<span class="badge badge-copper"><i class="fas fa-chart-line"></i> Mineral económico clave</span>' : 
+                        '<span class="badge badge-volcanic"><i class="fas fa-mountain"></i> Mineral indicador geológico</span>'}
+                </div>
+            `;
+            
+            if (relatedDeposits.length > 0) {
+                html += `<div style="margin:10px 0;"><strong>Tipos de depósito:</strong> ${relatedDeposits.join(', ')}</div>`;
+            }
+            
+            if (geologicalZone && geologicalZone.minerals && geologicalZone.minerals.includes(mineral.name)) {
+                html += `<div style="margin:10px 0; padding:10px; background:rgba(39, 174, 96, 0.1); border-radius:5px;">
+                    <i class="fas fa-check-circle" style="color:var(--success);"></i>
+                    <strong>Presente en esta zona:</strong> Común en ${geologicalZone.name}
+                </div>`;
+            }
+            
+            // Información específica por mineral
+            if (mineral.name === "Atacamita") {
+                html += `<div style="margin:10px 0; padding:10px; background:rgba(52, 152, 219, 0.1); border-radius:5px;">
+                    <i class="fas fa-star" style="color:var(--accent2);"></i>
+                    <strong>Mineral tipo:</strong> Descubierto en el Desierto de Atacama, Chile
+                </div>`;
+            }
+            
+            if (mineral.name.includes("Litio")) {
+                html += `<div style="margin:10px 0; padding:10px; background:rgba(46, 204, 113, 0.1); border-radius:5px;">
+                    <i class="fas fa-battery-full" style="color:var(--success);"></i>
+                    <strong>Recurso estratégico:</strong> Chile es el 2° productor mundial de litio
+                </div>`;
+            }
+            
+            contextDiv.innerHTML = html;
+        }
+
+        // === PROYECCIONES GEOLÓGICAS INTEGRADAS ===
+        function initializeCanvas() {
+            const canvas = document.getElementById('geologicalCanvas');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+
+        function generateProjection() {
+            const canvas = document.getElementById('geologicalCanvas');
+            const ctx = canvas.getContext('2d');
+            const type = document.getElementById('projectionType').value;
+            
+            // Limpiar canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Fondo
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Título
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('Proyección Geológica - Atacama', 20, 30);
+            
+            // Información de ubicación si está disponible
+            if (currentLocation) {
+                ctx.font = '12px Arial';
+                ctx.fillStyle = '#666';
+                ctx.fillText(`Ubicación: ${currentLocation.latitude.toFixed(4)}, ${currentLocation.longitude.toFixed(4)}`, 20, 55);
+                ctx.fillText(`Zona: ${geologicalZone.name}`, 20, 75);
+            }
+            
+            // Generar proyección según tipo
+            switch(type) {
+                case 'structural':
+                    drawStructuralMap(ctx, canvas);
+                    break;
+                case 'mineralization':
+                    drawMineralizationMap(ctx, canvas);
+                    break;
+                case 'crossSection':
+                    drawCrossSection(ctx, canvas);
+                    break;
+                case 'volcanic':
+                    drawVolcanicMap(ctx, canvas);
+                    break;
+                case 'faults':
+                    drawFaultSystem(ctx, canvas);
+                    break;
+            }
+            
+            // Si hay un mineral identificado, destacarlo
+            if (currentMineral) {
+                ctx.fillStyle = '#d35400';
+                ctx.font = 'bold 14px Arial';
+                ctx.fillText(`Mineral: ${currentMineral.name}`, canvas.width - 200, 30);
+                ctx.fillText(`Tipo: ${currentMineral.type}`, canvas.width - 200, 50);
+            }
+            
+            showNotification(`Proyección ${type} generada`, 'success');
+        }
+
+        function drawMineralizationMap(ctx, canvas) {
+            // Mapa de mineralización de Atacama
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // Dibujar regiones
+            const regions = [
+                {name: "Costa", x: centerX - 200, y: centerY - 50, width: 100, height: 300, color: '#95a5a6', minerals: ["Cuarzo", "Magnetita"]},
+                {name: "Depresión", x: centerX - 50, y: centerY - 100, width: 100, height: 400, color: '#f39c12', minerals: ["Calcopirita", "Yeso"]},
+                {name: "Precordillera", x: centerX + 50, y: centerY - 150, width: 100, height: 450, color: '#e74c3c', minerals: ["Argentita", "Galena"]},
+                {name: "Andes", x: centerX + 150, y: centerY - 200, width: 100, height: 500, color: '#2c3e50', minerals: ["Cobre", "Oro", "Molibdenita"]},
+                {name: "Altiplano", x: centerX + 250, y: centerY - 100, width: 100, height: 400, color: '#3498db', minerals: ["Litio", "Halita"]}
+            ];
+            
+            regions.forEach(region => {
+                ctx.fillStyle = region.color;
+                ctx.fillRect(region.x, region.y, region.width, region.height);
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(region.x, region.y, region.width, region.height);
+                
+                // Nombre de región
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 12px Arial';
+                ctx.save();
+                ctx.translate(region.x + 20, region.y + 20);
+                ctx.rotate(-Math.PI/2);
+                ctx.fillText(region.name, 0, 0);
+                ctx.restore();
+                
+                // Minerales
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Arial';
+                region.minerals.forEach((mineral, i) => {
+                    ctx.fillText(mineral, region.x + 10, region.y + 50 + i * 20);
+                });
+            });
+            
+            // Ubicación actual si está disponible
+            if (currentLocation) {
+                ctx.fillStyle = '#27ae60';
+                ctx.beginPath();
+                ctx.arc(centerX + (currentLocation.longitude + 70) * 2, centerY - (currentLocation.latitude + 27) * 20, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.fillText('Tú', centerX + (currentLocation.longitude + 70) * 2 - 5, centerY - (currentLocation.latitude + 27) * 20 + 3);
+            }
+            
+            // Leyenda
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('Distribución de Mineralización - Región de Atacama', centerX - 150, 100);
+        }
+
+        function drawCrossSection(ctx, canvas) {
+            // Corte geológico E-O de Atacama
+            const startX = 50;
+            const startY = canvas.height - 100;
+            const width = canvas.width - 100;
+            const height = 300;
+            
+            // Eje
+            ctx.strokeStyle = '#666';
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(startX + width, startY);
+            ctx.stroke();
+            
+            // Etiquetas
+            ctx.fillStyle = '#666';
+            ctx.font = '12px Arial';
+            ctx.fillText('O (Costa)', startX - 30, startY + 5);
+            ctx.fillText('E (Andes)', startX + width - 30, startY + 5);
+            ctx.fillText('Perfil geológico E-O Atacama', startX + width/2 - 80, startY + 30);
+            
+            // Unidades geológicas
+            const units = [
+                {name: "Sedimentos costeros", x: startX, y: startY - 50, width: width * 0.2, height: 50, color: '#f39c12'},
+                {name: "Batolito jurásico", x: startX + width * 0.2, y: startY - 150, width: width * 0.3, height: 150, color: '#95a5a6'},
+                {name: "Cuencas terciarias", x: startX + width * 0.5, y: startY - 100, width: width * 0.2, height: 100, color: '#d35400'},
+                {name: "Volcanes andinos", x: startX + width * 0.7, y: startY - 250, width: width * 0.3, height: 250, color: '#e74c3c'}
+            ];
+            
+            units.forEach(unit => {
+                ctx.fillStyle = unit.color;
+                ctx.fillRect(unit.x, unit.y, unit.width, unit.height);
+                ctx.strokeStyle = '#fff';
+                ctx.strokeRect(unit.x, unit.y, unit.width, unit.height);
+                
+                // Nombre
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Arial';
+                ctx.save();
+                ctx.translate(unit.x + 10, unit.y + unit.height/2);
+                ctx.rotate(-Math.PI/2);
+                ctx.fillText(unit.name, 0, 0);
+                ctx.restore();
+            });
+            
+            // Fallas
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(startX + width * 0.2, startY);
+            ctx.lineTo(startX + width * 0.3, startY - 100);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(startX + width * 0.5, startY);
+            ctx.lineTo(startX + width * 0.6, startY - 150);
+            ctx.stroke();
+            
+            ctx.setLineDash([]);
+            
+            // Ubicación actual aproximada
+            if (currentLocation) {
+                const lat = currentLocation.latitude;
+                const posX = startX + width * ((lat + 28) / 5); // Aproximación
+                ctx.fillStyle = '#27ae60';
+                ctx.beginPath();
+                ctx.arc(posX, startY - 30, 8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 10px Arial';
+                ctx.fillText('Tú', posX - 4, startY - 27);
+            }
+        }
+
+        function drawVolcanicMap(ctx, canvas) {
+            // Mapa de volcanes de Atacama
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            
+            // Título
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('Zonas Volcánicas - Región de Atacama', centerX - 120, 80);
+            
+            // Dibujar volcanes
+            const volcanoes = [
+                {name: "Ojos del Salado", x: centerX + 100, y: centerY - 100, height: 6893, status: "Activo"},
+                {name: "Incahuasi", x: centerX + 150, y: centerY - 50, height: 6638, status: "Activo"},
+                {name: "Copiapó", x: centerX - 50, y: centerY - 150, height: 6052, status: "Activo"},
+                {name: "Nevado Tres Cruces", x: centerX + 50, y: centerY + 50, height: 6748, status: "Activo"}
+            ];
+            
+            volcanoes.forEach(volcano => {
+                // Cono volcánico
+                ctx.fillStyle = volcano.status === "Activo" ? '#e74c3c' : '#95a5a6';
+                ctx.beginPath();
+                ctx.moveTo(volcano.x - 30, volcano.y + 40);
+                ctx.lineTo(volcano.x, volcano.y - 60);
+                ctx.lineTo(volcano.x + 30, volcano.y + 40);
+                ctx.closePath();
+                ctx.fill();
+                
+                // Nube de humo si está activo
+                if (volcano.status === "Activo") {
+                    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+                    ctx.beginPath();
+                    ctx.arc(volcano.x, volcano.y - 80, 20, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                
+                // Etiqueta
+                ctx.fillStyle = '#2c3e50';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText(volcano.name, volcano.x - 40, volcano.y + 60);
+                ctx.font = '10px Arial';
+                ctx.fillText(`${volcano.height} msnm`, volcano.x - 30, volcano.y + 75);
+            });
+            
+            // Zonas de riesgo
+            ctx.strokeStyle = 'rgba(231, 76, 60, 0.5)';
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.arc(centerX + 100, centerY - 100, 120, 0, Math.PI * 2);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.arc(centerX - 50, centerY - 150, 100, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+            
+            ctx.fillStyle = 'rgba(231, 76, 60, 0.1)';
+            ctx.beginPath();
+            ctx.arc(centerX + 100, centerY - 100, 120, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Leyenda
+            ctx.fillStyle = '#e74c3c';
+            ctx.beginPath();
+            ctx.arc(50, canvas.height - 80, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = '12px Arial';
+            ctx.fillText('Volcán activo', 70, canvas.height - 75);
+            
+            ctx.fillStyle = '#95a5a6';
+            ctx.beginPath();
+            ctx.arc(50, canvas.height - 50, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillText('Volcán inactivo', 70, canvas.height - 45);
+        }
+
+        function drawStructuralMap(ctx, canvas) {
+            // Mapa estructural simplificado
+            ctx.fillStyle = '#f8f9fa';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Sistema de fallas
+            ctx.strokeStyle = '#8e44ad';
+            ctx.lineWidth = 3;
+            
+            // Fallas principales
+            const faults = [
+                {x1: 50, y1: 100, x2: 400, y2: 200, name: "Falla Atacama"},
+                {x1: 100, y1: 300, x2: 350, y2: 150, name: "Falla Chafiar"},
+                {x1: 200, y1: 400, x2: 500, y2: 300, name: "Falla Domeyko"}
+            ];
+            
+            faults.forEach(fault => {
+                ctx.beginPath();
+                ctx.moveTo(fault.x1, fault.y1);
+                ctx.lineTo(fault.x2, fault.y2);
+                ctx.stroke();
+                
+                // Flecha indicando movimiento
+                const angle = Math.atan2(fault.y2 - fault.y1, fault.x2 - fault.x1);
+                ctx.save();
+                ctx.translate(fault.x2, fault.y2);
+                ctx.rotate(angle);
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(-15, -8);
+                ctx.lineTo(-15, 8);
+                ctx.closePath();
+                ctx.fillStyle = '#8e44ad';
+                ctx.fill();
+                ctx.restore();
+                
+                // Nombre de falla
+                ctx.fillStyle = '#8e44ad';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText(fault.name, (fault.x1 + fault.x2)/2 - 30, (fault.y1 + fault.y2)/2 - 10);
+            });
+            
+            // Bloques estructurales
+            ctx.fillStyle = 'rgba(52, 152, 219, 0.3)';
+            ctx.fillRect(100, 150, 200, 150);
+            ctx.strokeStyle = '#3498db';
+            ctx.strokeRect(100, 150, 200, 150);
+            ctx.fillStyle = '#3498db';
+            ctx.font = 'bold 12px Arial';
+            ctx.fillText('Bloque Oriental', 150, 230);
+            
+            ctx.fillStyle = 'rgba(46, 204, 113, 0.3)';
+            ctx.fillRect(300, 200, 200, 100);
+            ctx.strokeStyle = '#2ecc71';
+            ctx.strokeRect(300, 200, 200, 100);
+            ctx.fillStyle = '#2ecc71';
+            ctx.fillText('Bloque Central', 350, 250);
+            
+            ctx.fillStyle = 'rgba(241, 196, 15, 0.3)';
+            ctx.fillRect(200, 300, 250, 120);
+            ctx.strokeStyle = '#f1c40f';
+            ctx.strokeRect(200, 300, 250, 120);
+            ctx.fillStyle = '#f1c40f';
+            ctx.fillText('Bloque Occidental', 250, 360);
+            
+            // Ubicación actual
+            if (currentLocation) {
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                const posX = 150 + (currentLocation.longitude + 70) * 2;
+                const posY = 200 + (currentLocation.latitude + 27) * 10;
+                ctx.arc(posX, posY, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 10px Arial';
+                ctx.fillText('Tú', posX - 4, posY + 3);
+            }
+            
+            // Título
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 18px Arial';
+            ctx.fillText('Mapa Estructural - Región de Atacama', 150, 50);
+        }
+
+        function drawFaultSystem(ctx, canvas) {
+            // Sistema de fallas detallado
+            ctx.fillStyle = '#ecf0f1';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Título
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = 'bold 18px Arial';
+            ctx.fillText('Sistema de Fallas Andino - Atacama', canvas.width/2 - 150, 50);
+            
+            // Falla de Domeyko (principal)
+            ctx.strokeStyle = '#8e44ad';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(100, canvas.height/2 - 50);
+            ctx.lineTo(canvas.width - 100, canvas.height/2 + 100);
+            ctx.stroke();
+            
+            // Texto de falla principal
+            ctx.fillStyle = '#8e44ad';
+            ctx.font = 'bold 16px Arial';
+            ctx.fillText('Falla Domeyko', canvas.width/2 - 50, canvas.height/2 + 120);
+            ctx.font = '12px Arial';
+            ctx.fillText('Sistema de más de 1000 km de longitud', canvas.width/2 - 100, canvas.height/2 + 140);
+            
+            // Fallas secundarias
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 2;
+            
+            for(let i = 0; i < 8; i++) {
+                const y = 150 + i * 50;
+                ctx.beginPath();
+                ctx.moveTo(150 + i * 20, y);
+                ctx.lineTo(300 + i * 30, y + 100);
+                ctx.stroke();
+            }
+            
+            // Zonas de cizalle
+            ctx.fillStyle = 'rgba(231, 76, 60, 0.2)';
+            ctx.beginPath();
+            ctx.ellipse(canvas.width/2, canvas.height/2, 150, 80, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            ctx.fillStyle = '#e74c3c';
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText('Zona de Cizalle Principal', canvas.width/2 - 80, canvas.height/2 - 100);
+            
+            // Bloques tectónicos
+            const blocks = [
+                {x: 100, y: 100, w: 150, h: 200, name: "Bloque Costero", color: '#3498db'},
+                {x: 250, y: 150, w: 200, h: 250, name: "Bloque Intermedio", color: '#2ecc71'},
+                {x: 450, y: 100, w: 150, h: 300, name: "Bloque Andino", color: '#e74c3c'}
+            ];
+            
+            blocks.forEach(block => {
+                ctx.fillStyle = block.color + '40';
+                ctx.fillRect(block.x, block.y, block.w, block.h);
+                ctx.strokeStyle = block.color;
+                ctx.lineWidth = 2;
+                ctx.strokeRect(block.x, block.y, block.w, block.h);
+                
+                ctx.fillStyle = block.color;
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText(block.name, block.x + 10, block.y + 20);
+            });
+            
+            // Ubicación actual
+            if (currentLocation) {
+                const posX = 200 + (currentLocation.longitude + 70) * 3;
+                const posY = 200 + (currentLocation.latitude + 27) * 15;
+                ctx.fillStyle = '#27ae60';
+                ctx.beginPath();
+                ctx.arc(posX, posY, 12, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText('Tú', posX - 5, posY + 4);
+                
+                // Línea a falla principal
+                ctx.strokeStyle = '#27ae60';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([3, 3]);
+                ctx.beginPath();
+                ctx.moveTo(posX, posY);
+                ctx.lineTo(canvas.width/2, canvas.height/2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+            
+            // Leyenda
+            const legendY = canvas.height - 100;
+            ctx.fillStyle = '#8e44ad';
+            ctx.fillRect(50, legendY, 20, 20);
+            ctx.fillStyle = '#2c3e50';
+            ctx.font = '12px Arial';
+            ctx.fillText('Falla principal', 80, legendY + 15);
+            
+            ctx.fillStyle = '#3498db';
+            ctx.fillRect(50, legendY + 30, 20, 20);
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillText('Fallamiento secundario', 80, legendY + 45);
+            
+            ctx.fillStyle = '#e74c3c';
+            ctx.fillRect(250, legendY, 20, 20);
+            ctx.fillStyle = '#2c3e50';
+            ctx.fillText('Zona de cizalle', 280, legendY + 15);
+        }
+
+        // === HERRAMIENTAS ===
+        function openToolModal(tool) {
+            const modal = document.getElementById('toolModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            selectedTool = tool;
+            
+            switch(tool) {
+                case 'mohs':
+                    title.innerHTML = '<i class="fas fa-gem"></i> Escala de Mohs - Minerales Andinos';
+                    content.innerHTML = generateMohsContent();
+                    break;
+                case 'compass':
+                    title.innerHTML = '<i class="fas fa-compass"></i> Brújula Digital con Inclinómetro';
+                    content.innerHTML = generateCompassContent();
+                    startCompass();
+                    break;
+                case 'calculator':
+                    title.innerHTML = '<i class="fas fa-calculator"></i> Calculadora Geológica';
+                    content.innerHTML = generateCalculatorContent();
+                    break;
+                case 'converter':
+                    title.innerHTML = '<i class="fas fa-ruler-combined"></i> Conversor de Unidades Geológicas';
+                    content.innerHTML = generateConverterContent();
+                    break;
+                case 'streak':
+                    title.innerHTML = '<i class="fas fa-palette"></i> Colores de Raya - Minerales Atacama';
+                    content.innerHTML = generateStreakContent();
+                    break;
+                case 'geology':
+                    title.innerHTML = '<i class="fas fa-mountain"></i> Geología de Atacama';
+                    content.innerHTML = generateGeologyContent();
+                    break;
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function generateGeologyContent() {
+            let html = `
+                <div style="margin-bottom:20px;">
+                    <h3 style="color:var(--primary); margin-bottom:15px;">Geología Regional de Atacama</h3>
+                    <p>La Región de Atacama presenta una geología compleja resultado de la evolución andina.</p>
+                </div>
+                
+                <div class="tabs" id="geologyTabs">
+                    <div class="tab active" data-tab="overview">Resumen</div>
+                    <div class="tab" data-tab="structure">Estructuras</div>
+                    <div class="tab" data-tab="deposits">Depósitos</div>
+                    <div class="tab" data-tab="volcanoes">Volcanes</div>
+                </div>
+                
+                <div id="geologyTabContent" style="margin-top:20px;">
+                    ${generateGeologyOverview()}
+                </div>
+            `;
+            
+            // Agregar event listeners a las pestañas
+            setTimeout(() => {
+                document.querySelectorAll('#geologyTabs .tab').forEach(tab => {
+                    tab.addEventListener('click', function() {
+                        document.querySelectorAll('#geologyTabs .tab').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        
+                        const tabName = this.dataset.tab;
+                        const contentDiv = document.getElementById('geologyTabContent');
+                        
+                        switch(tabName) {
+                            case 'overview': contentDiv.innerHTML = generateGeologyOverview(); break;
+                            case 'structure': contentDiv.innerHTML = generateGeologyStructures(); break;
+                            case 'deposits': contentDiv.innerHTML = generateGeologyDeposits(); break;
+                            case 'volcanoes': contentDiv.innerHTML = generateGeologyVolcanoes(); break;
+                        }
+                    });
+                });
+            }, 100);
+            
+            return html;
+        }
+
+        function generateGeologyOverview() {
+            return `
+                <div style="padding:15px; background:#f8f9fa; border-radius:8px;">
+                    <h4><i class="fas fa-map"></i> Unidades Geomorfológicas</h4>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px;">
+                        <div class="structure-item">
+                            <strong>Cordillera de la Costa</strong><br>
+                            Altitud: 0-1000 msnm<br>
+                            Rocas: Metamórficas paleozoicas<br>
+                            Mineralización: Vetas de cuarzo, Fe
+                        </div>
+                        <div class="structure-item">
+                            <strong>Depresión Intermedia</strong><br>
+                            Altitud: 500-1500 msnm<br>
+                            Rocas: Sedimentarias cenozoicas<br>
+                            Mineralización: Cu, evaporíticos
+                        </div>
+                        <div class="structure-item">
+                            <strong>Precordillera</strong><br>
+                            Altitud: 1500-3000 msnm<br>
+                            Rocas: Volcánicas terciarias<br>
+                            Mineralización: Ag, Pb, Zn
+                        </div>
+                        <div class="structure-item">
+                            <strong>Cordillera de los Andes</strong><br>
+                            Altitud: 3000-6000+ msnm<br>
+                            Rocas: Volcánicas cenozoicas<br>
+                            Mineralización: Cu, Mo, Au
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top:20px; padding:15px; background:#e8f4fc; border-radius:8px;">
+                        <h4><i class="fas fa-info-circle"></i> Contexto Tectónico</h4>
+                        <p>La región se encuentra en un margen convergente activo, con subducción de la placa de Nazca bajo la Sudamericana. 
+                        Esto genera volcanismo, fallamiento y mineralización epitermal y pórfido cuprífero.</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        // === INFORMES CON GPS ===
+        function generateReport() {
+            if (!currentMineral) {
+                showNotification('Primero identifica un mineral', 'error');
+                return;
+            }
+            
+            if (!currentLocation) {
+                showNotification('Activa el GPS para incluir ubicación', 'warning');
+            }
+            
+            const report = {
+                id: Date.now(),
+                name: document.getElementById('reportName').value || `Muestreo ${new Date().toLocaleDateString()}`,
+                date: new Date().toISOString(),
+                mineral: currentMineral,
+                notes: document.getElementById('reportNotes').value,
+                location: currentLocation ? {
+                    coords: `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`,
+                    altitude: currentLocation.altitude,
+                    accuracy: currentLocation.accuracy
+                } : null,
+                geologicalZone: geologicalZone ? geologicalZone.name : 'No identificada',
+                projection: document.getElementById('projectionType').value
+            };
+            
+            reports.push(report);
+            localStorage.setItem('geologyReportsAtacama', JSON.stringify(reports));
+            
+            // Limpiar formulario
+            document.getElementById('reportName').value = '';
+            document.getElementById('reportNotes').value = '';
+            
+            showNotification('Informe geológico guardado', 'success');
+            loadReports();
+        }
+
+        function loadReports() {
+            const list = document.getElementById('reportsList');
+            list.innerHTML = '';
+            
+            if (reports.length === 0) {
+                list.innerHTML = '<p style="text-align:center;color:#666;padding:20px;"><i class="fas fa-file-alt"></i> No hay informes guardados</p>';
+                return;
+            }
+            
+            reports.slice(-5).reverse().forEach(report => {
+                const item = document.createElement('div');
+                item.className = 'report-item';
+                item.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <strong>${report.name}</strong>
+                        <span style="font-size:0.8em; color:#666;">
+                            ${new Date(report.date).toLocaleDateString()}
+                        </span>
+                    </div>
+                    <div style="font-size:0.9em; color:#666; margin-bottom:5px;">
+                        <i class="fas fa-gem"></i> ${report.mineral.name} | 
+                        <i class="fas fa-map-marker-alt"></i> ${report.location ? report.location.coords : 'Sin ubicación'}
+                    </div>
+                    <div style="margin-top:5px; font-size:0.9em;">
+                        ${report.notes || '<em>Sin observaciones</em>'}
+                    </div>
+                    ${report.geologicalZone !== 'No identificada' ? 
+                        `<div style="margin-top:5px;">
+                            <span class="badge" style="background:var(--accent2);color:white;">${report.geologicalZone}</span>
+                        </div>` : ''}
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function viewReports() {
+            if (reports.length === 0) {
+                showNotification('No hay informes para mostrar', 'warning');
+                return;
+            }
+            
+            let reportText = '=== INFORMES GEOLÓGICOS ATACAMA ===\n\n';
+            reports.forEach((report, index) => {
+                reportText += `INFORME #${index + 1}: ${report.name}\n`;
+                reportText += `Fecha: ${new Date(report.date).toLocaleString()}\n`;
+                reportText += `Mineral: ${report.mineral.name} (${report.mineral.formula})\n`;
+                reportText += `Ubicación: ${report.location ? report.location.coords : 'No registrada'}\n`;
+                reportText += `Zona geológica: ${report.geologicalZone}\n`;
+                reportText += `Observaciones: ${report.notes || 'Ninguna'}\n`;
+                reportText += '─'.repeat(50) + '\n\n';
+            });
+            
+            // Crear ventana de visualización
+            const modal = document.getElementById('toolModal');
+            const title = document.getElementById('modalTitle');
+            const content = document.getElementById('modalContent');
+            
+            title.innerHTML = '<i class="fas fa-file-alt"></i> Todos los Informes';
+            content.innerHTML = `
+                <div style="max-height:400px; overflow-y:auto; background:#f8f9fa; padding:15px; border-radius:8px;">
+                    <pre style="white-space:pre-wrap; font-family:monospace; font-size:12px;">${reportText}</pre>
+                </div>
+                <div style="margin-top:15px;">
+                    <button class="btn btn-primary" onclick="exportReports()">
+                        <i class="fas fa-download"></i> Exportar a TXT
+                    </button>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
+        function exportReports() {
+            let reportText = '=== INFORMES GEOLÓGICOS ATACAMA ===\n';
+            reportText += `Generado: ${new Date().toLocaleString()}\n`;
+            reportText += `Total de informes: ${reports.length}\n\n`;
+            
+            reports.forEach((report, index) => {
+                reportText += `\n--- INFORME #${index + 1} ---\n`;
+                reportText += `Nombre: ${report.name}\n`;
+                reportText += `Fecha: ${new Date(report.date).toLocaleString()}\n`;
+                reportText += `Mineral identificado: ${report.mineral.name}\n`;
+                reportText += `Fórmula: ${report.mineral.formula}\n`;
+                reportText += `Clase: ${report.mineral.class}\n`;
+                reportText += `Sistema: ${report.mineral.system}\n`;
+                reportText += `Ubicación GPS: ${report.location ? report.location.coords : 'No registrada'}\n`;
+                reportText += `Altitud: ${report.location && report.location.altitude ? report.location.altitude.toFixed(0) + ' msnm' : 'No registrada'}\n`;
+                reportText += `Zona geológica: ${report.geologicalZone}\n`;
+                reportText += `Proyección: ${report.projection}\n`;
+                reportText += `Observaciones: ${report.notes || 'Ninguna'}\n`;
+            });
+            
+            // Crear y descargar archivo
+            const blob = new Blob([reportText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `informes_geologicos_atacama_${new Date().toISOString().slice(0,10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Informes exportados exitosamente', 'success');
+        }
+
+        // === UTILIDADES ===
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            
+            let icon = 'info-circle';
+            if (type === 'success') icon = 'check-circle';
+            if (type === 'error') icon = 'exclamation-circle';
+            if (type === 'warning') icon = 'exclamation-triangle';
+            
+            notification.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            notification.style.background = type === 'error' ? 'var(--danger)' : 
+                                           type === 'warning' ? 'var(--warning)' : 'var(--success)';
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
+        }
+
+        function clearData() {
+            if (confirm('¿Estás seguro de eliminar todos los datos? Esta acción no se puede deshacer.')) {
+                localStorage.clear();
+                reports = [];
+                loadReports();
+                showNotification('Todos los datos han sido eliminados', 'success');
+            }
+        }
+
+        function installPWA() {
+            if (window.deferredPrompt) {
+                window.deferredPrompt.prompt();
+                window.deferredPrompt.userChoice.then(choiceResult => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showNotification('¡App instalada exitosamente!', 'success');
+                    }
+                    window.deferredPrompt = null;
+                });
+            } else {
+                showNotification('La app ya está instalada o no es instalable', 'warning');
+            }
+        }
+
+        function exportData() {
+            const data = {
+                version: '1.0',
+                exportDate: new Date().toISOString(),
+                reports: reports,
+                settings: {
+                    offlineMode: document.getElementById('offlineMode').checked,
+                    autoSave: document.getElementById('autoSave').checked,
+                    highAccuracy: document.getElementById('highAccuracy').checked
+                },
+                currentLocation: currentLocation,
+                currentMineral: currentMineral
+            };
+            
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `geology_data_atacama_${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Datos exportados exitosamente', 'success');
+        }
+
+        function closeModal() {
+            document.getElementById('toolModal').classList.remove('active');
+            selectedTool = null;
+        }
+
+        function registerServiceWorker() {
+            if ('serviceWorker' in navigator) {
+                // Service Worker inline
+                const swCode = `
+                    self.addEventListener('install', (event) => {
+                        event.waitUntil(
+                            caches.open('geology-atacama-v1').then((cache) => {
+                                return cache.addAll([
+                                    '/',
+                                    '/index.html'
+                                ]);
+                            })
+                        );
+                        self.skipWaiting();
+                    });
+
+                    self.addEventListener('fetch', (event) => {
+                        event.respondWith(
+                            caches.match(event.request).then((response) => {
+                                return response || fetch(event.request);
+                            })
+                        );
+                    });
+                `;
+                
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                const swURL = URL.createObjectURL(blob);
+                
+                navigator.serviceWorker.register(swURL)
+                    .then(() => console.log('Service Worker registrado para Atacama'))
+                    .catch(err => console.log('Error SW:', err));
+            }
+        }
+
+        // Funciones adicionales para herramientas
+        function generateMohsContent() {
+            return `
+                <div class="mohs-scale">
+                    ${mohsScale.map(item => `
+                        <div class="mohs-item">
+                            <div class="mohs-number">${item.number}</div>
+                            <div class="mohs-name"><strong>${item.mineral}</strong></div>
+                            <div class="mohs-example" style="color:#666;font-size:0.9em;">
+                                ${item.example}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top:20px;padding:15px;background:#e8f4fc;border-radius:8px;">
+                    <strong><i class="fas fa-lightbulb"></i> Aplicación en campo:</strong>
+                    <ul style="margin-top:10px; padding-left:20px;">
+                        <li>El yeso (2) se raya con la uña</li>
+                        <li>La calcita (3) se raya con una moneda de cobre</li>
+                        <li>La fluorita (4) se raya con un cuchillo</li>
+                        <li>El cuarzo (7) raya el vidrio</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        function generateCompassContent() {
+            return `
+                <div style="text-align:center;padding:20px;">
+                    <div id="compassCircle" style="
+                        width:200px;height:200px;margin:0 auto 20px;
+                        border:3px solid var(--secondary);border-radius:50%;
+                        position:relative;background:linear-gradient(135deg, #f8f9fa, #e8f4fc);
+                    ">
+                        <div id="compassNeedle" style="
+                            position:absolute;top:50%;left:50%;
+                            width:4px;height:90px;background:var(--danger);
+                            transform-origin:center top;
+                            transform:translate(-50%,-50%) rotate(0deg);
+                            border-radius:2px;
+                        "></div>
+                        <div style="position:absolute;top:10px;left:50%;transform:translateX(-50%);color:var(--primary);font-weight:bold;">
+                            N
+                        </div>
+                        <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);color:var(--primary);">
+                            S
+                        </div>
+                        <div style="position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--primary);">
+                            O
+                        </div>
+                        <div style="position:absolute;right:10px;top:50%;transform:translateY(-50%);color:var(--primary);">
+                            E
+                        </div>
+                    </div>
+                    <div id="compassReading" style="font-size:1.5em;font-weight:bold;color:var(--primary);">
+                        Orientación: --°
+                    </div>
+                    <div style="margin-top:20px;">
+                        <button class="btn btn-primary" id="calibrateCompass">
+                            <i class="fas fa-sync-alt"></i> Calibrar Brújula
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function startCompass() {
+            if ('DeviceOrientationEvent' in window) {
+                window.addEventListener('deviceorientation', handleCompass);
+                document.getElementById('calibrateCompass').addEventListener('click', calibrateCompass);
+            } else {
+                document.getElementById('compassReading').innerHTML = 
+                    '<span style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Brújula no soportada</span>';
+            }
+        }
+
+        function handleCompass(event) {
+            const needle = document.getElementById('compassNeedle');
+            const reading = document.getElementById('compassReading');
+            
+            if (event.webkitCompassHeading) {
+                const heading = event.webkitCompassHeading;
+                needle.style.transform = `translate(-50%,-50%) rotate(${-heading}deg)`;
+                reading.innerHTML = `Orientación: <span style="color:var(--secondary);">${Math.round(heading)}°</span>`;
+            } else if (event.alpha !== null) {
+                const heading = event.alpha;
+                needle.style.transform = `translate(-50%,-50%) rotate(${-heading}deg)`;
+                reading.innerHTML = `Orientación: <span style="color:var(--secondary);">${Math.round(heading)}°</span>`;
+            }
+        }
+
+        function calibrateCompass() {
+            showNotification('Mueve el dispositivo en forma de 8 para calibrar', 'info');
+        }
+
+        // Detectar si se puede instalar como PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            window.deferredPrompt = e;
+        });
+
+        // Generar contenido para otras herramientas
+        function generateCalculatorContent() {
+            return `
+                <div style="padding:15px;background:#f8f9fa;border-radius:8px;margin-bottom:15px;">
+                    <h4><i class="fas fa-weight-hanging"></i> Calculadora de Densidad</h4>
+                    <div class="form-group">
+                        <label>Masa (g):</label>
+                        <input type="number" class="form-control" id="massInput" placeholder="Ej: 25.5" value="50">
+                    </div>
+                    <div class="form-group">
+                        <label>Volumen (cm³):</label>
+                        <input type="number" class="form-control" id="volumeInput" placeholder="Ej: 10" value="15">
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateDensity()">
+                        <i class="fas fa-calculator"></i> Calcular Densidad
+                    </button>
+                    <div id="densityResult" style="margin-top:15px;padding:10px;background:white;border-radius:5px;"></div>
+                </div>
+                
+                <div style="padding:15px;background:#f8f9fa;border-radius:8px;">
+                    <h4><i class="fas fa-ruler"></i> Estimador de Reservas</h4>
+                    <div class="form-group">
+                        <label>Área (m²):</label>
+                        <input type="number" class="form-control" id="areaInput" placeholder="Ej: 1000" value="5000">
+                    </div>
+                    <div class="form-group">
+                        <label>Espesor promedio (m):</label>
+                        <input type="number" class="form-control" id="thicknessInput" placeholder="Ej: 2" value="3">
+                    </div>
+                    <div class="form-group">
+                        <label>Densidad (ton/m³):</label>
+                        <input type="number" class="form-control" id="rockDensityInput" placeholder="Ej: 2.7" value="2.8" step="0.1">
+                    </div>
+                    <button class="btn btn-primary" onclick="calculateReserves()">
+                        <i class="fas fa-chart-bar"></i> Calcular Reservas
+                    </button>
+                    <div id="reservesResult" style="margin-top:15px;padding:10px;background:white;border-radius:5px;"></div>
+                </div>
+            `;
+        }
+
+        function generateConverterContent() {
+            return `
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+                    <div style="padding:15px;background:#f8f9fa;border-radius:8px;">
+                        <h4><i class="fas fa-ruler"></i> Longitud</h4>
+                        <input type="number" class="form-control" id="lengthInput" value="1" step="0.01">
+                        <select class="form-control" id="lengthUnit" style="margin-top:10px;">
+                            <option value="m">Metros (m)</option>
+                            <option value="km">Kilómetros (km)</option>
+                            <option value="cm">Centímetros (cm)</option>
+                            <option value="ft">Pies (ft)</option>
+                        </select>
+                        <div id="lengthResults" style="margin-top:10px;padding:10px;background:white;border-radius:5px;"></div>
+                    </div>
+                    
+                    <div style="padding:15px;background:#f8f9fa;border-radius:8px;">
+                        <h4><i class="fas fa-weight"></i> Masa</h4>
+                        <input type="number" class="form-control" id="weightInput" value="1" step="0.01">
+                        <select class="form-control" id="weightUnit" style="margin-top:10px;">
+                            <option value="kg">Kilogramos (kg)</option>
+                            <option value="g">Gramos (g)</option>
+                            <option value="ton">Toneladas (ton)</option>
+                            <option value="lb">Libras (lb)</option>
+                        </select>
+                        <div id="weightResults" style="margin-top:10px;padding:10px;background:white;border-radius:5px;"></div>
+                    </div>
+                </div>
+                
+                <div style="margin-top:20px;padding:15px;background:#f8f9fa;border-radius:8px;">
+                    <h4><i class="fas fa-tachometer-alt"></i> Concentración</h4>
+                    <div style="display:flex;gap:10px;align-items:center;">
+                        <input type="number" class="form-control" id="gradeInput" value="1" step="0.01">
+                        <select class="form-control" id="gradeUnit">
+                            <option value="percent">%</option>
+                            <option value="gpt">g/ton (oro)</option>
+                            <option value="ppm">ppm</option>
+                            <option value="ppb">ppb</option>
+                        </select>
+                        <button class="btn btn-primary" onclick="convertGrade()">
+                            <i class="fas fa-exchange-alt"></i> Convertir
+                        </button>
+                    </div>
+                    <div id="gradeResults" style="margin-top:10px;padding:10px;background:white;border-radius:5px;"></div>
+                </div>
+            `;
+        }
+
+        function generateStreakContent() {
+            const streakColors = [
+                { color: "Blanco", minerals: ["Cuarzo", "Feldespato", "Calcita"], examples: "Minerales comunes de ganga" },
+                { color: "Negro", minerals: ["Hematita", "Magnetita", "Grafito"], examples: "Óxidos de hierro, carbono" },
+                { color: "Rojo cereza", minerals: ["Hematita"], examples: "Óxido de hierro especular" },
+                { color: "Amarillo", minerals: ["Limonita", "Azufre"], examples: "Óxidos hidratados, azufre nativo" },
+                { color: "Verde", minerals: ["Malaquita", "Crisocola"], examples: "Carbonatos y silicatos de cobre" },
+                { color: "Azul", minerals: ["Azurita"], examples: "Carbonato de cobre" },
+                { color: "Gris", minerals: ["Galena", "Plata"], examples: "Sulfuros metálicos" }
+            ];
+            
+            return `
+                <div style="padding:20px;background:#f8f9fa;border-radius:8px;">
+                    <h4><i class="fas fa-brush"></i> Guía de Colores de Raya</h4>
+                    <p>El color de la raya se determina frotando el mineral sobre una placa de porcelana. Es una propiedad diagnóstica importante.</p>
+                    
+                    <div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(200px, 1fr));gap:15px;margin-top:20px;">
+                        ${streakColors.map(item => `
+                            <div style="padding:15px;background:white;border-radius:8px;border-left:4px solid var(--secondary);">
+                                <div style="font-weight:bold;color:var(--primary);margin-bottom:5px;">
+                                    <div style="width:20px;height:20px;background:${item.color.toLowerCase()};display:inline-block;vertical-align:middle;margin-right:10px;border-radius:3px;"></div>
+                                    ${item.color}
+                                </div>
+                                <div style="font-size:0.9em;color:#666;margin-bottom:5px;">
+                                    <strong>Minerales:</strong> ${item.minerals.join(", ")}
+                                </div>
+                                <div style="font-size:0.8em;color:#888;">
+                                    ${item.examples}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-top:20px;padding:15px;background:#e8f4fc;border-radius:8px;">
+                        <strong><i class="fas fa-lightbulb"></i> Técnica en campo:</strong>
+                        <ul style="margin-top:10px; padding-left:20px;">
+                            <li>Usar placa de porcelana sin esmaltar</li>
+                            <li>Frotar con presión moderada</li>
+                            <li>Comparar con muestras conocidas</li>
+                            <li>El color de raya es más confiable que el color del mineral</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Funciones globales para herramientas
+        window.calculateDensity = function() {
+            const mass = parseFloat(document.getElementById('massInput').value);
+            const volume = parseFloat(document.getElementById('volumeInput').value);
+            
+            if (isNaN(mass) || isNaN(volume) || volume === 0) {
+                document.getElementById('densityResult').innerHTML = 
+                    '<span style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Valores inválidos</span>';
+                return;
+            }
+            
+            const density = mass / volume;
+            let interpretation = '';
+            
+            if (density < 2) interpretation = 'Muy ligero (ej: carbón)';
+            else if (density < 3) interpretation = 'Ligero (ej: cuarzo, yeso)';
+            else if (density < 4) interpretation = 'Moderado (ej: feldespato, calcita)';
+            else if (density < 6) interpretation = 'Pesado (ej: pirita, baritina)';
+            else interpretation = 'Muy pesado (ej: galena, oro)';
+            
+            document.getElementById('densityResult').innerHTML = `
+                <div style="font-weight:bold;color:var(--secondary);">
+                    Densidad = ${density.toFixed(2)} g/cm³
+                </div>
+                <div style="margin-top:5px;font-size:0.9em;">
+                    ${interpretation}
+                </div>
+            `;
+        };
+
+        window.calculateReserves = function() {
+            const area = parseFloat(document.getElementById('areaInput').value);
+            const thickness = parseFloat(document.getElementById('thicknessInput').value);
+            const density = parseFloat(document.getElementById('rockDensityInput').value);
+            
+            if (isNaN(area) || isNaN(thickness) || isNaN(density)) {
+                document.getElementById('reservesResult').innerHTML = 
+                    '<span style="color:var(--danger);"><i class="fas fa-exclamation-triangle"></i> Valores inválidos</span>';
+                return;
+            }
+            
+            const volume = area * thickness; // m³
+            const reserves = volume * density; // toneladas
+            
+            document.getElementById('reservesResult').innerHTML = `
+                <div style="margin-bottom:10px;">
+                    <strong>Volumen de roca:</strong> ${volume.toLocaleString('es-CL')} m³
+                </div>
+                <div style="margin-bottom:10px;">
+                    <strong>Reservas estimadas:</strong> ${reserves.toLocaleString('es-CL')} ton
+                </div>
+                <div style="font-size:0.9em;color:#666;">
+                    <i class="fas fa-info-circle"></i> Estimación preliminar sin considerar recuperación
+                </div>
+            `;
+        };
+
+        // Inicializar conversores al cargar
+        setTimeout(() => {
+            if (document.getElementById('lengthInput')) {
+                updateLengthConversion();
+                updateWeightConversion();
+            }
+        }, 100);
+
+        function updateLengthConversion() {
+            const value = parseFloat(document.getElementById('lengthInput').value) || 1;
+            const unit = document.getElementById('lengthUnit').value;
+            const results = document.getElementById('lengthResults');
+            
+            const conversions = {
+                m: { km: 0.001, cm: 100, ft: 3.28084 },
+                km: { m: 1000, cm: 100000, ft: 3280.84 },
+                cm: { m: 0.01, km: 0.00001, ft: 0.0328084 },
+                ft: { m: 0.3048, km: 0.0003048, cm: 30.48 }
+            };
+            
+            if (conversions[unit]) {
+                let html = '';
+                for (const [toUnit, factor] of Object.entries(conversions[unit])) {
+                    const converted = value * factor;
+                    html += `<div>${converted.toFixed(4)} ${toUnit}</div>`;
+                }
+                results.innerHTML = html;
+            }
+        }
+
+        function updateWeightConversion() {
+            const value = parseFloat(document.getElementById('weightInput').value) || 1;
+            const unit = document.getElementById('weightUnit').value;
+            const results = document.getElementById('weightResults');
+            
+            const conversions = {
+                kg: { g: 1000, ton: 0.001, lb: 2.20462 },
+                g: { kg: 0.001, ton: 0.000001, lb: 0.00220462 },
+                ton: { kg: 1000, g: 1000000, lb: 2204.62 },
+                lb: { kg: 0.453592, g: 453.592, ton: 0.000453592 }
+            };
+            
+            if (conversions[unit]) {
+                let html = '';
+                for (const [toUnit, factor] of Object.entries(conversions[unit])) {
+                    const converted = value * factor;
+                    html += `<div>${converted.toFixed(4)} ${toUnit}</div>`;
+                }
+                results.innerHTML = html;
+            }
+        }
+
+        window.convertGrade = function() {
+            const value = parseFloat(document.getElementById('gradeInput').value) || 1;
+            const unit = document.getElementById('gradeUnit').value;
+            const results = document.getElementById('gradeResults');
+            
+            let conversions = {};
+            switch(unit) {
+                case 'percent':
+                    conversions = {
+                        'g/ton': value * 10000,
+                        'ppm': value * 10000,
+                        'ppb': value * 10000000
+                    };
+                    break;
+                case 'gpt':
+                    conversions = {
+                        '%': value / 10000,
+                        'ppm': value * 1000,
+                        'ppb': value * 1000000
+                    };
+                    break;
+                case 'ppm':
+                    conversions = {
+                        '%': value / 10000,
+                        'g/ton': value / 1000,
+                        'ppb': value * 1000
+                    };
+                    break;
+                case 'ppb':
+                    conversions = {
+                        '%': value / 10000000,
+                        'g/ton': value / 1000000,
+                        'ppm': value / 1000
+                    };
+                    break;
+            }
+            
+            let html = '';
+            for (const [toUnit, converted] of Object.entries(conversions)) {
+                html += `<div><strong>${converted.toFixed(6)}</strong> ${toUnit}</div>`;
+            }
+            results.innerHTML = html;
+        };
+
+        // Event listeners para actualización automática
+        document.addEventListener('input', function(e) {
+            if (e.target.id === 'lengthInput' || e.target.id === 'lengthUnit') {
+                updateLengthConversion();
+            }
+            if (e.target.id === 'weightInput' || e.target.id === 'weightUnit') {
+                updateWeightConversion();
+            }
+        });
+
+        // Generar contenido para pestañas de geología
+        function generateGeologyStructures() {
+            return `
+                <div style="padding:15px; background:#f8f9fa; border-radius:8px;">
+                    <h4><i class="fas fa-layer-group"></i> Principales Estructuras</h4>
+                    
+                    <div style="margin-top:15px;">
+                        <div class="structure-item">
+                            <strong>Falla de Domeyko</strong><br>
+                            <em>Longitud: 1000+ km | Tipo: Dextral transcurrente</em><br>
+                            Controla la distribución de pórfidos cupríferos
+                        </div>
+                        
+                        <div class="structure-item">
+                            <strong>Sistema de Fallas Atacama</strong><br>
+                            <em>Orientación: NNE | Tipo: Inversa</em><br>
+                            Define el límite entre Cordillera y Depresión Intermedia
+                        </div>
+                        
+                        <div class="structure-item">
+                            <strong>Falla Chafiar</strong><br>
+                            <em>Longitud: 150 km | Tipo: Normal</em><br>
+                            Controla depósitos epitermales de plata
+                        </div>
+                        
+                        <div class="structure-item">
+                            <strong>Zona de Cizalle Vicuña</strong><br>
+                            <em>Ancho: 5-10 km | Mineralización: Oro</em><br>
+                            Corredor estructural con vetas de cuarzo-oro
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top:20px; padding:15px; background:#fff8e1; border-radius:8px;">
+                        <h4><i class="fas fa-map-signs"></i> Identificación en Campo</h4>
+                        <ul style="margin-top:10px; padding-left:20px;">
+                            <li>Lineamientos rectos en topografía</li>
+                            <li>Zonas de brechamiento y milonitización</li>
+                            <li>Escarpes y valles alineados</li>
+                            <li>Manantiales y alteración hidrotermal alineados</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateGeologyDeposits() {
+            return `
+                <div style="padding:15px; background:#f8f9fa; border-radius:8px;">
+                    <h4><i class="fas fa-hard-hat"></i> Tipos de Depósitos Minerales</h4>
+                    
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:15px;">
+                        <div class="structure-item">
+                            <strong>Pórfidos Cupríferos</strong><br>
+                            <em>Ej: Candelaria, El Salvador</em><br>
+                            Minerales: Calcopirita, Bornita, Molibdenita<br>
+                            Tamaño: 100-1000 Mt @ 0.5-1% Cu
+                        </div>
+                        
+                        <div class="structure-item">
+                            <strong>Vetas Epitermales</strong><br>
+                            <em>Ej: Chañarcillo, Inca de Oro</em><br>
+                            Minerales: Argentita, Plata, Galena<br>
+                            Ley: Alta (100-1000 g/ton Ag)
+                        </div>
+                        
+                        <div class="structure-item">
+                            <strong>Skarns</strong><br>
+                            <em>Ej: Cerro Imán, Algarrobo</em><br>
+                            Minerales: Magnetita, Cobre, Granate<br>
+                            Asociación: Contacto intrusivo-caliza
+                        </div>
+                        
+                        <div class="structure-item">
+                            <strong>Depósitos Evaporíticos</strong><br>
+                            <em>Ej: Salar de Atacama</em><br>
+                            Minerales: Halita, Litio, Yeso<br>
+                            Formación: Cuencas cerradas áridas
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top:20px; padding:15px; background:#e8f4fc; border-radius:8px;">
+                        <h4><i class="fas fa-chart-line"></i> Producción Regional</h4>
+                        <ul style="margin-top:10px; padding-left:20px;">
+                            <li><strong>Cobre:</strong> ~1.5 Mt anuales (30% nacional)</li>
+                            <li><strong>Oro:</strong> ~30 ton anuales</li>
+                            <li><strong>Plata:</strong> ~500 ton anuales</li>
+                            <li><strong>Litio:</strong> ~80.000 ton anuales (40% mundial)</li>
+                            <li><strong>Hierro:</strong> ~10 Mt anuales</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        function generateGeologyVolcanoes() {
+            return `
+                <div style="padding:15px; background:#f8f9fa; border-radius:8px;">
+                    <h4><i class="fas fa-fire"></i> Volcanismo Andino - Atacama</h4>
+                    
+                    <div style="margin-top:15px;">
+                        ${Object.entries(atacamaGeology.volcanoes).map(([name, data]) => `
+                            <div class="structure-item" style="margin-bottom:15px;">
+                                <strong>${name}</strong><br>
+                                <em>Altitud: ${data.height} | Tipo: ${data.type} | Estado: ${data.status}</em><br>
+                                Última erupción: ${data.lastEruption}<br>
+                                <span style="font-size:0.9em;color:#666;">
+                                    ${name === 'Ojos del Salado' ? 'Volcán activo más alto del mundo' : 
+                                      name === 'Cerro Incahuasi' ? 'Complejo volcánico binacional' :
+                                      'Parte del cinturón volcánico andino'}
+                                </span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    
+                    <div style="margin-top:20px; padding:15px; background:#ffebee; border-radius:8px;">
+                        <h4><i class="fas fa-exclamation-triangle"></i> Peligros Volcánicos</h4>
+                        <ul style="margin-top:10px; padding-left:20px;">
+                            <li>Lahares (flujos de lodo volcánico)</li>
+                            <li>Caída de ceniza y piroclastos</li>
+                            <li>Gases volcánicos (SO₂, CO₂)</li>
+                            <li>Flujos piroclásticos</li>
+                            <li>Sismicidad volcánica</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="margin-top:20px; padding:15px; background:#f3e5f5; border-radius:8px;">
+                        <h4><i class="fas fa-vial"></i> Mineralización Volcánica</h4>
+                        <p>El volcanismo andino genera sistemas hidrotermales que forman depósitos de:</p>
+                        <ul style="margin-top:10px; padding-left:20px;">
+                            <li>Oro y plata en vetas epitermales</li>
+                            <li>Cobre en pórfidos cupríferos</li>
+                            <li>Azufre nativo en fumarolas</li>
+                            <li>Zeolitas en rocas volcánicas alteradas</li>
+                        </ul>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Inicializar al cargar
+        window.addEventListener('load', function() {
+            console.log('GeoAnalyzer Pro Atacama cargado');
+        });
+    </script>
+</body>
+</html>
