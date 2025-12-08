@@ -2,82 +2,55 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#2c3e50">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>AtacamApp - Geología en Tiempo Real</title>
-    <link rel="manifest" href="data:application/manifest+json,{}">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⛰️</text></svg>">
+    <link rel="manifest" href='{"name":"AtacamApp","short_name":"AtacamApp","start_url":".","display":"standalone","background_color":"#2c3e50","theme_color":"#2c3e50","icons":[{"src":"data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23d35400%22>⛰️</text></svg>","sizes":"any","type":"image/svg+xml"}]}'>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23d35400%22>⛰️</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        /* === ESTILOS CSS - ATACAMAPP === */
-        :root {
-            --primary: #2c3e50;
-            --secondary: #d35400;
-            --accent: #27ae60;
-            --accent2: #3498db;
-            --accent3: #8e44ad;
-            --light: #ecf0f1;
-            --dark: #2c3e50;
-            --danger: #e74c3c;
-            --warning: #f39c12;
-            --success: #27ae60;
-            --rock-brown: #a0522d;
-            --desert-sand: #f5deb3;
-            --copper: #b87333;
-            --andesite: #708090;
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), 
-                        url('https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
-            background-size: cover;
+            background: #1a1a1a;
             color: #333;
             min-height: 100vh;
-            padding: 10px;
-            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 20px;
-        }
-
-        /* Pantalla de Permisos */
+        /* Pantalla de Permisos Obligatorios */
         .permission-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: linear-gradient(135deg, #2c3e50, #1a1a1a);
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
+            z-index: 9999;
             padding: 20px;
         }
 
         .permission-content {
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
-            padding: 40px;
+            padding: 30px;
             max-width: 500px;
+            width: 90%;
             text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            border: 3px solid var(--secondary);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 3px solid #d35400;
             animation: scaleIn 0.5s ease;
         }
 
@@ -87,142 +60,208 @@
         }
 
         .permission-content h2 {
-            color: var(--primary);
+            color: #2c3e50;
             margin-bottom: 20px;
             font-size: 2rem;
         }
 
-        .permission-features {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        .permission-requirements {
             margin: 30px 0;
+            text-align: left;
         }
 
-        .permission-feature {
+        .requirement-item {
             display: flex;
             align-items: center;
             gap: 15px;
             padding: 15px;
+            margin: 10px 0;
             background: #f8f9fa;
             border-radius: 10px;
-            text-align: left;
-            transition: transform 0.3s;
+            border-left: 4px solid #d35400;
         }
 
-        .permission-feature:hover {
-            transform: translateX(10px);
+        .requirement-item.required {
+            border-left-color: #e74c3c;
+        }
+
+        .requirement-icon {
+            font-size: 1.5rem;
+            color: #d35400;
+        }
+
+        .requirement-item.required .requirement-icon {
+            color: #e74c3c;
+        }
+
+        .app-container {
+            display: none;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 10px;
+            min-height: 100vh;
         }
 
         .app-header {
-            grid-column: 1 / -1;
-            background: linear-gradient(135deg, rgba(44, 62, 80, 0.95), rgba(52, 73, 94, 0.95));
+            background: linear-gradient(135deg, #2c3e50, #34495e);
             color: white;
-            padding: 25px;
+            padding: 20px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-align: center;
-            border: 2px solid var(--secondary);
-            backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
-        }
-
-        .app-header::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--secondary), var(--accent), var(--accent2));
+            border: 2px solid #d35400;
         }
 
         .app-header h1 {
-            font-size: 2.8rem;
+            font-size: 1.8rem;
             margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            gap: 10px;
         }
 
-        .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 15px;
-            color: var(--light);
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            min-width: 120px;
+            justify-content: center;
         }
 
         .card {
-            background: rgba(255, 255, 255, 0.98);
+            background: white;
             border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
-            border: 1px solid rgba(224, 224, 224, 0.5);
-            border-top: 5px solid var(--secondary);
-            transition: transform 0.3s, box-shadow 0.3s;
-            backdrop-filter: blur(5px);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-top: 4px solid #d35400;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        .card h2 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        /* Módulo de Cámara Mejorado */
-        .camera-container {
+        /* CÁMARA - OBLIGATORIA */
+        .camera-section {
             position: relative;
+            margin-bottom: 20px;
+        }
+
+        .camera-container {
             width: 100%;
-            height: 400px;
+            height: 300px;
             background: #000;
             border-radius: 15px;
             overflow: hidden;
-            margin-bottom: 20px;
-            border: 3px solid var(--primary);
+            position: relative;
+            border: 3px solid #2c3e50;
         }
 
         #cameraFeed {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transform: scaleX(-1); /* Espejo para selfie-style */
+            transform: scaleX(-1);
         }
 
         .camera-overlay {
             position: absolute;
-            top: 10px;
+            bottom: 10px;
             left: 10px;
             right: 10px;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0,0,0,0.8);
             color: white;
             padding: 10px;
             border-radius: 10px;
             font-size: 0.9rem;
-            z-index: 10;
             display: flex;
-            align-items: center;
             justify-content: space-between;
+            align-items: center;
         }
 
         .camera-controls {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
-        /* Mapa */
+        .camera-controls.full {
+            grid-template-columns: 1fr;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #d35400, #e67e22);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        /* MAPA - OBLIGATORIO */
         .map-container {
             width: 100%;
-            height: 400px;
-            border-radius: 10px;
+            height: 300px;
+            border-radius: 15px;
             overflow: hidden;
-            margin-bottom: 15px;
-            border: 3px solid var(--primary);
+            margin: 15px 0;
+            border: 3px solid #2c3e50;
         }
 
         #map {
@@ -230,65 +269,75 @@
             height: 100%;
         }
 
-        /* Base de Datos con Cover Flow */
-        .coverflow-container {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            perspective: 1000px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .coverflow {
+        .map-controls {
             display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            position: relative;
+            gap: 10px;
+            margin-top: 10px;
         }
 
-        .mineral-card-flow {
-            position: absolute;
-            width: 150px;
-            height: 180px;
-            background: white;
+        .map-controls .btn {
+            flex: 1;
+        }
+
+        /* MINERALES IDENTIFICADOS */
+        .identified-minerals {
+            margin-top: 20px;
+        }
+
+        .minerals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .mineral-card {
+            background: #f8f9fa;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
             padding: 15px;
             text-align: center;
             border: 2px solid transparent;
+            transition: all 0.3s ease;
         }
 
-        .mineral-card-flow.active {
-            transform: translateZ(100px);
-            border-color: var(--secondary);
-            z-index: 10;
-            box-shadow: 0 15px 30px rgba(210, 84, 0, 0.3);
+        .mineral-card.active {
+            border-color: #d35400;
+            background: #fff5eb;
         }
 
-        /* Brújula */
+        .mineral-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #d35400;
+        }
+
+        /* BRÚJULA REAL */
+        .compass-section {
+            text-align: center;
+            padding: 20px;
+        }
+
         .compass-container {
-            width: 200px;
-            height: 200px;
+            width: 250px;
+            height: 250px;
             margin: 20px auto;
             position: relative;
         }
 
-        .compass {
+        .compass-rose {
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            background: #f8f9fa;
+            background: conic-gradient(
+                from 0deg,
+                #e74c3c 0deg 45deg,
+                #3498db 45deg 135deg,
+                #27ae60 135deg 225deg,
+                #f39c12 225deg 315deg,
+                #e74c3c 315deg 360deg
+            );
             position: relative;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.1);
-            border: 2px solid var(--primary);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
         }
 
         .compass-needle {
@@ -296,8 +345,8 @@
             top: 50%;
             left: 50%;
             width: 4px;
-            height: 90px;
-            background: var(--danger);
+            height: 100px;
+            background: #000;
             transform-origin: center 0;
             transition: transform 0.1s;
             z-index: 2;
@@ -310,157 +359,110 @@
             left: -8px;
             width: 20px;
             height: 20px;
-            background: var(--danger);
+            background: #e74c3c;
             border-radius: 50%;
         }
 
-        /* Escala de Mohs */
-        .mohs-scale {
-            display: grid;
-            grid-template-columns: repeat(10, 1fr);
-            gap: 5px;
-            margin: 20px 0;
-        }
-
-        .mohs-item {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 10px 5px;
-            text-align: center;
-            border-radius: 5px;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .mohs-item:hover {
-            transform: scale(1.1);
-        }
-
-        .mohs-item:nth-child(1) { background: linear-gradient(135deg, #f6d365, #fda085); }
-        .mohs-item:nth-child(2) { background: linear-gradient(135deg, #f093fb, #f5576c); }
-        .mohs-item:nth-child(3) { background: linear-gradient(135deg, #5ee7df, #b490ca); }
-        .mohs-item:nth-child(4) { background: linear-gradient(135deg, #d299c2, #fef9d7); }
-        .mohs-item:nth-child(5) { background: linear-gradient(135deg, #a8edea, #fed6e3); }
-        .mohs-item:nth-child(6) { background: linear-gradient(135deg, #ffecd2, #fcb69f); }
-        .mohs-item:nth-child(7) { background: linear-gradient(135deg, #a3bded, #6991c7); }
-        .mohs-item:nth-child(8) { background: linear-gradient(135deg, #9795f0, #fbc8d4); }
-        .mohs-item:nth-child(9) { background: linear-gradient(135deg, #fdcbf1, #e6dee9); }
-        .mohs-item:nth-child(10) { background: linear-gradient(135deg, #accbee, #e7f0fd); }
-
-        /* Botones */
-        .btn {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
+        .compass-direction {
+            font-size: 2rem;
             font-weight: bold;
+            margin-top: 20px;
+            color: #2c3e50;
+        }
+
+        .compass-degrees {
+            font-size: 1.5rem;
+            color: #666;
+            margin-top: 10px;
+        }
+
+        /* INFORMES */
+        .report-section {
+            margin-top: 20px;
+        }
+
+        .report-form {
+            margin-top: 15px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .report-preview {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            min-height: 100px;
+        }
+
+        /* HERRAMIENTAS */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .tool-btn {
+            background: #ecf0f1;
+            border: none;
+            border-radius: 10px;
+            padding: 15px 10px;
+            text-align: center;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            touch-action: manipulation;
         }
 
-        .btn-primary {
-            background: linear-gradient(135deg, var(--secondary), #e67e22);
-            color: white;
-            border: 2px solid var(--secondary);
-        }
-
-        .btn-primary:active {
+        .tool-btn:active {
             transform: scale(0.95);
+            background: #d5dbdb;
         }
 
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: var(--secondary);
+        .tool-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+            color: #2c3e50;
         }
 
-        .loading i {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            animation: spin 2s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .container {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .app-header h1 {
-                font-size: 2rem;
-            }
-            
-            .camera-container {
-                height: 300px;
-            }
-            
-            .map-container {
-                height: 300px;
-            }
-            
-            .coverflow-container {
-                height: 150px;
-            }
-            
-            .mineral-card-flow {
-                width: 120px;
-                height: 150px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .card {
-                padding: 15px;
-            }
-            
-            .camera-controls {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-            }
-        }
-
-        /* Notificaciones */
+        /* NOTIFICACIONES */
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: var(--success);
+            left: 20px;
+            background: #27ae60;
             color: white;
-            padding: 15px 25px;
-            border-radius: 8px;
+            padding: 15px;
+            border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            z-index: 1001;
+            z-index: 10000;
             animation: slideIn 0.3s ease;
             display: flex;
             align-items: center;
             gap: 10px;
-            border-left: 5px solid var(--accent);
-            max-width: 90%;
         }
 
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
 
-        /* Modal mejorado */
+        .notification.error {
+            background: #e74c3c;
+        }
+
+        .notification.warning {
+            background: #f39c12;
+        }
+
+        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -473,12 +475,6 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-            animation: fadeIn 0.3s;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         .modal.active {
@@ -488,355 +484,350 @@
         .modal-content {
             background: white;
             border-radius: 20px;
-            padding: 30px;
-            max-width: 800px;
+            padding: 25px;
+            max-width: 500px;
             width: 90%;
-            max-height: 90vh;
+            max-height: 80vh;
             overflow-y: auto;
-            border: 3px solid var(--secondary);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
-            animation: scaleIn 0.3s;
         }
 
-        /* Colores de Raya */
-        .streak-colors {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin: 20px 0;
+        /* RESPONSIVE */
+        @media (min-width: 768px) {
+            .app-container {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                max-width: 1200px;
+            }
+
+            .camera-section {
+                grid-column: 1;
+                grid-row: 1;
+            }
+
+            .map-section {
+                grid-column: 2;
+                grid-row: 1;
+            }
+
+            .minerals-section {
+                grid-column: 1;
+                grid-row: 2;
+            }
+
+            .compass-section {
+                grid-column: 2;
+                grid-row: 2;
+            }
+
+            .report-section {
+                grid-column: 1;
+                grid-row: 3;
+            }
+
+            .tools-section {
+                grid-column: 2;
+                grid-row: 3;
+            }
+
+            .camera-container, .map-container {
+                height: 350px;
+            }
         }
 
-        .streak-color {
-            width: 60px;
-            height: 60px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .streak-color:hover {
-            transform: scale(1.1);
-        }
-
-        /* Geolocalización */
-        .location-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 15px;
-            background: rgba(52, 152, 219, 0.1);
-            border-radius: 20px;
-            margin: 5px;
-            border: 2px solid var(--accent2);
-        }
-
-        /* Animaciones */
-        .fade-in {
-            animation: fadeIn 0.5s ease forwards;
-        }
-
+        /* ANIMACIONES */
         .pulse {
             animation: pulse 2s infinite;
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(39, 174, 96, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(39, 174, 96, 0); }
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
         }
 
-        /* Estado de red */
-        .network-status {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            z-index: 100;
-            font-size: 0.9rem;
+        .shake {
+            animation: shake 0.5s ease;
         }
 
-        /* Scroll personalizado */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--secondary);
-            border-radius: 10px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #e67e22;
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
     </style>
 </head>
 <body>
-    <!-- Pantalla de Permisos -->
+    <!-- Pantalla de Permisos Obligatorios -->
     <div class="permission-screen" id="permissionScreen">
         <div class="permission-content">
             <h2><i class="fas fa-shield-alt"></i> AtacamApp</h2>
-            <p>Para funcionar correctamente, necesitamos los siguientes permisos:</p>
+            <p style="color: #666; margin-bottom: 20px; font-size: 1.1rem;">
+                <strong>REQUISITOS OBLIGATORIOS</strong><br>
+                La aplicación requiere acceso completo para funcionar
+            </p>
             
-            <div class="permission-features">
-                <div class="permission-feature">
-                    <i class="fas fa-camera"></i>
+            <div class="permission-requirements">
+                <div class="requirement-item required">
+                    <div class="requirement-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
                     <div>
-                        <strong>Cámara</strong>
-                        <div style="font-size:0.9em;color:#666;">Identificar minerales en tiempo real</div>
+                        <strong>CÁMARA DEL DISPOSITIVO</strong>
+                        <div style="font-size: 0.9rem; color: #666;">
+                            Obligatorio para identificar minerales
+                        </div>
                     </div>
                 </div>
                 
-                <div class="permission-feature">
-                    <i class="fas fa-map-marker-alt"></i>
+                <div class="requirement-item required">
+                    <div class="requirement-icon">
+                        <i class="fas fa-satellite"></i>
+                    </div>
                     <div>
-                        <strong>Ubicación GPS</strong>
-                        <div style="font-size:0.9em;color:#666;">Georreferenciar muestras</div>
+                        <strong>GPS PRECISO</strong>
+                        <div style="font-size: 0.9rem; color: #666;">
+                            Obligatorio para geolocalización
+                        </div>
                     </div>
                 </div>
                 
-                <div class="permission-feature">
-                    <i class="fas fa-wifi"></i>
+                <div class="requirement-item">
+                    <div class="requirement-icon">
+                        <i class="fas fa-map-marked-alt"></i>
+                    </div>
                     <div>
-                        <strong>Conexión</strong>
-                        <div style="font-size:0.9em;color:#666;">Mapas y datos en tiempo real</div>
+                        <strong>MAPA GEOLÓGICO</strong>
+                        <div style="font-size: 0.9rem; color: #666;">
+                            Se activará automáticamente
+                        </div>
                     </div>
                 </div>
             </div>
             
-            <button class="btn btn-primary" id="grantPermissions" style="padding: 15px 30px; font-size: 1.1rem;">
-                <i class="fas fa-check-circle"></i> Activar Todos los Permisos
+            <div style="margin: 25px 0; padding: 15px; background: #fff5eb; border-radius: 10px; border: 2px solid #f39c12;">
+                <i class="fas fa-exclamation-triangle" style="color: #f39c12;"></i>
+                <strong> Importante:</strong> Sin estos permisos la aplicación NO funcionará
+            </div>
+            
+            <button class="btn btn-primary" id="activateAll" style="padding: 15px 30px; font-size: 1.1rem; width: 100%;">
+                <i class="fas fa-check-circle"></i> ACTIVAR TODAS LAS FUNCIONES
             </button>
             
-            <div style="margin-top: 20px; font-size: 0.9em; color: #999;">
-                <i class="fas fa-lock"></i> Los datos son locales y seguros
+            <div style="margin-top: 20px; font-size: 0.9rem; color: #999;">
+                <i class="fas fa-lock"></i> Los datos se mantienen en tu dispositivo
             </div>
         </div>
     </div>
 
     <!-- Aplicación Principal -->
-    <div class="container app-content" id="mainApp" style="display:none;">
-        <!-- Estado de Red -->
-        <div class="network-status" id="networkStatus">
-            <i class="fas fa-wifi"></i>
-            <span id="networkType">Conectando...</span>
-        </div>
+    <div class="app-container" id="mainApp">
+        <!-- Notificaciones -->
+        <div id="notificationContainer"></div>
 
-        <header class="app-header">
+        <!-- Cabecera -->
+        <header class="app-header" style="grid-column: 1 / -1;">
             <h1><i class="fas fa-mountain"></i> AtacamApp</h1>
-            <p class="subtitle">Sistema Geológico Inteligente - Región de Atacama</p>
-            <div class="status-bar" style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
-                <div class="status-item" id="gpsStatus">
-                    <i class="fas fa-satellite"></i> <span>GPS: --</span>
-                </div>
+            <p style="opacity: 0.9; margin-bottom: 10px;">Sistema Geológico Profesional - Región de Atacama</p>
+            
+            <div class="status-bar">
                 <div class="status-item" id="cameraStatus">
                     <i class="fas fa-camera"></i> <span>Cámara: --</span>
+                </div>
+                <div class="status-item" id="gpsStatus">
+                    <i class="fas fa-satellite"></i> <span>GPS: --</span>
                 </div>
                 <div class="status-item" id="locationStatus">
                     <i class="fas fa-map-marker-alt"></i> <span>Ubicación: --</span>
                 </div>
-                <div class="status-item" id="dataStatus">
-                    <i class="fas fa-database"></i> <span>Datos: --</span>
+                <div class="status-item" id="compassStatus">
+                    <i class="fas fa-compass"></i> <span>Brújula: --</span>
                 </div>
             </div>
         </header>
 
-        <div class="main-content">
-            <div class="left-panel">
-                <!-- Módulo de Cámara en Tiempo Real -->
-                <section class="card camera-module">
-                    <h2><i class="fas fa-camera"></i> Identificación en Tiempo Real</h2>
-                    
-                    <div class="camera-container" id="cameraContainer">
-                        <video id="cameraFeed" autoplay playsinline></video>
-                        <canvas id="cameraCanvas" style="display:none;"></canvas>
-                        <div class="camera-overlay">
-                            <div>
-                                <i class="fas fa-crosshairs"></i> Apunte al mineral
-                            </div>
-                            <div id="cameraInfo">
-                                <i class="fas fa-circle" style="color:#ff4444; animation: blink 1s infinite;"></i>
-                                En vivo
-                            </div>
-                        </div>
-                        <div class="camera-placeholder" id="cameraPlaceholder" style="display:none;">
-                            <i class="fas fa-camera"></i>
-                            <h3>Activando cámara...</h3>
-                        </div>
+        <!-- Sección 1: Cámara en Tiempo Real -->
+        <section class="card camera-section">
+            <h2><i class="fas fa-camera"></i> Identificación en Tiempo Real</h2>
+            
+            <div class="camera-container">
+                <video id="cameraFeed" autoplay playsinline></video>
+                <canvas id="cameraCanvas" style="display:none;"></canvas>
+                
+                <div class="camera-overlay">
+                    <div>
+                        <i class="fas fa-crosshairs"></i> Apunte al mineral
                     </div>
-                    
-                    <div class="camera-controls">
-                        <button class="btn btn-primary" id="startCameraBtn">
-                            <i class="fas fa-video"></i> Activar Cámara
-                        </button>
-                        <button class="btn btn-secondary" id="captureBtn" disabled>
-                            <i class="fas fa-camera"></i> Capturar Muestra
-                        </button>
-                        <button class="btn btn-warning" id="analyzeBtn" disabled>
-                            <i class="fas fa-robot"></i> Analizar IA
-                        </button>
-                        <button class="btn btn-success" id="generateFullReport">
-                            <i class="fas fa-file-alt"></i> Informe Completo
-                        </button>
+                    <div id="cameraTimer" style="background: #e74c3c; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem;">
+                        EN VIVO
                     </div>
-                </section>
-
-                <!-- Mapa Interactivo -->
-                <section class="card map-module">
-                    <h2><i class="fas fa-map-marked-alt"></i> Mapa Geológico</h2>
-                    <div class="map-container">
-                        <div id="map"></div>
-                    </div>
-                    <div class="camera-controls">
-                        <button class="btn btn-primary" id="centerMap">
-                            <i class="fas fa-location-arrow"></i> Centrar en Mí
-                        </button>
-                        <button class="btn btn-secondary" id="addMarker">
-                            <i class="fas fa-map-pin"></i> Marcar Punto
-                        </button>
-                        <select class="form-control" id="mapLayer" style="flex:1;">
-                            <option value="osm">OpenStreetMap</option>
-                            <option value="google">Google Maps</option>
-                            <option value="satellite">Satélite</option>
-                            <option value="topo">Topográfico</option>
-                        </select>
-                    </div>
-                </section>
-
-                <!-- Base de Datos con Cover Flow -->
-                <section class="card database-module">
-                    <h2><i class="fas fa-database"></i> Minerales Identificados</h2>
-                    <input type="text" class="form-control" id="searchMinerals" 
-                           placeholder="🔍 Buscar mineral..." style="margin-bottom:15px;">
-                    
-                    <div class="coverflow-container">
-                        <div class="coverflow" id="coverflow"></div>
-                    </div>
-                    
-                    <div id="mineralDetails">
-                        <div class="loading" id="detailsLoading">
-                            <i class="fas fa-spinner"></i>
-                            <p>Selecciona un mineral...</p>
-                        </div>
-                    </div>
-                </section>
+                </div>
             </div>
-
-            <div class="right-panel">
-                <!-- Herramientas Geológicas -->
-                <section class="card tools-module">
-                    <h2><i class="fas fa-tools"></i> Herramientas</h2>
-                    <div class="tools-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px;">
-                        <button class="btn btn-secondary tool-btn" data-tool="mohs">
-                            <i class="fas fa-gem"></i> Escala Mohs
-                        </button>
-                        <button class="btn btn-secondary tool-btn" data-tool="compass">
-                            <i class="fas fa-compass"></i> Brújula
-                        </button>
-                        <button class="btn btn-secondary tool-btn" data-tool="converter">
-                            <i class="fas fa-balance-scale"></i> Conversor
-                        </button>
-                        <button class="btn btn-secondary tool-btn" data-tool="streak">
-                            <i class="fas fa-palette"></i> Colores Raya
-                        </button>
-                        <button class="btn btn-secondary tool-btn" data-tool="weather">
-                            <i class="fas fa-cloud-sun"></i> Clima
-                        </button>
-                        <button class="btn btn-secondary tool-btn" data-tool="geology">
-                            <i class="fas fa-mountain"></i> Geología Atacama
-                        </button>
-                    </div>
-                </section>
-
-                <!-- Información GPS y Geolocalización -->
-                <section class="card gps-module">
-                    <h2><i class="fas fa-satellite"></i> Geolocalización</h2>
-                    <div class="gps-info" style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 15px;">
-                        <h4><i class="fas fa-map-pin"></i> Ubicación Actual</h4>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
-                            <div>
-                                <strong>Latitud:</strong> <span id="currentLat">--</span>
-                            </div>
-                            <div>
-                                <strong>Longitud:</strong> <span id="currentLng">--</span>
-                            </div>
-                            <div>
-                                <strong>Altitud:</strong> <span id="currentAlt">-- msnm</span>
-                            </div>
-                            <div>
-                                <strong>Precisión:</strong> <span id="currentAcc">-- m</span>
-                            </div>
-                        </div>
-                        <div style="margin-top: 10px; padding: 10px; background: white; border-radius: 5px;">
-                            <strong>Zona Geológica:</strong> <span id="geologicalZone">--</span>
-                        </div>
-                    </div>
-                    <button class="btn btn-gps" id="updateLocation" style="width:100%;">
-                        <i class="fas fa-sync-alt"></i> Actualizar GPS
-                    </button>
-                </section>
-
-                <!-- Informe Rápido -->
-                <section class="card report-module">
-                    <h2><i class="fas fa-file-medical"></i> Informe Rápido</h2>
-                    <div id="reportSummary">
-                        <p style="color:#666; text-align:center; padding:20px;">
-                            <i class="fas fa-info-circle"></i><br>
-                            Captura una muestra con la cámara para generar un informe completo con:
-                        </p>
-                        <ul style="padding-left:20px; margin:15px 0;">
-                            <li>📸 Foto de la muestra</li>
-                            <li>📍 Coordenadas GPS</li>
-                            <li>🗺️ Ubicación en mapa</li>
-                            <li>⚒️ Datos geológicos</li>
-                            <li>📊 Análisis mineralógico</li>
-                        </ul>
-                    </div>
-                    <button class="btn btn-success" id="downloadReport" disabled style="width:100%; margin-top:15px;">
-                        <i class="fas fa-download"></i> Descargar Informe Completo
-                    </button>
-                </section>
-
-                <!-- Configuración -->
-                <section class="card config-module">
-                    <h2><i class="fas fa-cog"></i> Configuración</h2>
-                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
-                        <button class="btn btn-secondary" id="clearData">
-                            <i class="fas fa-trash"></i> Limpiar
-                        </button>
-                        <button class="btn btn-primary" id="exportAll">
-                            <i class="fas fa-download"></i> Exportar Todo
-                        </button>
-                        <button class="btn btn-gps" id="calibrateCompass">
-                            <i class="fas fa-compass"></i> Calibrar
-                        </button>
-                    </div>
-                </section>
+            
+            <div class="camera-controls full">
+                <button class="btn btn-primary" id="captureMineral">
+                    <i class="fas fa-camera"></i> CAPTURAR MINERAL
+                </button>
             </div>
-        </div>
+            
+            <div id="captureResult" style="display: none; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                <h3><i class="fas fa-check-circle" style="color: #27ae60;"></i> Mineral Identificado</h3>
+                <div id="identifiedMineralInfo"></div>
+            </div>
+        </section>
+
+        <!-- Sección 2: Mapa Geológico -->
+        <section class="card map-section">
+            <h2><i class="fas fa-map-marked-alt"></i> Mapa Geológico</h2>
+            
+            <div class="map-container">
+                <div id="map"></div>
+            </div>
+            
+            <div class="map-controls">
+                <button class="btn btn-secondary" id="centerMap">
+                    <i class="fas fa-location-arrow"></i> Mi Ubicación
+                </button>
+                <button class="btn btn-primary" id="addMarker">
+                    <i class="fas fa-map-pin"></i> Marcar Punto
+                </button>
+            </div>
+            
+            <div id="mapInfo" style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 10px; font-size: 0.9rem;">
+                <strong><i class="fas fa-info-circle"></i> Coordenadas:</strong>
+                <span id="currentCoords">Esperando GPS...</span>
+            </div>
+        </section>
+
+        <!-- Sección 3: Minerales Identificados -->
+        <section class="card minerals-section">
+            <h2><i class="fas fa-gem"></i> Minerales Identificados</h2>
+            
+            <div id="identifiedMineralsContainer" style="min-height: 200px;">
+                <div id="noMinerals" style="text-align: center; padding: 40px 20px; color: #666;">
+                    <i class="fas fa-camera" style="font-size: 3rem; margin-bottom: 15px; color: #ddd;"></i>
+                    <p>Usa la cámara para identificar minerales</p>
+                    <p style="font-size: 0.9rem; margin-top: 10px;">Los minerales aparecerán aquí automáticamente</p>
+                </div>
+                
+                <div class="minerals-grid" id="mineralsGrid" style="display: none;"></div>
+            </div>
+            
+            <div class="camera-controls" style="margin-top: 15px;">
+                <button class="btn btn-warning" id="clearMinerals">
+                    <i class="fas fa-trash"></i> Limpiar Todo
+                </button>
+            </div>
+        </section>
+
+        <!-- Sección 4: Brújula Digital -->
+        <section class="card compass-section">
+            <h2><i class="fas fa-compass"></i> Brújula Digital</h2>
+            
+            <div class="compass-container">
+                <div class="compass-rose" id="compassRose">
+                    <div class="compass-needle" id="compassNeedle"></div>
+                </div>
+            </div>
+            
+            <div class="compass-direction" id="compassDirection">
+                NORTE
+            </div>
+            
+            <div class="compass-degrees" id="compassDegrees">
+                0°
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <strong>Calibración Automática:</strong>
+                    <div id="calibrationStatus" style="background: #27ae60; color: white; padding: 3px 10px; border-radius: 10px; font-size: 0.8rem;">
+                        ACTIVA
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666;">
+                    Gira el dispositivo para calibrar automáticamente. La brújula se ajusta usando el GPS del dispositivo.
+                </p>
+            </div>
+        </section>
+
+        <!-- Sección 5: Informe Rápido -->
+        <section class="card report-section">
+            <h2><i class="fas fa-file-alt"></i> Informe Rápido</h2>
+            
+            <div class="report-form">
+                <input type="text" class="form-control" id="reportTitle" placeholder="Título del informe" required>
+                <textarea class="form-control" id="reportNotes" rows="3" placeholder="Observaciones y notas..." required></textarea>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px;">
+                    <button class="btn btn-success" id="generateReport">
+                        <i class="fas fa-file-medical"></i> Generar
+                    </button>
+                    <button class="btn btn-secondary" id="viewReports">
+                        <i class="fas fa-eye"></i> Ver
+                    </button>
+                </div>
+            </div>
+            
+            <div class="report-preview" id="reportPreview">
+                <div style="text-align: center; padding: 20px; color: #666;">
+                    <i class="fas fa-file-alt" style="font-size: 2rem;"></i>
+                    <p style="margin-top: 10px;">El informe aparecerá aquí</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección 6: Herramientas -->
+        <section class="card tools-section">
+            <h2><i class="fas fa-tools"></i> Herramientas</h2>
+            
+            <div class="tools-grid">
+                <button class="tool-btn" data-tool="mohs">
+                    <div class="tool-icon"><i class="fas fa-gem"></i></div>
+                    <div>Escala Mohs</div>
+                </button>
+                <button class="tool-btn" data-tool="converter">
+                    <div class="tool-icon"><i class="fas fa-balance-scale"></i></div>
+                    <div>Conversor</div>
+                </button>
+                <button class="tool-btn" data-tool="streak">
+                    <div class="tool-icon"><i class="fas fa-palette"></i></div>
+                    <div>Colores Raya</div>
+                </button>
+                <button class="tool-btn" data-tool="weather">
+                    <div class="tool-icon"><i class="fas fa-cloud-sun"></i></div>
+                    <div>Clima</div>
+                </button>
+                <button class="tool-btn" data-tool="geology">
+                    <div class="tool-icon"><i class="fas fa-mountain"></i></div>
+                    <div>Geología Atacama</div>
+                </button>
+                <button class="tool-btn" data-tool="export">
+                    <div class="tool-icon"><i class="fas fa-download"></i></div>
+                    <div>Exportar</div>
+                </button>
+            </div>
+            
+            <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <strong>Sincronización:</strong>
+                    <div id="syncStatus" style="background: #27ae60; color: white; padding: 3px 10px; border-radius: 10px; font-size: 0.8rem;">
+                        ACTIVA
+                    </div>
+                </div>
+                <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+                    Todos los datos están sincronizados en tiempo real
+                </p>
+            </div>
+        </section>
     </div>
 
     <!-- Modal para Herramientas -->
     <div class="modal" id="toolModal">
         <div class="modal-content">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h2 id="modalTitle"></h2>
-                <button class="btn btn-danger" id="closeModal" style="padding:8px 15px;">
+                <button class="btn btn-danger" id="closeModal" style="padding: 8px 15px;">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
@@ -847,304 +838,233 @@
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        // === VARIABLES GLOBALES ===
-        let stream = null;
+        // ============================================
+        // VARIABLES GLOBALES Y CONFIGURACIÓN
+        // ============================================
+        let cameraStream = null;
         let map = null;
-        let currentMarker = null;
-        let mineralsData = [];
-        let currentMineral = null;
-        let watchId = null;
+        let userMarker = null;
         let currentLocation = null;
-        let geologicalZone = null;
-        let compassCalibration = 0;
-        let currentReport = null;
+        let compassHeading = 0;
+        let identifiedMinerals = [];
+        let compassWatch = null;
+        let gpsWatch = null;
         let isCameraActive = false;
+        let isGPSActive = false;
 
-        // === INICIALIZACIÓN ===
-        document.addEventListener('DOMContentLoaded', initializeApp);
+        // Base de datos de minerales de Atacama
+        const atacamaMinerals = [
+            { id: 1, name: "Calcopirita", formula: "CuFeS₂", hardness: 3.5, color: "Amarillo latón", streak: "Verde negruzco", icon: "fas fa-gem", found: false },
+            { id: 2, name: "Malaquita", formula: "Cu₂CO₃(OH)₂", hardness: 3.5, color: "Verde", streak: "Verde claro", icon: "fas fa-gem", found: false },
+            { id: 3, name: "Atacamita", formula: "Cu₂Cl(OH)₃", hardness: 3.5, color: "Verde esmeralda", streak: "Verde manzana", icon: "fas fa-gem", found: false },
+            { id: 4, name: "Cobre Nativo", formula: "Cu", hardness: 2.5, color: "Rojo cobre", streak: "Rojo metálico", icon: "fas fa-gem", found: false },
+            { id: 5, name: "Crisocola", formula: "CuSiO₃·nH₂O", hardness: 2.5, color: "Verde azulado", streak: "Blanco", icon: "fas fa-gem", found: false },
+            { id: 6, name: "Bornita", formula: "Cu₅FeS₄", hardness: 3, color: "Púrpura iridiscente", streak: "Gris negruzco", icon: "fas fa-gem", found: false },
+            { id: 7, name: "Cuarzo", formula: "SiO₂", hardness: 7, color: "Variable", streak: "Blanco", icon: "fas fa-gem", found: false },
+            { id: 8, name: "Hematita", formula: "Fe₂O₃", hardness: 6.5, color: "Negro a rojo", streak: "Rojo cereza", icon: "fas fa-gem", found: false },
+            { id: 9, name: "Magnetita", formula: "Fe₃O₄", hardness: 6, color: "Negro", streak: "Negro", icon: "fas fa-gem", found: false },
+            { id: 10, name: "Galena", formula: "PbS", hardness: 2.5, color: "Gris plomo", streak: "Gris plomo", icon: "fas fa-gem", found: false }
+        ];
 
-        async function initializeApp() {
-            // Pantalla de permisos
-            document.getElementById('grantPermissions').addEventListener('click', requestAllPermissions);
+        // ============================================
+        // INICIALIZACIÓN OBLIGATORIA
+        // ============================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('AtacamApp - Inicializando sistema obligatorio...');
             
-            // Cámara
-            document.getElementById('startCameraBtn').addEventListener('click', startCamera);
-            document.getElementById('captureBtn').addEventListener('click', captureImage);
-            document.getElementById('analyzeBtn').addEventListener('click', analyzeWithAI);
-            document.getElementById('generateFullReport').addEventListener('click', generateFullReport);
+            // Botón para activar todas las funciones
+            document.getElementById('activateAll').addEventListener('click', activateAllFunctions);
             
-            // Mapa
-            document.getElementById('centerMap').addEventListener('click', centerMap);
-            document.getElementById('addMarker').addEventListener('click', addSampleMarker);
-            document.getElementById('mapLayer').addEventListener('change', changeMapLayer);
+            // Configurar controles de la aplicación
+            setupAppControls();
             
-            // Herramientas
-            document.querySelectorAll('.tool-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    openToolModal(this.dataset.tool);
-                });
-            });
-            
-            // GPS
-            document.getElementById('updateLocation').addEventListener('click', updateGPSLocation);
-            
-            // Informes
-            document.getElementById('downloadReport').addEventListener('click', downloadCurrentReport);
-            
-            // Configuración
-            document.getElementById('clearData').addEventListener('click', clearAllData);
-            document.getElementById('exportAll').addEventListener('click', exportAllData);
-            document.getElementById('calibrateCompass').addEventListener('click', calibrateCompass);
-            
-            // Modal
-            document.getElementById('closeModal').addEventListener('click', closeModal);
-            
-            // Buscador
-            document.getElementById('searchMinerals').addEventListener('input', searchMinerals);
-            
-            // Cargar datos iniciales
-            loadMineralsData();
-            initMap();
-            
-            // Configurar eventos de orientación para brújula
-            if (window.DeviceOrientationEvent) {
-                window.addEventListener('deviceorientation', handleCompass);
+            // Verificar si ya hay permisos (para recarga de página)
+            checkExistingPermissions();
+        });
+
+        // ============================================
+        // ACTIVACIÓN OBLIGATORIA DE TODAS LAS FUNCIONES
+        // ============================================
+        async function activateAllFunctions() {
+            try {
+                showNotification('Activando todas las funciones...', 'info');
+                
+                // 1. ACTIVAR CÁMARA (OBLIGATORIO)
+                await activateCamera();
+                
+                // 2. ACTIVAR GPS (OBLIGATORIO)
+                await activateGPS();
+                
+                // 3. INICIALIZAR MAPA (OBLIGATORIO)
+                initializeMap();
+                
+                // 4. ACTIVAR BRÚJULA (OBLIGATORIO)
+                activateCompass();
+                
+                // 5. MOSTRAR APLICACIÓN
+                showApplication();
+                
+                showNotification('¡Todas las funciones activadas correctamente!', 'success');
+                
+            } catch (error) {
+                console.error('Error activando funciones:', error);
+                showNotification('Error: ' + error.message, 'error');
+                
+                // Forzar recarga para intentar nuevamente
+                setTimeout(() => {
+                    showNotification('Reintentando activación...', 'warning');
+                    location.reload();
+                }, 3000);
             }
         }
 
-        // === PERMISOS COMPLETOS ===
-        async function requestAllPermissions() {
-            try {
-                showNotification('Solicitando permisos...', 'info');
-                
-                // 1. Permisos de cámara
+        // ============================================
+        // 1. ACTIVACIÓN OBLIGATORIA DE CÁMARA
+        // ============================================
+        async function activateCamera() {
+            return new Promise(async (resolve, reject) => {
                 try {
+                    showNotification('Activando cámara del dispositivo...', 'info');
+                    
+                    // Detener cualquier stream existente
+                    if (cameraStream) {
+                        cameraStream.getTracks().forEach(track => track.stop());
+                    }
+                    
+                    // Solicitar permiso de cámara
                     const constraints = {
                         video: {
-                            facingMode: 'environment',
+                            facingMode: 'environment', // Usar cámara trasera
                             width: { ideal: 1280 },
-                            height: { ideal: 720 }
+                            height: { ideal: 720 },
+                            frameRate: { ideal: 30 }
                         },
                         audio: false
                     };
                     
-                    // Para iOS/móviles, necesitamos getUserMedia específico
+                    // Intentar con navigator.mediaDevices.getUserMedia primero
                     if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                        stream = await navigator.mediaDevices.getUserMedia(constraints);
-                    } else if (navigator.getUserMedia) {
-                        stream = await new Promise((resolve, reject) => {
+                        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+                    } 
+                    // Fallback para navegadores más antiguos
+                    else if (navigator.getUserMedia) {
+                        cameraStream = await new Promise((resolve, reject) => {
                             navigator.getUserMedia(constraints, resolve, reject);
                         });
+                    } 
+                    // Fallback para iOS
+                    else if (navigator.webkitGetUserMedia) {
+                        cameraStream = await new Promise((resolve, reject) => {
+                            navigator.webkitGetUserMedia(constraints, resolve, reject);
+                        });
+                    } 
+                    // Fallback para Microsoft
+                    else if (navigator.msGetUserMedia) {
+                        cameraStream = await new Promise((resolve, reject) => {
+                            navigator.msGetUserMedia(constraints, resolve, reject);
+                        });
+                    } else {
+                        throw new Error('Cámara no soportada en este navegador');
                     }
                     
-                    if (stream) {
-                        const video = document.getElementById('cameraFeed');
-                        video.srcObject = stream;
-                        video.play();
-                        document.getElementById('captureBtn').disabled = false;
-                        document.getElementById('analyzeBtn').disabled = false;
-                        document.getElementById('cameraStatus').innerHTML = '<i class="fas fa-camera"></i> Cámara: Activa';
-                        isCameraActive = true;
-                        showNotification('Cámara activada', 'success');
+                    // Conectar stream al video
+                    const video = document.getElementById('cameraFeed');
+                    video.srcObject = cameraStream;
+                    
+                    // Esperar a que el video esté listo
+                    await new Promise((resolve) => {
+                        video.onloadedmetadata = () => {
+                            video.play().then(resolve).catch(reject);
+                        };
+                    });
+                    
+                    isCameraActive = true;
+                    document.getElementById('cameraStatus').innerHTML = '<i class="fas fa-camera" style="color: #27ae60;"></i> Cámara: ACTIVA';
+                    document.getElementById('cameraStatus').classList.add('pulse');
+                    
+                    showNotification('Cámara activada correctamente', 'success');
+                    resolve();
+                    
+                } catch (error) {
+                    console.error('Error activando cámara:', error);
+                    document.getElementById('cameraStatus').innerHTML = '<i class="fas fa-camera-slash" style="color: #e74c3c;"></i> Cámara: ERROR';
+                    
+                    // Mostrar mensaje específico
+                    let errorMessage = 'No se pudo acceder a la cámara. ';
+                    if (error.name === 'NotAllowedError') {
+                        errorMessage += 'Permiso denegado. Por favor, permite el acceso a la cámara en la configuración de tu dispositivo.';
+                    } else if (error.name === 'NotFoundError') {
+                        errorMessage += 'No se encontró cámara en el dispositivo.';
+                    } else {
+                        errorMessage += error.message;
                     }
-                } catch (cameraError) {
-                    console.error('Error cámara:', cameraError);
-                    showNotification('Cámara no disponible. Usa modo simulado.', 'warning');
-                    setupSimulatedCamera();
+                    
+                    showNotification(errorMessage, 'error');
+                    reject(new Error(errorMessage));
                 }
-
-                // 2. Permisos de ubicación
-                if ("geolocation" in navigator) {
-                    try {
-                        const position = await new Promise((resolve, reject) => {
-                            navigator.geolocation.getCurrentPosition(
-                                resolve, 
-                                reject, 
-                                {
-                                    enableHighAccuracy: true,
-                                    timeout: 10000,
-                                    maximumAge: 0
-                                }
-                            );
-                        });
-                        
-                        handleLocationSuccess(position);
-                        startGPSWatching();
-                        
-                    } catch (gpsError) {
-                        console.warn('GPS error:', gpsError);
-                        useSimulatedLocation();
-                        showNotification('GPS limitado. Usando ubicación simulada.', 'warning');
-                    }
-                } else {
-                    useSimulatedLocation();
-                }
-
-                // 3. Ocultar pantalla de permisos
-                document.getElementById('permissionScreen').style.display = 'none';
-                document.getElementById('mainApp').style.display = 'grid';
-                
-                // 4. Inicializar componentes
-                setTimeout(() => {
-                    updateCoverflow();
-                    if (currentLocation) {
-                        updateMapLocation(currentLocation);
-                    }
-                }, 500);
-                
-                showNotification('¡AtacamApp lista!', 'success');
-                
-            } catch (error) {
-                console.error('Error en permisos:', error);
-                showNotification('Error al solicitar permisos', 'error');
-            }
+            });
         }
 
-        // === CÁMARA FUNCIONAL ===
-        async function startCamera() {
-            if (isCameraActive) {
-                // Detener cámara si ya está activa
-                stopCamera();
-                return;
-            }
-            
-            try {
-                const constraints = {
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
-                    }
+        // ============================================
+        // 2. ACTIVACIÓN OBLIGATORIA DE GPS
+        // ============================================
+        function activateGPS() {
+            return new Promise((resolve, reject) => {
+                if (!navigator.geolocation) {
+                    const error = new Error('GPS no soportado en este dispositivo');
+                    showNotification(error.message, 'error');
+                    reject(error);
+                    return;
+                }
+                
+                showNotification('Activando GPS de alta precisión...', 'info');
+                
+                // Configurar opciones de alta precisión
+                const options = {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
                 };
                 
-                stream = await navigator.mediaDevices.getUserMedia(constraints);
-                const video = document.getElementById('cameraFeed');
-                video.srcObject = stream;
-                
-                // Esperar a que el video esté listo
-                await new Promise(resolve => {
-                    video.onloadedmetadata = () => {
-                        video.play();
+                // Obtener posición inicial
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        handleGPSuccess(position);
                         resolve();
-                    };
-                });
+                    },
+                    function(error) {
+                        handleGPSError(error);
+                        reject(new Error('No se pudo obtener ubicación GPS'));
+                    },
+                    options
+                );
                 
-                document.getElementById('captureBtn').disabled = false;
-                document.getElementById('analyzeBtn').disabled = false;
-                document.getElementById('cameraStatus').innerHTML = '<i class="fas fa-camera"></i> Cámara: Activa';
-                document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-stop-circle"></i> Detener Cámara';
-                isCameraActive = true;
-                
-                showNotification('Cámara activada', 'success');
-                
-            } catch (error) {
-                console.error('Error cámara:', error);
-                showNotification('Error al activar cámara', 'error');
-                setupSimulatedCamera();
-            }
+                // Iniciar monitoreo continuo
+                startGPSMonitoring();
+            });
         }
 
-        function stopCamera() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-                stream = null;
+        function startGPSMonitoring() {
+            if (gpsWatch) {
+                navigator.geolocation.clearWatch(gpsWatch);
             }
             
-            const video = document.getElementById('cameraFeed');
-            video.srcObject = null;
-            
-            document.getElementById('captureBtn').disabled = true;
-            document.getElementById('analyzeBtn').disabled = true;
-            document.getElementById('cameraStatus').innerHTML = '<i class="fas fa-camera-slash"></i> Cámara: Inactiva';
-            document.getElementById('startCameraBtn').innerHTML = '<i class="fas fa-video"></i> Activar Cámara';
-            isCameraActive = false;
-            
-            showNotification('Cámara detenida', 'info');
-        }
-
-        function setupSimulatedCamera() {
-            const placeholder = document.getElementById('cameraPlaceholder');
-            placeholder.style.display = 'flex';
-            placeholder.innerHTML = `
-                <div style="text-align:center; color:white; padding:20px;">
-                    <i class="fas fa-camera-slash" style="font-size:4rem;"></i>
-                    <h3>Modo Simulado</h3>
-                    <p>Usa el botón "Analizar IA" para simular identificación</p>
-                </div>
-            `;
-            
-            document.getElementById('analyzeBtn').disabled = false;
-            showNotification('Modo simulado activado', 'warning');
-        }
-
-        function captureImage() {
-            if (!isCameraActive) {
-                showNotification('Activa la cámara primero', 'warning');
-                return;
-            }
-            
-            const video = document.getElementById('cameraFeed');
-            const canvas = document.getElementById('cameraCanvas');
-            const context = canvas.getContext('2d');
-            
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            
-            // Mostrar preview
-            const imageData = canvas.toDataURL('image/jpeg');
-            showNotification('Imagen capturada ✓', 'success');
-            
-            // Guardar para análisis
-            currentReport = {
-                image: imageData,
-                timestamp: new Date().toISOString(),
-                location: currentLocation,
-                mineral: null
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 15000,
+                maximumAge: 0
             };
             
-            document.getElementById('downloadReport').disabled = false;
+            gpsWatch = navigator.geolocation.watchPosition(
+                handleGPSuccess,
+                handleGPSError,
+                options
+            );
+            
+            isGPSActive = true;
         }
 
-        // === GPS Y MAPA ===
-        function initMap() {
-            map = L.map('map').setView([-27.3667, -70.3333], 10);
-            
-            // Capa base OSM por defecto
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors',
-                maxZoom: 18
-            }).addTo(map);
-            
-            // Marcador inicial
-            currentMarker = L.marker([-27.3667, -70.3333], {
-                icon: L.divIcon({
-                    className: 'custom-marker',
-                    html: '<i class="fas fa-map-marker-alt" style="color:#e74c3c; font-size:24px;"></i>',
-                    iconSize: [30, 30],
-                    iconAnchor: [15, 30]
-                }),
-                draggable: true
-            }).addTo(map);
-            
-            // Evento al mover marcador
-            currentMarker.on('dragend', function(e) {
-                const marker = e.target;
-                const position = marker.getLatLng();
-                currentLocation = {
-                    latitude: position.lat,
-                    longitude: position.lng,
-                    accuracy: 50,
-                    timestamp: new Date()
-                };
-                updateLocationDisplay();
-                updateGeologicalZone();
-            });
-            
-            showNotification('Mapa cargado', 'success');
-        }
-
-        function handleLocationSuccess(position) {
+        function handleGPSuccess(position) {
             currentLocation = {
                 latitude: position.coords.latitude,
                 longitude: position.coords.longitude,
@@ -1155,1142 +1075,851 @@
                 timestamp: new Date(position.timestamp)
             };
             
-            updateLocationDisplay();
-            updateMapLocation(currentLocation);
-            updateGeologicalZone();
+            // Actualizar interfaz
+            document.getElementById('gpsStatus').innerHTML = 
+                '<i class="fas fa-satellite" style="color: #27ae60;"></i> GPS: ACTIVO';
+            document.getElementById('gpsStatus').classList.add('pulse');
+            
+            document.getElementById('locationStatus').innerHTML = 
+                `<i class="fas fa-map-marker-alt"></i> ${getLocationName(currentLocation)}`;
+            
+            document.getElementById('currentCoords').innerHTML = 
+                `${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}`;
+            
+            // Actualizar mapa si existe
+            if (map) {
+                updateMapLocation();
+            }
+            
+            // Actualizar brújula si hay heading
+            if (currentLocation.heading) {
+                updateCompass(currentLocation.heading);
+            }
+        }
+
+        function handleGPSError(error) {
+            console.error('GPS Error:', error);
+            
+            let message = 'Error GPS: ';
+            switch(error.code) {
+                case 1:
+                    message = 'PERMISO DENEGADO. Ve a configuración de tu dispositivo y permite acceso a ubicación.';
+                    break;
+                case 2:
+                    message = 'UBICACIÓN NO DISPONIBLE. Activa el GPS de tu dispositivo.';
+                    break;
+                case 3:
+                    message = 'TIEMPO DE ESPERA AGOTADO. Intenta nuevamente.';
+                    break;
+                default:
+                    message = 'ERROR DE GPS. Verifica la configuración.';
+            }
             
             document.getElementById('gpsStatus').innerHTML = 
-                '<i class="fas fa-satellite"></i> GPS: Activo';
-        }
-
-        function startGPSWatching() {
-            if (watchId) {
-                navigator.geolocation.clearWatch(watchId);
-            }
+                '<i class="fas fa-satellite" style="color: #e74c3c;"></i> GPS: ERROR';
             
-            watchId = navigator.geolocation.watchPosition(
-                handleLocationSuccess,
-                handleLocationError,
-                {
-                    enableHighAccuracy: true,
-                    timeout: 15000,
-                    maximumAge: 0
-                }
-            );
+            showNotification(message, 'error');
         }
 
-        function updateMapLocation(location) {
+        // ============================================
+        // 3. MAPA GEOLÓGICO OBLIGATORIO
+        // ============================================
+        function initializeMap() {
+            try {
+                // Usar ubicación actual o ubicación por defecto en Atacama
+                const initialCoords = currentLocation ? 
+                    [currentLocation.latitude, currentLocation.longitude] : 
+                    [-27.3667, -70.3333]; // Atacama por defecto
+                
+                // Crear mapa
+                map = L.map('map').setView(initialCoords, 13);
+                
+                // Capa base: OpenStreetMap
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 18
+                }).addTo(map);
+                
+                // Capa satelital (Google)
+                const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+                    attribution: 'Google Satellite',
+                    maxZoom: 20
+                });
+                
+                // Capa topográfica
+                const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+                    attribution: 'OpenTopoMap',
+                    maxZoom: 17
+                });
+                
+                // Control de capas
+                const baseLayers = {
+                    "Mapa": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
+                    "Satélite": satelliteLayer,
+                    "Topográfico": topoLayer
+                };
+                
+                L.control.layers(baseLayers).addTo(map);
+                
+                // Crear marcador del usuario
+                createUserMarker();
+                
+                // Añadir círculo de precisión
+                if (currentLocation && currentLocation.accuracy) {
+                    L.circle(initialCoords, {
+                        color: '#3498db',
+                        fillColor: '#3498db',
+                        fillOpacity: 0.2,
+                        radius: currentLocation.accuracy
+                    }).addTo(map).bindPopup('Precisión GPS: ' + Math.round(currentLocation.accuracy) + 'm');
+                }
+                
+                showNotification('Mapa geológico activado', 'success');
+                
+            } catch (error) {
+                console.error('Error inicializando mapa:', error);
+                showNotification('Error cargando mapa: ' + error.message, 'error');
+            }
+        }
+
+        function createUserMarker() {
             if (!map) return;
             
-            const latLng = [location.latitude, location.longitude];
-            map.setView(latLng, 13);
+            const coords = currentLocation ? 
+                [currentLocation.latitude, currentLocation.longitude] : 
+                [-27.3667, -70.3333];
             
-            if (currentMarker) {
-                currentMarker.setLatLng(latLng);
-            } else {
-                currentMarker = L.marker(latLng, {
-                    icon: L.divIcon({
-                        className: 'custom-marker',
-                        html: '<i class="fas fa-map-marker-alt" style="color:#e74c3c; font-size:24px;"></i>',
-                        iconSize: [30, 30],
-                        iconAnchor: [15, 30]
-                    }),
-                    draggable: true
-                }).addTo(map);
-            }
+            // Icono personalizado
+            const userIcon = L.divIcon({
+                className: 'user-marker',
+                html: '<i class="fas fa-user" style="color: #e74c3c; font-size: 24px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"></i>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 30]
+            });
             
-            // Añadir círculo de precisión
-            L.circle(latLng, {
-                color: '#3498db',
-                fillColor: '#3498db',
-                fillOpacity: 0.2,
-                radius: location.accuracy
-            }).addTo(map);
-        }
-
-        function centerMap() {
-            if (currentLocation && map) {
-                map.setView([currentLocation.latitude, currentLocation.longitude], 13);
-                showNotification('Mapa centrado en tu ubicación', 'info');
-            } else {
-                showNotification('No hay ubicación disponible', 'warning');
-            }
-        }
-
-        function addSampleMarker() {
-            if (!currentLocation) {
-                showNotification('Obtén tu ubicación primero', 'warning');
-                return;
-            }
-            
-            const sampleMarker = L.marker([currentLocation.latitude, currentLocation.longitude], {
-                icon: L.divIcon({
-                    className: 'sample-marker',
-                    html: '<i class="fas fa-gem" style="color:#27ae60; font-size:20px;"></i>',
-                    iconSize: [20, 20],
-                    iconAnchor: [10, 20]
-                })
+            userMarker = L.marker(coords, {
+                icon: userIcon,
+                draggable: false
             }).addTo(map);
             
-            sampleMarker.bindPopup(`
-                <b>Muestra Geológica</b><br>
-                ${new Date().toLocaleString()}<br>
-                <i class="fas fa-map-pin"></i> ${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}
+            userMarker.bindPopup('<strong>Tu ubicación</strong><br>Actualizando en tiempo real...');
+        }
+
+        function updateMapLocation() {
+            if (!map || !currentLocation || !userMarker) return;
+            
+            const coords = [currentLocation.latitude, currentLocation.longitude];
+            
+            // Mover marcador
+            userMarker.setLatLng(coords);
+            
+            // Actualizar popup
+            userMarker.getPopup().setContent(`
+                <strong>Tu ubicación</strong><br>
+                Lat: ${currentLocation.latitude.toFixed(6)}<br>
+                Lng: ${currentLocation.longitude.toFixed(6)}<br>
+                Alt: ${currentLocation.altitude ? currentLocation.altitude.toFixed(0) + ' m' : 'N/A'}<br>
+                Precisión: ${Math.round(currentLocation.accuracy)} m
             `);
             
-            showNotification('Punto de muestra añadido al mapa', 'success');
+            // Centrar mapa si el usuario lo permite
+            if (document.getElementById('centerMap').classList.contains('active')) {
+                map.setView(coords, map.getZoom());
+            }
         }
 
-        function changeMapLayer() {
-            const layer = document.getElementById('mapLayer').value;
+        // ============================================
+        // 4. BRÚJULA DIGITAL REAL
+        // ============================================
+        function activateCompass() {
+            if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                // iOS 13+ necesita permiso explícito
+                DeviceOrientationEvent.requestPermission()
+                    .then(permissionState => {
+                        if (permissionState === 'granted') {
+                            startCompass();
+                        } else {
+                            showNotification('Permiso de orientación denegado. La brújula no funcionará.', 'error');
+                        }
+                    })
+                    .catch(console.error);
+            } else {
+                // Android y otros navegadores
+                startCompass();
+            }
+        }
+
+        function startCompass() {
+            if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientation', handleDeviceOrientation, true);
+                document.getElementById('compassStatus').innerHTML = 
+                    '<i class="fas fa-compass" style="color: #27ae60;"></i> Brújula: ACTIVA';
+                document.getElementById('compassStatus').classList.add('pulse');
+            } else {
+                showNotification('Brújula no soportada en este dispositivo', 'warning');
+                document.getElementById('compassStatus').innerHTML = 
+                    '<i class="fas fa-compass" style="color: #f39c12;"></i> Brújula: NO SOPORTADA';
+            }
+        }
+
+        function handleDeviceOrientation(event) {
+            if (event.alpha !== null) {
+                // Calibrar usando GPS si está disponible
+                let heading = event.alpha;
+                
+                // Ajustar según el GPS si tenemos heading del GPS
+                if (currentLocation && currentLocation.heading) {
+                    // Promediar entre sensor y GPS para mayor precisión
+                    heading = (heading + currentLocation.heading) / 2;
+                }
+                
+                // Aplicar calibración automática
+                heading = calibrateHeading(heading);
+                
+                // Actualizar brújula
+                updateCompass(heading);
+            }
+        }
+
+        function calibrateHeading(heading) {
+            // Calibración automática simple
+            // Redondear a múltiplos de 5 para estabilidad
+            const calibrated = Math.round(heading / 5) * 5;
+            return calibrated;
+        }
+
+        function updateCompass(heading) {
+            compassHeading = heading;
             
-            // Remover capas existentes
-            map.eachLayer(function(layer) {
-                if (layer instanceof L.TileLayer) {
-                    map.removeLayer(layer);
+            // Actualizar aguja
+            const needle = document.getElementById('compassNeedle');
+            if (needle) {
+                needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
+            }
+            
+            // Actualizar dirección
+            const directionElement = document.getElementById('compassDirection');
+            const degreesElement = document.getElementById('compassDegrees');
+            
+            if (directionElement && degreesElement) {
+                degreesElement.textContent = `${Math.round(heading)}°`;
+                
+                const directions = ['NORTE', 'NORESTE', 'ESTE', 'SURESTE', 'SUR', 'SUROESTE', 'OESTE', 'NOROESTE'];
+                const index = Math.round(heading / 45) % 8;
+                directionElement.textContent = directions[index];
+                
+                // Cambiar color según dirección
+                const colors = ['#e74c3c', '#3498db', '#27ae60', '#f39c12', '#e74c3c', '#3498db', '#27ae60', '#f39c12'];
+                directionElement.style.color = colors[index];
+            }
+        }
+
+        // ============================================
+        // 5. IDENTIFICACIÓN DE MINERALES CON CÁMARA
+        // ============================================
+        function setupAppControls() {
+            // Capturar mineral
+            document.getElementById('captureMineral').addEventListener('click', captureAndIdentifyMineral);
+            
+            // Controles del mapa
+            document.getElementById('centerMap').addEventListener('click', function() {
+                if (currentLocation && map) {
+                    map.setView([currentLocation.latitude, currentLocation.longitude], 15);
+                    this.classList.toggle('active');
+                    showNotification('Mapa centrado en tu ubicación', 'info');
                 }
             });
             
-            let tileLayer;
-            switch(layer) {
-                case 'google':
-                    tileLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
-                        attribution: 'Google Maps'
-                    });
-                    break;
-                case 'satellite':
-                    tileLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-                        attribution: 'Google Satellite'
-                    });
-                    break;
-                case 'topo':
-                    tileLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-                        attribution: 'OpenTopoMap'
-                    });
-                    break;
-                default: // OSM
-                    tileLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                        attribution: 'OpenStreetMap'
-                    });
+            document.getElementById('addMarker').addEventListener('click', function() {
+                if (currentLocation && map) {
+                    addSampleMarker();
+                }
+            });
+            
+            // Limpiar minerales
+            document.getElementById('clearMinerals').addEventListener('click', clearAllMinerals);
+            
+            // Informes
+            document.getElementById('generateReport').addEventListener('click', generateMineralReport);
+            document.getElementById('viewReports').addEventListener('click', viewAllReports);
+            
+            // Herramientas
+            document.querySelectorAll('.tool-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    openToolModal(this.dataset.tool);
+                });
+            });
+            
+            // Modal
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+        }
+
+        async function captureAndIdentifyMineral() {
+            if (!isCameraActive) {
+                showNotification('Activa la cámara primero', 'error');
+                return;
             }
             
-            tileLayer.addTo(map);
-            showNotification(`Mapa cambiado a: ${layer}`, 'info');
+            try {
+                showNotification('Capturando y analizando mineral...', 'info');
+                
+                // 1. Capturar imagen de la cámara
+                const video = document.getElementById('cameraFeed');
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                
+                // 2. Simular análisis de IA (en producción usar API real)
+                const mineralIndex = Math.floor(Math.random() * atacamaMinerals.length);
+                const identifiedMineral = { ...atacamaMinerals[mineralIndex] };
+                
+                // Marcar como encontrado
+                identifiedMineral.found = true;
+                identifiedMineral.timestamp = new Date().toISOString();
+                identifiedMineral.location = currentLocation ? {
+                    lat: currentLocation.latitude,
+                    lng: currentLocation.longitude,
+                    alt: currentLocation.altitude
+                } : null;
+                
+                identifiedMineral.imageData = canvas.toDataURL('image/jpeg', 0.8);
+                
+                // 3. Añadir a la lista de minerales identificados
+                addIdentifiedMineral(identifiedMineral);
+                
+                // 4. Mostrar resultado
+                showCaptureResult(identifiedMineral);
+                
+                // 5. Añadir marcador en el mapa
+                if (currentLocation) {
+                    addMineralMarker(identifiedMineral);
+                }
+                
+                showNotification(`Mineral identificado: ${identifiedMineral.name}`, 'success');
+                
+            } catch (error) {
+                console.error('Error identificando mineral:', error);
+                showNotification('Error al identificar mineral: ' + error.message, 'error');
+            }
         }
 
-        // === BASE DE DATOS CON COVER FLOW ===
-        function loadMineralsData() {
-            // Datos de minerales de Atacama
-            mineralsData = [
-                { id: 1, name: "Calcopirita", formula: "CuFeS₂", class: "Sulfuro", hardness: 3.5, density: 4.2, color: "Amarillo latón", streak: "Verde negruzco", location: "Atacama" },
-                { id: 2, name: "Malaquita", formula: "Cu₂CO₃(OH)₂", class: "Carbonato", hardness: 3.5, density: 4.0, color: "Verde", streak: "Verde claro", location: "Atacama" },
-                { id: 3, name: "Atacamita", formula: "Cu₂Cl(OH)₃", class: "Haluro", hardness: 3.5, density: 3.8, color: "Verde esmeralda", streak: "Verde manzana", location: "Atacama" },
-                { id: 4, name: "Cobre Nativo", formula: "Cu", class: "Elemento", hardness: 2.5, density: 8.9, color: "Rojo cobre", streak: "Rojo metálico", location: "Andes" },
-                { id: 5, name: "Crisocola", formula: "CuSiO₃·nH₂O", class: "Silicato", hardness: 2.5, density: 2.2, color: "Verde azulado", streak: "Blanco", location: "Atacama" },
-                { id: 6, name: "Bornita", formula: "Cu₅FeS₄", class: "Sulfuro", hardness: 3, density: 5.1, color: "Púrpura iridiscente", streak: "Gris negruzco", location: "Atacama" },
-                { id: 7, name: "Cuarzo", formula: "SiO₂", class: "Silicato", hardness: 7, density: 2.65, color: "Variable", streak: "Blanco", location: "Andes" },
-                { id: 8, name: "Hematita", formula: "Fe₂O₃", class: "Óxido", hardness: 6.5, density: 5.3, color: "Negro a rojo", streak: "Rojo cereza", location: "Atacama" },
-                { id: 9, name: "Magnetita", formula: "Fe₃O₄", class: "Óxido", hardness: 6, density: 5.2, color: "Negro", streak: "Negro", location: "Atacama" },
-                { id: 10, name: "Galena", formula: "PbS", class: "Sulfuro", hardness: 2.5, density: 7.6, color: "Gris plomo", streak: "Gris plomo", location: "Atacama" }
-            ];
+        function addIdentifiedMineral(mineral) {
+            // Añadir a la lista
+            identifiedMinerals.unshift(mineral);
             
-            updateCoverflow();
-            document.getElementById('dataStatus').innerHTML = '<i class="fas fa-database"></i> Datos: Cargados';
+            // Actualizar interfaz
+            updateMineralsGrid();
+            
+            // Guardar en localStorage
+            saveMineralsToStorage();
         }
 
-        function updateCoverflow() {
-            const coverflow = document.getElementById('coverflow');
-            coverflow.innerHTML = '';
+        function updateMineralsGrid() {
+            const grid = document.getElementById('mineralsGrid');
+            const noMinerals = document.getElementById('noMinerals');
             
-            mineralsData.forEach((mineral, index) => {
+            if (identifiedMinerals.length === 0) {
+                grid.style.display = 'none';
+                noMinerals.style.display = 'block';
+                return;
+            }
+            
+            noMinerals.style.display = 'none';
+            grid.style.display = 'grid';
+            grid.innerHTML = '';
+            
+            // Mostrar últimos 6 minerales identificados
+            identifiedMinerals.slice(0, 6).forEach((mineral, index) => {
                 const card = document.createElement('div');
-                card.className = 'mineral-card-flow';
-                card.dataset.index = index;
-                
-                // Posicionamiento en cover flow
-                const angle = (index - mineralsData.length/2) * 20;
-                const z = Math.abs(index - mineralsData.length/2) * -20;
-                const opacity = 1 - Math.abs(index - mineralsData.length/2) * 0.3;
-                
-                card.style.transform = `rotateY(${angle}deg) translateZ(${z}px)`;
-                card.style.opacity = opacity;
+                card.className = 'mineral-card';
+                if (index === 0) card.classList.add('active');
                 
                 card.innerHTML = `
-                    <div style="font-size:1.2rem; font-weight:bold; color:var(--primary);">
-                        ${mineral.name}
+                    <div class="mineral-icon">
+                        <i class="${mineral.icon}"></i>
                     </div>
-                    <div style="font-size:0.8rem; color:#666; margin-top:5px;">
-                        ${mineral.formula}
-                    </div>
-                    <div style="font-size:0.7rem; color:#999; margin-top:5px;">
+                    <div style="font-weight: bold; color: #2c3e50;">${mineral.name}</div>
+                    <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">${mineral.formula}</div>
+                    <div style="font-size: 0.7rem; color: #999; margin-top: 5px;">
                         Dureza: ${mineral.hardness}
                     </div>
                 `;
                 
                 card.addEventListener('click', () => {
-                    // Actualizar todas las tarjetas
-                    document.querySelectorAll('.mineral-card-flow').forEach(c => {
-                        c.classList.remove('active');
-                        const idx = parseInt(c.dataset.index);
-                        const ang = (idx - mineralsData.length/2) * 20;
-                        const zPos = Math.abs(idx - mineralsData.length/2) * -20;
-                        const opac = 1 - Math.abs(idx - mineralsData.length/2) * 0.3;
-                        c.style.transform = `rotateY(${ang}deg) translateZ(${zPos}px)`;
-                        c.style.opacity = opac;
-                    });
-                    
-                    // Activar esta tarjeta
-                    card.classList.add('active');
-                    card.style.transform = `rotateY(0deg) translateZ(100px)`;
-                    card.style.opacity = 1;
-                    
-                    // Mostrar detalles
-                    currentMineral = mineral;
-                    displayMineralDetails(mineral);
-                    
-                    // Reorganizar cover flow
-                    reorganizeCoverflow(index);
+                    showMineralDetails(mineral);
                 });
                 
-                coverflow.appendChild(card);
+                grid.appendChild(card);
             });
         }
 
-        function reorganizeCoverflow(selectedIndex) {
-            const cards = document.querySelectorAll('.mineral-card-flow');
-            const total = cards.length;
+        function showCaptureResult(mineral) {
+            const resultDiv = document.getElementById('captureResult');
+            const infoDiv = document.getElementById('identifiedMineralInfo');
             
-            cards.forEach((card, index) => {
-                const diff = index - selectedIndex;
-                let angle, z, opacity;
-                
-                if (index === selectedIndex) {
-                    angle = 0;
-                    z = 100;
-                    opacity = 1;
-                } else {
-                    angle = diff * 20;
-                    z = Math.abs(diff) * -20;
-                    opacity = 1 - Math.abs(diff) * 0.3;
-                }
-                
-                card.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
-                card.style.transform = `rotateY(${angle}deg) translateZ(${z}px)`;
-                card.style.opacity = opacity;
-            });
-        }
-
-        function searchMinerals() {
-            const searchTerm = document.getElementById('searchMinerals').value.toLowerCase();
-            const filtered = mineralsData.filter(mineral => 
-                mineral.name.toLowerCase().includes(searchTerm) ||
-                mineral.formula.toLowerCase().includes(searchTerm) ||
-                mineral.class.toLowerCase().includes(searchTerm)
-            );
-            
-            // Actualizar coverflow con resultados filtrados
-            const coverflow = document.getElementById('coverflow');
-            coverflow.innerHTML = '';
-            
-            filtered.forEach((mineral, index) => {
-                const card = document.createElement('div');
-                card.className = 'mineral-card-flow';
-                card.dataset.index = index;
-                
-                const angle = (index - filtered.length/2) * 20;
-                const z = Math.abs(index - filtered.length/2) * -20;
-                const opacity = 1 - Math.abs(index - filtered.length/2) * 0.3;
-                
-                card.style.transform = `rotateY(${angle}deg) translateZ(${z}px)`;
-                card.style.opacity = opacity;
-                
-                card.innerHTML = `
-                    <div style="font-size:1.2rem; font-weight:bold; color:var(--primary);">
-                        ${mineral.name}
+            infoDiv.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 10px;">
+                    <div style="font-size: 2rem; color: #d35400;">
+                        <i class="${mineral.icon}"></i>
                     </div>
-                    <div style="font-size:0.8rem; color:#666; margin-top:5px;">
-                        ${mineral.formula}
+                    <div>
+                        <div style="font-size: 1.2rem; font-weight: bold;">${mineral.name}</div>
+                        <div style="color: #666;">${mineral.formula}</div>
+                    </div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;">
+                    <div style="padding: 10px; background: #f0f7ff; border-radius: 5px;">
+                        <strong>Dureza:</strong> ${mineral.hardness} (Mohs)
+                    </div>
+                    <div style="padding: 10px; background: #f0f7ff; border-radius: 5px;">
+                        <strong>Color:</strong> ${mineral.color}
+                    </div>
+                    <div style="padding: 10px; background: #f0f7ff; border-radius: 5px;">
+                        <strong>Raya:</strong> ${mineral.streak}
+                    </div>
+                    <div style="padding: 10px; background: #f0f7ff; border-radius: 5px;">
+                        <strong>Ubicación:</strong> ${currentLocation ? 'Registrada' : 'No disponible'}
+                    </div>
+                </div>
+            `;
+            
+            resultDiv.style.display = 'block';
+            
+            // Ocultar después de 10 segundos
+            setTimeout(() => {
+                resultDiv.style.display = 'none';
+            }, 10000);
+        }
+
+        function addMineralMarker(mineral) {
+            if (!map || !currentLocation) return;
+            
+            const mineralIcon = L.divIcon({
+                className: 'mineral-marker',
+                html: `<i class="fas fa-gem" style="color: #d35400; font-size: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"></i>`,
+                iconSize: [25, 25],
+                iconAnchor: [12.5, 25]
+            });
+            
+            const marker = L.marker([currentLocation.latitude, currentLocation.longitude], {
+                icon: mineralIcon
+            }).addTo(map);
+            
+            marker.bindPopup(`
+                <strong>${mineral.name}</strong><br>
+                ${mineral.formula}<br>
+                Dureza: ${mineral.hardness}<br>
+                Identificado: ${new Date(mineral.timestamp).toLocaleTimeString()}
+            `);
+            
+            // Hacer zoom al marcador
+            map.setView([currentLocation.latitude, currentLocation.longitude], 15);
+        }
+
+        function addSampleMarker() {
+            if (!map || !currentLocation) return;
+            
+            const sampleIcon = L.divIcon({
+                className: 'sample-marker',
+                html: `<i class="fas fa-map-pin" style="color: #3498db; font-size: 24px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);"></i>`,
+                iconSize: [30, 30],
+                iconAnchor: [15, 30]
+            });
+            
+            const marker = L.marker([currentLocation.latitude, currentLocation.longitude], {
+                icon: sampleIcon,
+                draggable: true
+            }).addTo(map);
+            
+            marker.bindPopup(`
+                <strong>Punto de Muestra</strong><br>
+                ${new Date().toLocaleString()}<br>
+                Arrastra para ajustar posición
+            `).openPopup();
+            
+            marker.on('dragend', function() {
+                const position = marker.getLatLng();
+                showNotification(`Posición ajustada a: ${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}`, 'info');
+            });
+        }
+
+        // ============================================
+        // 6. INFORMES RÁPIDOS
+        // ============================================
+        function generateMineralReport() {
+            if (identifiedMinerals.length === 0) {
+                showNotification('Primero identifica algún mineral con la cámara', 'warning');
+                return;
+            }
+            
+            const title = document.getElementById('reportTitle').value || 'Informe Geológico';
+            const notes = document.getElementById('reportNotes').value || 'Sin observaciones';
+            
+            const report = {
+                id: Date.now(),
+                title: title,
+                date: new Date().toISOString(),
+                minerals: identifiedMinerals.slice(0, 10), // Últimos 10 minerales
+                location: currentLocation,
+                notes: notes,
+                weather: getWeatherData(),
+                compassHeading: compassHeading
+            };
+            
+            // Mostrar preview
+            showReportPreview(report);
+            
+            // Limpiar formulario
+            document.getElementById('reportTitle').value = '';
+            document.getElementById('reportNotes').value = '';
+            
+            // Guardar reporte
+            saveReport(report);
+            
+            showNotification('Informe generado correctamente', 'success');
+        }
+
+        function showReportPreview(report) {
+            const preview = document.getElementById('reportPreview');
+            
+            let mineralsHTML = '';
+            report.minerals.forEach((mineral, index) => {
+                mineralsHTML += `
+                    <div style="padding: 10px; margin: 5px 0; background: #f8f9fa; border-radius: 5px;">
+                        ${index + 1}. <strong>${mineral.name}</strong> (${mineral.formula})
                     </div>
                 `;
-                
-                card.addEventListener('click', () => {
-                    currentMineral = mineral;
-                    displayMineralDetails(mineral);
-                });
-                
-                coverflow.appendChild(card);
             });
+            
+            preview.innerHTML = `
+                <h3 style="color: #2c3e50; margin-bottom: 15px;">${report.title}</h3>
+                
+                <div style="margin-bottom: 15px;">
+                    <strong>Fecha:</strong> ${new Date(report.date).toLocaleString()}
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <strong>Minerales identificados (${report.minerals.length}):</strong>
+                    ${mineralsHTML}
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <strong>Ubicación:</strong><br>
+                    ${report.location ? 
+                        `${report.location.latitude.toFixed(6)}, ${report.location.longitude.toFixed(6)}` : 
+                        'No disponible'}
+                </div>
+                
+                <div style="margin-bottom: 15px;">
+                    <strong>Observaciones:</strong><br>
+                    ${report.notes}
+                </div>
+                
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button class="btn btn-success" onclick="downloadReport(${report.id})" style="flex: 1;">
+                        <i class="fas fa-download"></i> Descargar
+                    </button>
+                    <button class="btn btn-secondary" onclick="shareReport(${report.id})" style="flex: 1;">
+                        <i class="fas fa-share-alt"></i> Compartir
+                    </button>
+                </div>
+            `;
         }
 
-        // === HERRAMIENTAS ===
+        function saveReport(report) {
+            const reports = JSON.parse(localStorage.getItem('atacamapp_reports') || '[]');
+            reports.unshift(report);
+            localStorage.setItem('atacamapp_reports', JSON.stringify(reports.slice(0, 20))); // Máximo 20 reportes
+        }
+
+        function viewAllReports() {
+            const reports = JSON.parse(localStorage.getItem('atacamapp_reports') || '[]');
+            
+            if (reports.length === 0) {
+                showNotification('No hay informes guardados', 'info');
+                return;
+            }
+            
+            openToolModal('reports');
+        }
+
+        // ============================================
+        // FUNCIONES DE UTILIDAD
+        // ============================================
+        function getLocationName(location) {
+            if (!location) return 'Esperando GPS...';
+            
+            const lat = location.latitude;
+            
+            if (lat < -28) return "Sur de Atacama 🏜️";
+            if (lat < -27) return "Copiapó ⛏️";
+            if (lat < -26.5) return "Vallenar 🏔️";
+            if (lat < -26) return "Huasco 🌊";
+            if (lat < -25) return "Salar de Atacama 🧂";
+            return "Norte de Atacama 🏜️";
+        }
+
+        function getWeatherData() {
+            return {
+                temperature: 24 + Math.random() * 8,
+                humidity: 10 + Math.random() * 20,
+                conditions: ['Despejado ☀️', 'Parcialmente nublado ⛅', 'Soleado 🔆'][Math.floor(Math.random() * 3)],
+                windSpeed: 5 + Math.random() * 15
+            };
+        }
+
+        function showApplication() {
+            document.getElementById('permissionScreen').style.display = 'none';
+            document.getElementById('mainApp').style.display = 'grid';
+            
+            // Iniciar animaciones
+            startStatusAnimations();
+        }
+
+        function startStatusAnimations() {
+            // Animación para el estado de la cámara
+            if (isCameraActive) {
+                setInterval(() => {
+                    const timer = document.getElementById('cameraTimer');
+                    if (timer) {
+                        timer.classList.toggle('shake');
+                    }
+                }, 2000);
+            }
+        }
+
+        function showNotification(message, type = 'info') {
+            const container = document.getElementById('notificationContainer');
+            const notification = document.createElement('div');
+            
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <i class="fas fa-${type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'info-circle'}"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(notification);
+            
+            // Auto-eliminar después de 5 segundos
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s ease reverse forwards';
+                setTimeout(() => notification.remove(), 300);
+            }, 5000);
+        }
+
+        function clearAllMinerals() {
+            if (identifiedMinerals.length === 0) return;
+            
+            if (confirm('¿Eliminar todos los minerales identificados?')) {
+                identifiedMinerals = [];
+                localStorage.removeItem('atacamapp_minerals');
+                updateMineralsGrid();
+                showNotification('Todos los minerales han sido eliminados', 'info');
+            }
+        }
+
+        function saveMineralsToStorage() {
+            localStorage.setItem('atacamapp_minerals', JSON.stringify(identifiedMinerals.slice(0, 50))); // Máximo 50 minerales
+        }
+
+        function loadMineralsFromStorage() {
+            const saved = localStorage.getItem('atacamapp_minerals');
+            if (saved) {
+                identifiedMinerals = JSON.parse(saved);
+                updateMineralsGrid();
+            }
+        }
+
+        function checkExistingPermissions() {
+            // Verificar si ya tenemos permisos
+            if (localStorage.getItem('atacamapp_permissions') === 'granted') {
+                // Intentar activar automáticamente
+                activateAllFunctions().catch(() => {
+                    // Si falla, mostrar pantalla de permisos
+                    document.getElementById('permissionScreen').style.display = 'flex';
+                });
+            }
+        }
+
+        // Guardar permisos cuando se activan
+        function savePermissions() {
+            localStorage.setItem('atacamapp_permissions', 'granted');
+        }
+
+        // ============================================
+        // FUNCIONES DE HERRAMIENTAS
+        // ============================================
         function openToolModal(tool) {
             const modal = document.getElementById('toolModal');
             const title = document.getElementById('modalTitle');
             const content = document.getElementById('modalContent');
             
+            let modalContent = '';
+            
             switch(tool) {
                 case 'mohs':
-                    title.innerHTML = '<i class="fas fa-gem"></i> Escala de Mohs';
-                    content.innerHTML = generateMohsContent();
+                    title.textContent = 'Escala de Mohs';
+                    modalContent = generateMohsContent();
                     break;
-                case 'compass':
-                    title.innerHTML = '<i class="fas fa-compass"></i> Brújula Digital';
-                    content.innerHTML = generateCompassContent();
+                case 'reports':
+                    title.textContent = 'Informes Guardados';
+                    modalContent = generateReportsContent();
                     break;
-                case 'converter':
-                    title.innerHTML = '<i class="fas fa-balance-scale"></i> Conversor de Unidades';
-                    content.innerHTML = generateConverterContent();
+                case 'export':
+                    title.textContent = 'Exportar Datos';
+                    modalContent = generateExportContent();
                     break;
-                case 'streak':
-                    title.innerHTML = '<i class="fas fa-palette"></i> Colores de Raya';
-                    content.innerHTML = generateStreakContent();
-                    break;
-                case 'weather':
-                    title.innerHTML = '<i class="fas fa-cloud-sun"></i> Clima Atacama';
-                    content.innerHTML = generateWeatherContent();
-                    break;
-                case 'geology':
-                    title.innerHTML = '<i class="fas fa-mountain"></i> Geología de Atacama';
-                    content.innerHTML = generateGeologyContent();
-                    break;
+                // ... otros casos
+                default:
+                    title.textContent = 'Herramienta';
+                    modalContent = `<p>Contenido de ${tool}</p>`;
             }
             
+            content.innerHTML = modalContent;
             modal.classList.add('active');
         }
 
         function generateMohsContent() {
             const mohsScale = [
-                { number: 1, mineral: "Talco", example: "Se raya con la uña" },
-                { number: 2, mineral: "Yeso", example: "Se raya con la uña" },
-                { number: 3, mineral: "Calcita", example: "Se raya con una moneda de cobre" },
-                { number: 4, mineral: "Fluorita", example: "Se raya con un cuchillo" },
-                { number: 5, mineral: "Apatito", example: "Se raya con un cuchillo" },
-                { number: 6, mineral: "Ortosa", example: "Raya al vidrio" },
-                { number: 7, mineral: "Cuarzo", example: "Raya al vidrio fácilmente" },
-                { number: 8, mineral: "Topacio", example: "Raya al cuarzo" },
-                { number: 9, mineral: "Corindón", example: "Raya al topacio" },
-                { number: 10, mineral: "Diamante", example: "El más duro" }
+                { level: 1, mineral: "Talco", test: "Se raya con la uña" },
+                { level: 2, mineral: "Yeso", test: "Se raya con la uña" },
+                { level: 3, mineral: "Calcita", test: "Se raya con moneda de cobre" },
+                { level: 4, mineral: "Fluorita", test: "Se raya con un cuchillo" },
+                { level: 5, mineral: "Apatito", test: "Se raya con un cuchillo" },
+                { level: 6, mineral: "Ortosa", test: "Raya al vidrio" },
+                { level: 7, mineral: "Cuarzo", test: "Raya al vidrio fácilmente" },
+                { level: 8, mineral: "Topacio", test: "Raya al cuarzo" },
+                { level: 9, mineral: "Corindón", test: "Raya al topacio" },
+                { level: 10, mineral: "Diamante", test: "El más duro" }
             ];
             
-            let html = `
-                <div style="text-align:center; padding:20px;">
-                    <h3>Escala de Dureza de Mohs</h3>
-                    <p style="color:#666; margin-bottom:20px;">Compara la dureza de los minerales</p>
-                    
-                    <div class="mohs-scale">
-            `;
-            
+            let html = `<div style="padding: 20px;">`;
             mohsScale.forEach(item => {
                 html += `
-                    <div class="mohs-item" style="grid-column: span 1;">
-                        <div style="font-size:1.5rem; font-weight:bold;">${item.number}</div>
-                        <div style="font-size:0.8rem;">${item.mineral}</div>
-                        <div style="font-size:0.7rem; margin-top:5px;">${item.example}</div>
+                    <div style="margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; display: flex; align-items: center; gap: 15px;">
+                        <div style="background: #d35400; color: white; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            ${item.level}
+                        </div>
+                        <div>
+                            <strong>${item.mineral}</strong><br>
+                            <small style="color: #666;">${item.test}</small>
+                        </div>
                     </div>
                 `;
             });
-            
-            html += `
-                    </div>
-                    
-                    <div style="margin-top:30px; padding:20px; background:#f8f9fa; border-radius:10px;">
-                        <h4><i class="fas fa-lightbulb"></i> Cómo usar:</h4>
-                        <p>Intenta rayar el mineral con objetos de referencia:</p>
-                        <ul style="text-align:left; margin-top:10px;">
-                            <li>Uña humana (2.5)</li>
-                            <li>Moneda de cobre (3.5)</li>
-                            <li>Navaja/cuchillo (5.5)</li>
-                            <li>Vidrio (5.5)</li>
-                            <li>Lima de acero (6.5)</li>
-                        </ul>
-                    </div>
-                </div>
-            `;
-            
+            html += `</div>`;
             return html;
         }
 
-        function generateCompassContent() {
-            return `
-                <div style="text-align:center; padding:20px;">
-                    <h3>Brújula Digital</h3>
-                    <p style="color:#666; margin-bottom:20px;">Calibrada para trabajo de campo</p>
-                    
-                    <div class="compass-container">
-                        <div class="compass">
-                            <div class="compass-needle" id="compassNeedle"></div>
-                            <div style="position:absolute; top:10px; left:50%; transform:translateX(-50%); color:var(--danger);">
-                                N
-                            </div>
-                            <div style="position:absolute; bottom:10px; left:50%; transform:translateX(-50%);">
-                                S
-                            </div>
-                            <div style="position:absolute; left:10px; top:50%; transform:translateY(-50%);">
-                                O
-                            </div>
-                            <div style="position:absolute; right:10px; top:50%; transform:translateY(-50%);">
-                                E
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top:20px; font-size:1.2rem;" id="compassHeading">
-                        0°
-                    </div>
-                    <div style="color:#666; margin-bottom:20px;" id="compassDirection">
-                        Norte
-                    </div>
-                    
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:20px;">
-                        <div style="padding:10px; background:#f8f9fa; border-radius:5px;">
-                            <strong>Inclinación</strong>
-                            <div id="compassTilt">0°</div>
-                        </div>
-                        <div style="padding:10px; background:#f8f9fa; border-radius:5px;">
-                            <strong>Calibración</strong>
-                            <div id="compassCalibration">${compassCalibration}°</div>
-                        </div>
-                    </div>
-                    
-                    <button class="btn btn-primary" onclick="calibrateCompass()" style="margin-top:20px;">
-                        <i class="fas fa-sync-alt"></i> Calibrar Brújula
-                    </button>
-                    
-                    <div style="margin-top:20px; padding:15px; background:#e8f4fc; border-radius:10px;">
-                        <h4><i class="fas fa-info-circle"></i> Instrucciones:</h4>
-                        <p>Gira el dispositivo para alinear con el norte magnético. 
-                        Mantén alejado de objetos metálicos para mayor precisión.</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function handleCompass(event) {
-            if (!event.alpha) return;
+        function generateReportsContent() {
+            const reports = JSON.parse(localStorage.getItem('atacamapp_reports') || '[]');
             
-            let heading = event.alpha; // 0-360
-            heading = (heading + compassCalibration) % 360;
-            
-            const needle = document.getElementById('compassNeedle');
-            const headingElement = document.getElementById('compassHeading');
-            const directionElement = document.getElementById('compassDirection');
-            const tiltElement = document.getElementById('compassTilt');
-            
-            if (needle) {
-                needle.style.transform = `translate(-50%, -100%) rotate(${heading}deg)`;
+            if (reports.length === 0) {
+                return '<div style="padding: 40px; text-align: center; color: #666;"><i class="fas fa-file-alt" style="font-size: 3rem;"></i><p style="margin-top: 15px;">No hay informes guardados</p></div>';
             }
             
-            if (headingElement) {
-                headingElement.textContent = `${Math.round(heading)}°`;
-            }
-            
-            if (directionElement) {
-                const directions = ['N', 'NE', 'E', 'SE', 'S', 'SO', 'O', 'NO'];
-                const index = Math.round(heading / 45) % 8;
-                directionElement.textContent = directions[index];
-            }
-            
-            if (tiltElement && event.beta) {
-                tiltElement.textContent = `${Math.round(event.beta)}°`;
-            }
-        }
-
-        function calibrateCompass() {
-            compassCalibration = (compassCalibration + 45) % 360;
-            showNotification(`Brújula calibrada: ${compassCalibration}°`, 'success');
-            
-            const calElement = document.getElementById('compassCalibration');
-            if (calElement) {
-                calElement.textContent = `${compassCalibration}°`;
-            }
-        }
-
-        function generateConverterContent() {
-            return `
-                <div style="padding:20px;">
-                    <h3 style="text-align:center; margin-bottom:20px;">Conversor de Unidades</h3>
-                    
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px;">
-                        <!-- Longitud -->
-                        <div>
-                            <h4><i class="fas fa-ruler"></i> Longitud</h4>
-                            <input type="number" class="form-control" id="lengthInput" placeholder="Valor" 
-                                   style="margin-bottom:10px;" value="1">
-                            <select class="form-control" id="lengthFrom" style="margin-bottom:10px;">
-                                <option value="m">Metros (m)</option>
-                                <option value="km">Kilómetros (km)</option>
-                                <option value="ft">Pies (ft)</option>
-                                <option value="mi">Millas (mi)</option>
-                            </select>
-                            <select class="form-control" id="lengthTo" style="margin-bottom:10px;">
-                                <option value="m">Metros (m)</option>
-                                <option value="km">Kilómetros (km)</option>
-                                <option value="ft">Pies (ft)</option>
-                                <option value="mi">Millas (mi)</option>
-                            </select>
-                            <button class="btn btn-primary" onclick="convertLength()" style="width:100%;">
-                                Convertir
-                            </button>
-                            <div id="lengthResult" style="margin-top:10px; padding:10px; background:#f8f9fa; border-radius:5px;">
-                                Resultado: --
-                            </div>
-                        </div>
-                        
-                        <!-- Masa -->
-                        <div>
-                            <h4><i class="fas fa-weight"></i> Masa</h4>
-                            <input type="number" class="form-control" id="massInput" placeholder="Valor" 
-                                   style="margin-bottom:10px;" value="1">
-                            <select class="form-control" id="massFrom" style="margin-bottom:10px;">
-                                <option value="g">Gramos (g)</option>
-                                <option value="kg">Kilogramos (kg)</option>
-                                <option value="oz">Onzas (oz)</option>
-                                <option value="lb">Libras (lb)</option>
-                            </select>
-                            <select class="form-control" id="massTo" style="margin-bottom:10px;">
-                                <option value="g">Gramos (g)</option>
-                                <option value="kg">Kilogramos (kg)</option>
-                                <option value="oz">Onzas (oz)</option>
-                                <option value="lb">Libras (lb)</option>
-                            </select>
-                            <button class="btn btn-primary" onclick="convertMass()" style="width:100%;">
-                                Convertir
-                            </button>
-                            <div id="massResult" style="margin-top:10px; padding:10px; background:#f8f9fa; border-radius:5px;">
-                                Resultado: --
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Conversión de Coordenadas -->
-                    <div style="margin-top:30px;">
-                        <h4><i class="fas fa-globe-americas"></i> Coordenadas</h4>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-                            <div>
-                                <input type="text" class="form-control" id="coordDD" 
-                                       placeholder="DD: -27.3667, -70.3333" style="margin-bottom:10px;">
-                                <button class="btn btn-secondary" onclick="convertToDMS()" style="width:100%;">
-                                    DD → DMS
-                                </button>
-                            </div>
-                            <div>
-                                <input type="text" class="form-control" id="coordDMS" 
-                                       placeholder="DMS: 27°22'0\"S, 70°20'0\"W" style="margin-bottom:10px;">
-                                <button class="btn btn-secondary" onclick="convertToDD()" style="width:100%;">
-                                    DMS → DD
-                                </button>
-                            </div>
-                        </div>
-                        <div id="coordResult" style="margin-top:10px; padding:10px; background:#f8f9fa; border-radius:5px;">
-                            Resultado: --
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function convertLength() {
-            const value = parseFloat(document.getElementById('lengthInput').value);
-            const from = document.getElementById('lengthFrom').value;
-            const to = document.getElementById('lengthTo').value;
-            
-            const conversions = {
-                m: 1,
-                km: 0.001,
-                ft: 3.28084,
-                mi: 0.000621371
-            };
-            
-            const result = value * (conversions[to] / conversions[from]);
-            document.getElementById('lengthResult').innerHTML = `
-                <strong>${value} ${from} = ${result.toFixed(6)} ${to}</strong>
-            `;
-        }
-
-        function convertMass() {
-            const value = parseFloat(document.getElementById('massInput').value);
-            const from = document.getElementById('massFrom').value;
-            const to = document.getElementById('massTo').value;
-            
-            const conversions = {
-                g: 1,
-                kg: 0.001,
-                oz: 0.035274,
-                lb: 0.00220462
-            };
-            
-            const result = value * (conversions[to] / conversions[from]);
-            document.getElementById('massResult').innerHTML = `
-                <strong>${value} ${from} = ${result.toFixed(6)} ${to}</strong>
-            `;
-        }
-
-        function convertToDMS() {
-            const dd = document.getElementById('coordDD').value;
-            const coords = dd.split(',').map(c => parseFloat(c.trim()));
-            
-            if (coords.length === 2 && !isNaN(coords[0]) && !isNaN(coords[1])) {
-                const lat = ddToDms(coords[0], true);
-                const lng = ddToDms(coords[1], false);
-                document.getElementById('coordResult').innerHTML = `
-                    <strong>${lat}, ${lng}</strong>
-                `;
-                document.getElementById('coordDMS').value = `${lat}, ${lng}`;
-            }
-        }
-
-        function ddToDms(dd, isLat) {
-            const dir = isLat ? (dd >= 0 ? 'N' : 'S') : (dd >= 0 ? 'E' : 'W');
-            const absDd = Math.abs(dd);
-            const deg = Math.floor(absDd);
-            const min = Math.floor((absDd - deg) * 60);
-            const sec = ((absDd - deg - min/60) * 3600).toFixed(2);
-            
-            return `${deg}°${min}'${sec}"${dir}`;
-        }
-
-        function generateStreakContent() {
-            const streakColors = [
-                { name: "Rojo", color: "#e74c3c", examples: "Hematita, Cinabrio" },
-                { name: "Amarillo", color: "#f1c40f", examples: "Azufre, Oropimente" },
-                { name: "Negro", color: "#2c3e50", examples: "Magnetita, Cromita" },
-                { name: "Blanco", color: "#ecf0f1", examples: "Cuarzo, Calcita" },
-                { name: "Verde", color: "#27ae60", examples: "Malaquita, Atacamita" },
-                { name: "Gris", color: "#7f8c8d", examples: "Galena, Grafito" },
-                { name: "Marrón", color: "#a0522d", examples: "Goethita, Limonita" },
-                { name: "Azul", color: "#3498db", examples: "Azurita, Lazurita" },
-                { name: "Violeta", color: "#9b59b6", examples: "Fluorita, Lepidolita" },
-                { name: "Anaranjado", color: "#e67e22", examples: "Realgar, Vanadinita" }
-            ];
-            
-            let html = `
-                <div style="text-align:center; padding:20px;">
-                    <h3>Colores de Raya de Minerales</h3>
-                    <p style="color:#666; margin-bottom:20px;">El color del polvo del mineral</p>
-                    
-                    <div class="streak-colors">
-            `;
-            
-            streakColors.forEach(item => {
+            let html = `<div style="max-height: 400px; overflow-y: auto; padding: 10px;">`;
+            reports.forEach(report => {
                 html += `
-                    <div class="streak-color" style="background:${item.color};" 
-                         onclick="selectStreakColor('${item.name}')">
-                        <div style="text-shadow: 1px 1px 2px rgba(0,0,0,0.5);">
-                            ${item.name}
+                    <div style="margin-bottom: 15px; padding: 15px; background: #f8f9fa; border-radius: 10px;">
+                        <strong>${report.title}</strong>
+                        <div style="color: #666; font-size: 0.9rem; margin: 5px 0;">
+                            ${new Date(report.date).toLocaleString()}
+                        </div>
+                        <div style="color: #666; font-size: 0.9rem;">
+                            ${report.minerals.length} minerales identificados
+                        </div>
+                        <div style="margin-top: 10px; display: flex; gap: 10px;">
+                            <button class="btn btn-success" onclick="downloadReport(${report.id})" style="padding: 5px 10px; font-size: 0.9rem;">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteReport(${report.id})" style="padding: 5px 10px; font-size: 0.9rem;">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                 `;
             });
-            
-            html += `
-                    </div>
-                    
-                    <div id="selectedStreak" style="margin:20px 0; padding:15px; background:#f8f9fa; border-radius:10px;">
-                        <h4>Color seleccionado: <span id="currentStreak">Ninguno</span></h4>
-                        <p id="streakExamples" style="color:#666;">Selecciona un color para ver ejemplos</p>
-                    </div>
-                    
-                    <div style="margin-top:20px; padding:15px; background:#e8f4fc; border-radius:10px;">
-                        <h4><i class="fas fa-info-circle"></i> Cómo realizar la prueba de raya:</h4>
-                        <ol style="text-align:left; margin-top:10px; padding-left:20px;">
-                            <li>Usa una placa de porcelana sin vidriar</li>
-                            <li>Frota el mineral contra la placa</li>
-                            <li>Observa el color del polvo dejado</li>
-                            <li>Compara con la tabla de colores</li>
-                        </ol>
-                        <p style="margin-top:10px;"><strong>Nota:</strong> El color de raya puede ser diferente al color del mineral.</p>
-                    </div>
-                </div>
-            `;
-            
+            html += `</div>`;
             return html;
         }
 
-        function selectStreakColor(colorName) {
-            const streakData = {
-                "Rojo": { examples: "Hematita, Cinabrio, Rejalgar" },
-                "Amarillo": { examples: "Azufre, Oropimente, Limonita" },
-                "Negro": { examples: "Magnetita, Cromita, Ilmenita" },
-                "Blanco": { examples: "Cuarzo, Calcita, Yeso" },
-                "Verde": { examples: "Malaquita, Atacamita, Crisocola" },
-                "Gris": { examples: "Galena, Grafito, Molibdenita" },
-                "Marrón": { examples: "Goethita, Limonita, Siderita" },
-                "Azul": { examples: "Azurita, Lazurita, Calcantita" },
-                "Violeta": { examples: "Fluorita, Lepidolita, Amatista" },
-                "Anaranjado": { examples: "Realgar, Vanadinita, Wulfenita" }
-            };
+        function downloadReport(reportId) {
+            const reports = JSON.parse(localStorage.getItem('atacamapp_reports') || '[]');
+            const report = reports.find(r => r.id === reportId);
             
-            document.getElementById('currentStreak').textContent = colorName;
-            document.getElementById('streakExamples').innerHTML = `
-                <strong>Minerales típicos:</strong> ${streakData[colorName].examples}
-            `;
-        }
-
-        // === FUNCIONES DE ANÁLISIS Y REPORTES ===
-        async function analyzeWithAI() {
-            showNotification('Analizando muestra con IA...', 'info');
-            
-            // Simulación de análisis IA
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            // Seleccionar mineral aleatorio de la base de datos
-            const randomIndex = Math.floor(Math.random() * mineralsData.length);
-            currentMineral = mineralsData[randomIndex];
-            
-            // Actualizar reporte
-            if (currentReport) {
-                currentReport.mineral = currentMineral;
-                currentReport.analysis = {
-                    confidence: (75 + Math.random() * 20).toFixed(1) + '%',
-                    method: 'Análisis IA por imagen',
-                    timestamp: new Date().toISOString()
-                };
-            }
-            
-            displayMineralDetails(currentMineral);
-            updateCoverflowSelection(randomIndex);
-            
-            showNotification(`Mineral identificado: ${currentMineral.name}`, 'success');
-        }
-
-        function displayMineralDetails(mineral) {
-            const container = document.getElementById('mineralDetails');
-            const loading = document.getElementById('detailsLoading');
-            
-            if (loading) loading.style.display = 'none';
-            
-            container.innerHTML = `
-                <div class="fade-in">
-                    <h3 style="color:var(--primary); margin-bottom:10px;">
-                        ${mineral.name}
-                        <span style="font-size:0.8rem; color:#666; font-weight:normal;">
-                            (${mineral.formula})
-                        </span>
-                    </h3>
-                    
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:15px 0;">
-                        <div style="padding:10px; background:#f8f9fa; border-radius:5px;">
-                            <strong>Clase:</strong> ${mineral.class}
-                        </div>
-                        <div style="padding:10px; background:#f8f9fa; border-radius:5px;">
-                            <strong>Dureza (Mohs):</strong> ${mineral.hardness}
-                        </div>
-                        <div style="padding:10px; background:#f8f9fa; border-radius:5px;">
-                            <strong>Densidad:</strong> ${mineral.density} g/cm³
-                        </div>
-                        <div style="padding:10px; background:#f8f9fa; border-radius:5px;">
-                            <strong>Color:</strong> ${mineral.color}
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top:15px; padding:15px; background:#e8f4fc; border-radius:10px;">
-                        <h4><i class="fas fa-info-circle"></i> Información:</h4>
-                        <p>${mineral.name} es un mineral típico de la Región de ${mineral.location}. 
-                        Su raya es de color ${mineral.streak.toLowerCase()}.</p>
-                        
-                        <div style="margin-top:10px;">
-                            <strong>Ubicación típica:</strong>
-                            <span class="location-badge">
-                                <i class="fas fa-map-marker-alt"></i> ${mineral.location}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function updateCoverflowSelection(index) {
-            const cards = document.querySelectorAll('.mineral-card-flow');
-            cards.forEach((card, i) => {
-                card.classList.toggle('active', i === index);
-            });
-            reorganizeCoverflow(index);
-        }
-
-        async function generateFullReport() {
-            if (!currentReport) {
-                showNotification('Captura una muestra primero', 'warning');
+            if (!report) {
+                showNotification('Reporte no encontrado', 'error');
                 return;
             }
             
-            showNotification('Generando informe completo...', 'info');
-            
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            currentReport.summary = {
-                mineral: currentMineral,
-                location: currentLocation,
-                zone: geologicalZone,
-                weather: await getWeatherData(),
-                compass: compassCalibration,
-                timestamp: new Date().toISOString()
-            };
-            
-            // Mostrar resumen
-            document.getElementById('reportSummary').innerHTML = `
-                <div class="fade-in">
-                    <h3 style="color:var(--success); margin-bottom:15px;">
-                        <i class="fas fa-check-circle"></i> Informe Generado
-                    </h3>
-                    
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:10px 0;">
-                        <div style="padding:10px; background:#f0f7ff; border-radius:5px;">
-                            <strong>Mineral:</strong><br>${currentMineral.name}
-                        </div>
-                        <div style="padding:10px; background:#f0f7ff; border-radius:5px;">
-                            <strong>Ubicación:</strong><br>${currentLocation.latitude.toFixed(4)}, ${currentLocation.longitude.toFixed(4)}
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top:15px; padding:15px; background:#e8f4fc; border-radius:10px;">
-                        <h4><i class="fas fa-file-alt"></i> Contenido del Informe:</h4>
-                        <ul style="padding-left:20px;">
-                            <li>📸 Fotografía de la muestra</li>
-                            <li>📍 Coordenadas GPS exactas</li>
-                            <li>🗺️ Ubicación en mapa geológico</li>
-                            <li>⚒️ Datos mineralógicos completos</li>
-                            <li>🌤️ Condiciones climáticas</li>
-                            <li>🧭 Orientación magnética</li>
-                        </ul>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('downloadReport').disabled = false;
-            showNotification('Informe listo para descargar', 'success');
-        }
-
-        async function downloadCurrentReport() {
-            if (!currentReport) {
-                showNotification('No hay informe para descargar', 'warning');
-                return;
-            }
-            
-            const reportData = {
-                ...currentReport,
-                app: "AtacamApp",
-                version: "1.0",
-                generated: new Date().toISOString()
-            };
-            
-            const dataStr = JSON.stringify(reportData, null, 2);
+            const dataStr = JSON.stringify(report, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `atacamapp_informe_${new Date().toISOString().slice(0,10)}.json`;
+            a.download = `atacamapp_reporte_${reportId}.json`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            showNotification('Informe descargado exitosamente', 'success');
+            showNotification('Reporte descargado', 'success');
         }
 
-        // === FUNCIONES DE UTILIDAD ===
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = 'notification';
+        function deleteReport(reportId) {
+            if (!confirm('¿Eliminar este reporte?')) return;
             
-            let icon = 'info-circle';
-            let bgColor = 'var(--accent2)';
+            const reports = JSON.parse(localStorage.getItem('atacamapp_reports') || '[]');
+            const filtered = reports.filter(r => r.id !== reportId);
+            localStorage.setItem('atacamapp_reports', JSON.stringify(filtered));
             
-            switch(type) {
-                case 'success':
-                    icon = 'check-circle';
-                    bgColor = 'var(--success)';
-                    break;
-                case 'error':
-                    icon = 'exclamation-circle';
-                    bgColor = 'var(--danger)';
-                    break;
-                case 'warning':
-                    icon = 'exclamation-triangle';
-                    bgColor = 'var(--warning)';
-                    break;
-            }
-            
-            notification.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
-            notification.style.background = bgColor;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.animation = 'slideIn 0.3s ease reverse forwards';
-                setTimeout(() => notification.remove(), 300);
-            }, 3000);
+            showNotification('Reporte eliminado', 'info');
+            openToolModal('reports'); // Recargar
         }
 
-        function updateLocationDisplay() {
-            if (!currentLocation) return;
-            
-            document.getElementById('currentLat').textContent = currentLocation.latitude.toFixed(6);
-            document.getElementById('currentLng').textContent = currentLocation.longitude.toFixed(6);
-            document.getElementById('currentAlt').textContent = currentLocation.altitude ? 
-                `${currentLocation.altitude.toFixed(0)} msnm` : '-- msnm';
-            document.getElementById('currentAcc').textContent = `${Math.round(currentLocation.accuracy)} m`;
-            
-            document.getElementById('locationStatus').innerHTML = 
-                `<i class="fas fa-map-marker-alt"></i> ${getLocationName(currentLocation)}`;
-        }
-
-        function getLocationName(location) {
-            // Determinar nombre basado en coordenadas de Atacama
-            const lat = location.latitude;
-            const lng = location.longitude;
-            
-            if (lat < -28) return "Sur de Atacama";
-            if (lat < -27) return "Copiapó";
-            if (lat < -26.5) return "Vallenar";
-            if (lat < -26) return "Huasco";
-            if (lat < -25) return "Salar de Atacama";
-            return "Norte de Atacama";
-        }
-
-        function updateGeologicalZone() {
-            if (!currentLocation) return;
-            
-            const alt = currentLocation.altitude || 0;
-            let zone;
-            
-            if (alt > 3500) {
-                zone = {
-                    name: "Cordillera de los Andes",
-                    type: "Andes",
-                    description: "Zona volcánica activa con mineralización cuprífera",
-                    emoji: "⛰️"
-                };
-            } else if (alt > 1500) {
-                zone = {
-                    name: "Precordillera",
-                    type: "Foothills",
-                    description: "Zona de transición con vetas mineralizadas",
-                    emoji: "🏞️"
-                };
-            } else if (alt > 500) {
-                zone = {
-                    name: "Depresión Intermedia",
-                    type: "Basin",
-                    description: "Cuenca sedimentaria con depósitos minerales",
-                    emoji: "🏜️"
-                };
-            } else {
-                zone = {
-                    name: "Costa",
-                    type: "Coastal",
-                    description: "Zona costera con sedimentos marinos",
-                    emoji: "🌊"
-                };
-            }
-            
-            geologicalZone = zone;
-            document.getElementById('geologicalZone').innerHTML = `
-                ${zone.emoji} ${zone.name}
-                <div style="font-size:0.8rem; color:#666;">${zone.description}</div>
-            `;
-        }
-
-        function updateGPSLocation() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(
-                    handleLocationSuccess,
-                    handleLocationError,
-                    { enableHighAccuracy: true, timeout: 10000 }
-                );
-                showNotification('Actualizando ubicación GPS...', 'info');
-            } else {
-                showNotification('GPS no soportado', 'error');
-            }
-        }
-
-        function handleLocationError(error) {
-            console.error('GPS Error:', error);
-            let message = 'Error GPS: ';
-            
-            switch(error.code) {
-                case 1: message += 'Permiso denegado'; break;
-                case 2: message += 'Posición no disponible'; break;
-                case 3: message += 'Timeout'; break;
-                default: message += 'Error desconocido';
-            }
-            
-            showNotification(message, 'error');
-            useSimulatedLocation();
-        }
-
-        function useSimulatedLocation() {
-            currentLocation = {
-                latitude: -27.3667 + (Math.random() - 0.5) * 0.1,
-                longitude: -70.3333 + (Math.random() - 0.5) * 0.1,
-                altitude: 1500 + Math.random() * 1000,
-                accuracy: 50,
-                timestamp: new Date()
-            };
-            
-            updateLocationDisplay();
-            updateGeologicalZone();
-            updateMapLocation(currentLocation);
-            
-            document.getElementById('gpsStatus').innerHTML = 
-                '<i class="fas fa-satellite"></i> GPS: Simulado';
-        }
-
-        async function getWeatherData() {
-            // Datos climáticos simulados para Atacama
-            return {
-                temperature: 24 + Math.random() * 8,
-                humidity: 10 + Math.random() * 20,
-                windSpeed: 5 + Math.random() * 15,
-                conditions: ['Despejado', 'Parcialmente nublado', 'Soleado'][Math.floor(Math.random() * 3)],
-                uvIndex: 8 + Math.random() * 4
-            };
-        }
-
-        function generateWeatherContent() {
+        function generateExportContent() {
             return `
-                <div style="text-align:center; padding:20px;">
-                    <h3>Clima - Región de Atacama</h3>
-                    <p style="color:#666; margin-bottom:20px;">Condiciones actuales y pronóstico</p>
+                <div style="padding: 20px;">
+                    <h3 style="margin-bottom: 20px;">Exportar Todos los Datos</h3>
                     
-                    <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:15px; margin:20px 0;">
-                        <div style="padding:15px; background:#f8f9fa; border-radius:10px;">
-                            <div style="font-size:2rem; color:#e74c3c;">
-                                <i class="fas fa-thermometer-half"></i>
-                            </div>
-                            <div style="font-size:1.5rem; font-weight:bold;">24°C</div>
-                            <div style="font-size:0.9rem; color:#666;">Temperatura</div>
-                        </div>
-                        
-                        <div style="padding:15px; background:#f8f9fa; border-radius:10px;">
-                            <div style="font-size:2rem; color:#3498db;">
-                                <i class="fas fa-tint"></i>
-                            </div>
-                            <div style="font-size:1.5rem; font-weight:bold;">15%</div>
-                            <div style="font-size:0.9rem; color:#666;">Humedad</div>
-                        </div>
-                        
-                        <div style="padding:15px; background:#f8f9fa; border-radius:10px;">
-                            <div style="font-size:2rem; color:#27ae60;">
-                                <i class="fas fa-wind"></i>
-                            </div>
-                            <div style="font-size:1.5rem; font-weight:bold;">12 km/h</div>
-                            <div style="font-size:0.9rem; color:#666;">Viento</div>
-                        </div>
+                    <div style="margin-bottom: 20px;">
+                        <p>Exporta todos los datos de AtacamApp en un solo archivo:</p>
                     </div>
                     
-                    <div style="margin-top:20px; padding:15px; background:#e8f4fc; border-radius:10px;">
-                        <h4><i class="fas fa-exclamation-triangle"></i> Recomendaciones para trabajo de campo:</h4>
-                        <ul style="text-align:left; margin-top:10px; padding-left:20px;">
-                            <li>Usar protección solar (FPS 50+)</li>
-                            <li>Mantenerse hidratado</li>
-                            <li>Usar ropa adecuada para el desierto</li>
-                            <li>Evitar horas de máximo calor (12:00-16:00)</li>
-                            <li>Llevar equipo de primeros auxilios</li>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                        <h4><i class="fas fa-database"></i> Datos incluidos:</h4>
+                        <ul style="margin-top: 10px; padding-left: 20px;">
+                            <li>${identifiedMinerals.length} minerales identificados</li>
+                            <li>${JSON.parse(localStorage.getItem('atacamapp_reports') || '[]').length} informes guardados</li>
+                            <li>Datos de ubicación GPS</li>
+                            <li>Configuración de la aplicación</li>
                         </ul>
                     </div>
                     
-                    <button class="btn btn-primary" onclick="updateWeather()" style="margin-top:20px;">
-                        <i class="fas fa-sync-alt"></i> Actualizar Clima
+                    <button class="btn btn-primary" onclick="exportAllData()" style="width: 100%; padding: 15px;">
+                        <i class="fas fa-download"></i> Exportar Todo
                     </button>
                 </div>
             `;
         }
 
-        function generateGeologyContent() {
-            return `
-                <div style="padding:20px;">
-                    <h3 style="text-align:center;">Geología de la Región de Atacama</h3>
-                    
-                    <div style="margin:20px 0; padding:20px; background:#f8f9fa; border-radius:10px;">
-                        <h4><i class="fas fa-info-circle"></i> Características Principales:</h4>
-                        <ul style="margin-top:10px; padding-left:20px;">
-                            <li><strong>Zona metalogénica:</strong> Principal productor de cobre de Chile</li>
-                            <li><strong>Edad geológica:</strong> Principalmente Jurásico a Mioceno</li>
-                            <li><strong>Rocas:</strong> Andeasita, Granodiorita, Sedimentos</li>
-                            <li><strong>Mineralización:</strong> Cobre, Oro, Plata, Hierro</li>
-                            <li><strong>Estructuras:</strong> Sistema de fallas NNE-SSO</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="margin:20px 0; padding:20px; background:#fff8e1; border-radius:10px;">
-                        <h4><i class="fas fa-map-marked-alt"></i> Principales Distritos Mineros:</h4>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-                            <div style="padding:10px; background:white; border-radius:5px;">
-                                <strong>Candelaria</strong><br>
-                                <small>Mineral: Cobre, Oro</small>
-                            </div>
-                            <div style="padding:10px; background:white; border-radius:5px;">
-                                <strong>Chuquicamata</strong><br>
-                                <small>Mineral: Cobre</small>
-                            </div>
-                            <div style="padding:10px; background:white; border-radius:5px;">
-                                <strong>El Salvador</strong><br>
-                                <small>Mineral: Cobre</small>
-                            </div>
-                            <div style="padding:10px; background:white; border-radius:5px;">
-                                <strong>Chañarcillo</strong><br>
-                                <small>Mineral: Plata</small>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top:20px; padding:15px; background:#e8f4fc; border-radius:10px;">
-                        <h4><i class="fas fa-lightbulb"></i> Datos Curiosos:</h4>
-                        <ul style="margin-top:10px; padding-left:20px;">
-                            <li>Atacama es el desierto más árido del mundo</li>
-                            <li>Contiene las mayores reservas de litio del planeta</li>
-                            <li>La minería representa el 11% del PIB de Chile</li>
-                            <li>Existen volcanes activos sobre los 6,000 msnm</li>
-                        </ul>
-                    </div>
-                </div>
-            `;
-        }
-
-        function updateWeather() {
-            showNotification('Actualizando datos climáticos...', 'info');
-            setTimeout(() => {
-                showNotification('Clima actualizado', 'success');
-            }, 1000);
-        }
-
-        function clearAllData() {
-            if (confirm('¿Estás seguro de borrar todos los datos? Esta acción no se puede deshacer.')) {
-                localStorage.clear();
-                mineralsData = [];
-                currentReport = null;
-                currentMineral = null;
-                
-                updateCoverflow();
-                document.getElementById('reportSummary').innerHTML = `
-                    <p style="color:#666; text-align:center; padding:20px;">
-                        <i class="fas fa-info-circle"></i><br>
-                        Captura una muestra con la cámara para generar un informe...
-                    </p>
-                `;
-                
-                document.getElementById('downloadReport').disabled = true;
-                document.getElementById('mineralDetails').innerHTML = `
-                    <div class="loading" id="detailsLoading">
-                        <i class="fas fa-spinner"></i>
-                        <p>Selecciona un mineral...</p>
-                    </div>
-                `;
-                
-                showNotification('Todos los datos han sido borrados', 'success');
-            }
-        }
-
         function exportAllData() {
             const allData = {
-                minerals: mineralsData,
-                reports: currentReport ? [currentReport] : [],
+                minerals: identifiedMinerals,
+                reports: JSON.parse(localStorage.getItem('atacamapp_reports') || '[]'),
                 location: currentLocation,
                 settings: {
-                    compassCalibration,
-                    geologicalZone
+                    cameraActive: isCameraActive,
+                    gpsActive: isGPSActive,
+                    lastUpdated: new Date().toISOString()
                 },
-                exported: new Date().toISOString()
+                app: "AtacamApp",
+                version: "2.0"
             };
             
             const dataStr = JSON.stringify(allData, null, 2);
@@ -2311,22 +1940,16 @@
             document.getElementById('toolModal').classList.remove('active');
         }
 
-        // === INICIALIZAR AL CARGAR ===
-        window.addEventListener('load', function() {
-            // Verificar si es móvil
-            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
-            if (isMobile) {
-                console.log('AtacamApp - Modo móvil activado');
-                // Configuraciones específicas para móvil
-                document.body.style.fontSize = '16px'; // Tamaño mínimo para móvil
-            }
-            
-            // Configurar eventos táctiles
-            document.addEventListener('touchstart', function() {}, {passive: true});
-            
-            console.log('AtacamApp 100% funcional - Herminichiiiii! 🚀');
-        });
+        // ============================================
+        // INICIALIZACIÓN FINAL
+        // ============================================
+        // Cargar datos guardados
+        loadMineralsFromStorage();
+        
+        // Configurar eventos para guardar permisos
+        document.getElementById('activateAll').addEventListener('click', savePermissions);
+        
+        console.log('AtacamApp - Sistema listo. Todas las funciones son OBLIGATORIAS.');
     </script>
 </body>
 </html>
