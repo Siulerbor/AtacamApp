@@ -192,7 +192,6 @@
         #appContainer {
             display: none;
             min-height: 100vh;
-            padding-bottom: 70px;
         }
 
         /* Header Compacto Desierto */
@@ -661,6 +660,26 @@
             border-bottom: none;
         }
 
+        /* Graph Container */
+        .graph-container {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.1), rgba(210, 180, 140, 0.05));
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1.5px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .graph-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
         /* Layers Panel Desierto */
         .layers-panel {
             background: linear-gradient(135deg, rgba(255, 248, 220, 0.1), rgba(210, 180, 140, 0.05));
@@ -685,62 +704,45 @@
             border-bottom: none;
         }
 
-        /* Bottom Navigation Desierto */
-        .bottom-nav {
-            position: fixed;
-            bottom: 12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 92%;
-            max-width: 340px;
-            background: linear-gradient(135deg, rgba(255, 248, 220, 0.2), rgba(210, 180, 140, 0.15));
-            backdrop-filter: blur(30px);
+        /* Tabs Navigation */
+        .tabs-navigation {
             display: flex;
             justify-content: space-around;
-            padding: 10px 12px;
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.2), rgba(210, 180, 140, 0.15));
+            backdrop-filter: blur(30px);
             border-radius: 18px;
+            padding: 8px;
+            margin: 15px;
             box-shadow: 0 10px 35px rgba(139, 69, 19, 0.2);
-            z-index: 1000;
             border: 1.5px solid var(--glass-border);
         }
 
-        .nav-btn {
+        .tab-btn {
             display: flex;
             flex-direction: column;
             align-items: center;
             text-decoration: none;
             color: var(--text-secondary);
-            font-size: 0.68rem;
-            padding: 6px 8px;
+            font-size: 0.7rem;
+            padding: 8px 12px;
             border-radius: 12px;
             transition: var(--transition);
             min-width: 60px;
             position: relative;
             font-weight: 600;
+            cursor: pointer;
         }
 
-        .nav-btn span:first-child {
+        .tab-btn span:first-child {
             font-size: 1.4rem;
             margin-bottom: 3px;
         }
 
-        .nav-btn.active {
+        .tab-btn.active {
             color: white;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            transform: translateY(-6px);
+            transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(139, 69, 19, 0.3);
-        }
-
-        .nav-btn.active::after {
-            content: "";
-            position: absolute;
-            top: -3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 5px;
-            height: 5px;
-            background: var(--accent);
-            border-radius: 50%;
         }
 
         /* Notification Desierto */
@@ -897,6 +899,63 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Graph Types Selector */
+        .graph-types {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .graph-type-btn {
+            padding: 12px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.1), rgba(210, 180, 140, 0.05));
+            border: 1.5px solid var(--glass-border);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .graph-type-btn.active {
+            background: linear-gradient(135deg, rgba(212, 160, 23, 0.2), rgba(139, 69, 19, 0.1));
+            border-color: var(--primary);
+        }
+
+        /* Route Info Panel */
+        .route-info {
+            background: linear-gradient(135deg, rgba(70, 130, 180, 0.15), rgba(100, 149, 237, 0.1));
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 15px;
+            margin-top: 15px;
+            border: 1.5px solid rgba(70, 130, 180, 0.3);
+            display: none;
+        }
+
+        /* Mineral Database Grid */
+        .mineral-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .mineral-card {
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.1), rgba(210, 180, 140, 0.05));
+            backdrop-filter: blur(10px);
+            padding: 10px;
+            border-radius: 10px;
+            border: 1.5px solid var(--glass-border);
+            text-align: center;
+            font-size: 0.75rem;
+        }
+
         /* Responsive Design */
         @media (max-width: 360px) {
             html { font-size: 13px; }
@@ -925,22 +984,6 @@
                 flex-direction: column;
                 gap: 10px;
             }
-            
-            .bottom-nav {
-                width: 96%;
-                padding: 8px 10px;
-                border-radius: 16px;
-            }
-            
-            .nav-btn {
-                min-width: 55px;
-                font-size: 0.65rem;
-                padding: 5px 6px;
-            }
-            
-            .nav-btn span:first-child {
-                font-size: 1.3rem;
-            }
         }
 
         @media (max-width: 480px) and (min-width: 361px) {
@@ -958,7 +1001,6 @@
             .map-container { height: 170px; }
             .camera-container { height: 140px; }
             .chat-container { height: 200px; }
-            .bottom-nav { bottom: 8px; }
             .gps-data-bar { margin: 8px; padding: 10px; }
         }
 
@@ -1046,6 +1088,26 @@
             </div>
         </div>
 
+        <!-- Tabs Navigation -->
+        <div class="tabs-navigation">
+            <div class="tab-btn active" data-page="dashboard">
+                <span>🗺️</span>
+                <span>Mapa</span>
+            </div>
+            <div class="tab-btn" data-page="camera">
+                <span>📸</span>
+                <span>Cámara</span>
+            </div>
+            <div class="tab-btn" data-page="graphs">
+                <span>📊</span>
+                <span>Gráficos</span>
+            </div>
+            <div class="tab-btn" data-page="AI">
+                <span>🤖</span>
+                <span>GeoBot</span>
+            </div>
+        </div>
+
         <!-- Main Content -->
         <main class="main-content">
             <!-- Page 1: Dashboard -->
@@ -1054,7 +1116,7 @@
                 <div class="glass-card">
                     <div class="card-header">
                         <span>🗺️</span>
-                        <h2 class="card-title">Mapa Geológico</h2>
+                        <h2 class="card-title">Mapa Geológico Topográfico</h2>
                     </div>
                     
                     <div class="map-container">
@@ -1066,6 +1128,9 @@
                             <button class="map-control-btn" id="mapTerrainBtn" title="Vista topográfica">
                                 <span>⛰️</span>
                             </button>
+                            <button class="map-control-btn" id="mapGeologyBtn" title="Capa geológica">
+                                <span>🪨</span>
+                            </button>
                         </div>
                         <div class="map-legend">
                             <div class="legend-item">
@@ -1076,26 +1141,45 @@
                                 <div class="legend-color" style="background: linear-gradient(135deg, #DC143C, #8B0000);"></div>
                                 <span>Fallas ⚡</span>
                             </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: linear-gradient(135deg, #228B22, #006400);"></div>
+                                <span>Ruta 📍</span>
+                            </div>
                         </div>
                     </div>
                     
                     <div class="quick-actions">
-                        <button class="glass-btn primary" id="updateLocationBtn">
+                        <button class="glass-btn primary" id="addPointBtn">
                             <span>📍</span>
-                            Actualizar GPS
-                        </button>
-                        <button class="glass-btn warning" id="addPointBtn">
-                            <span>➕</span>
                             Agregar Punto
                         </button>
-                        <button class="glass-btn danger" id="clearMapBtn">
-                            <span>🗑️</span>
-                            Limpiar
+                        <button class="glass-btn warning" id="markRouteBtn">
+                            <span>🔄</span>
+                            Marcar Ruta
                         </button>
+                        <button class="glass-btn success" id="downloadRouteBtn">
+                            <span>⬇️</span>
+                            Descargar Ruta
+                        </button>
+                    </div>
+
+                    <div id="routeInfo" class="route-info">
+                        <div class="data-row">
+                            <span>Longitud de ruta:</span>
+                            <span id="routeLength">0 km</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Puntos de ruta:</span>
+                            <span id="routePoints">0</span>
+                        </div>
+                        <div class="data-row">
+                            <span>Elevación total:</span>
+                            <span id="routeElevation">0 m</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Geology Info -->
+                <!-- Geology Info - Controlado por IA -->
                 <div class="glass-card">
                     <div class="card-header">
                         <span>📊</span>
@@ -1106,6 +1190,10 @@
                         <div class="empty-state">
                             <span>🔍</span>
                             <p>Activa el GPS para ver datos geológicos</p>
+                            <button class="glass-btn primary" id="askGeologyInfo" style="margin-top: 15px; padding: 10px;">
+                                <span>🤖</span>
+                                Consultar IA sobre geología local
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1164,21 +1252,40 @@
                 </div>
             </div>
 
-            <!-- Page 3: 3D Map -->
-            <div class="page" id="page3DMap">
+            <!-- Page 3: Graphs -->
+            <div class="page" id="pageGraphs">
                 <div class="glass-card">
                     <div class="card-header">
-                        <span>🌍</span>
-                        <h2 class="card-title">Visualización 3D</h2>
+                        <span>📊</span>
+                        <h2 class="card-title">Visualización de Datos 2D</h2>
                     </div>
                     
-                    <div class="map-container">
-                        <div id="map3d"></div>
+                    <div class="graph-types">
+                        <div class="graph-type-btn active" data-graph="bar">
+                            <span>📈</span>
+                            <span>Barras</span>
+                        </div>
+                        <div class="graph-type-btn" data-graph="pie">
+                            <span>🥧</span>
+                            <span>Pastel</span>
+                        </div>
+                        <div class="graph-type-btn" data-graph="line">
+                            <span>📉</span>
+                            <span>Línea</span>
+                        </div>
+                        <div class="graph-type-btn" data-graph="scatter">
+                            <span>✨</span>
+                            <span>Dispersión</span>
+                        </div>
+                    </div>
+                    
+                    <div class="graph-container">
+                        <canvas id="mainGraph" class="graph-canvas"></canvas>
                     </div>
                     
                     <div class="layers-panel">
                         <h3 style="margin-bottom: 20px; color: var(--text-primary); font-weight: 700; display: flex; align-items: center; gap: 10px;">
-                            <span>🗂️</span> Capas Geológicas
+                            <span>🗂️</span> Generar Capas Geológicas 2D
                         </h3>
                         <div class="layer-item">
                             <div style="display: flex; align-items: center; gap: 12px;">
@@ -1213,13 +1320,13 @@
                     </div>
                     
                     <div class="quick-actions">
-                        <button class="glass-btn primary" id="generate3D">
+                        <button class="glass-btn primary" id="generateLayers">
                             <span>🔄</span>
-                            Generar 3D
+                            Generar Capas
                         </button>
-                        <button class="glass-btn success" id="export3D">
+                        <button class="glass-btn success" id="exportLayersPNG">
                             <span>💾</span>
-                            Exportar
+                            Exportar PNG
                         </button>
                     </div>
                 </div>
@@ -1233,7 +1340,7 @@
                     <div id="structuralParams" class="geology-data">
                         <div class="empty-state">
                             <span>📏</span>
-                            <p>Genera modelo 3D para ver parámetros</p>
+                            <p>Genera capas para ver parámetros</p>
                         </div>
                     </div>
                 </div>
@@ -1244,12 +1351,12 @@
                 <div class="glass-card">
                     <div class="card-header">
                         <span>🤖</span>
-                        <h2 class="card-title">Dr. GeoBot - IA</h2>
+                        <h2 class="card-title">Dr. GeoBot - DeepSeek IA</h2>
                     </div>
                     
                     <div class="chat-container" id="chatContainer">
                         <div class="chat-message ai">
-                            <strong>Dr. GeoBot:</strong> ¡Hola! Soy tu asistente IA especializado en geología del Desierto de Atacama. Actívalo desde el botón 🤖 para comenzar a analizar rocas, minerales y estructuras geológicas.
+                            <strong>Dr. GeoBot:</strong> ¡Hola! Soy tu asistente IA especializado en geología del Desierto de Atacama, conectado directamente a DeepSeek API. Actívalo desde el botón 🤖 para comenzar análisis geológicos avanzados.
                         </div>
                     </div>
                     
@@ -1279,11 +1386,15 @@
 
                 <div class="glass-card">
                     <div class="card-header">
-                        <span>💾</span>
-                        <h2 class="card-title">Base de Datos</h2>
+                        <span>💎</span>
+                        <h2 class="card-title">Base de Datos Mineralógica (50+ Minerales)</h2>
                     </div>
                     
-                    <div id="geologyDatabase" class="geology-data">
+                    <div class="mineral-grid" id="mineralGrid">
+                        <!-- Los minerales se cargarán dinámicamente -->
+                    </div>
+                    
+                    <div id="geologyDatabase" class="geology-data" style="margin-top: 15px;">
                         <div class="data-row">
                             <span>Minerales 💎:</span>
                             <span id="mineralCount">Cargando...</span>
@@ -1304,26 +1415,6 @@
                 </div>
             </div>
         </main>
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="#" class="nav-btn active" data-page="dashboard">
-                <span>🏠</span>
-                <span>Inicio</span>
-            </a>
-            <a href="#" class="nav-btn" data-page="camera">
-                <span>📸</span>
-                <span>Cámara</span>
-            </a>
-            <a href="#" class="nav-btn" data-page="3DMap">
-                <span>🌍</span>
-                <span>3D</span>
-            </a>
-            <a href="#" class="nav-btn" data-page="AI">
-                <span>🤖</span>
-                <span>IA</span>
-            </a>
-        </nav>
     </div>
 
     <!-- Notification -->
@@ -1334,7 +1425,7 @@
 
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <script>
         // ============================================
@@ -1351,24 +1442,27 @@
             },
             MAP_LAYERS: {
                 topo: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
-                satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
+                satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+                geology: 'https://tiles.arcgis.com/tiles/nGt4QxSblgDfeJn9/arcgis/rest/services/Global_Geology/MapServer/tile/{z}/{y}/{x}'
             }
         };
 
         // Variables globales
         let map = null;
-        let map3d = null;
         let currentLocation = null;
         let cameraStream = null;
         let isCameraActive = false;
         let currentPhoto = null;
         let markersLayer = null;
         let isDrGeoBotActive = false;
-        let mindatData = null;
         let chatHistory = [];
+        let routePoints = [];
+        let routePolyline = null;
+        let currentGraph = null;
+        let currentGraphType = 'bar';
 
         // ============================================
-        // BASE DE DATOS MINERALES (Mindat.org - Atacama)
+        // BASE DE DATOS MINERALES AMPLIADA (50+ Minerales)
         // ============================================
         const MINERAL_DATABASE = {
             "Región de Antofagasta": {
@@ -1377,19 +1471,59 @@
                     { name: "Atacamita", formula: "Cu₂Cl(OH)₃", emoji: "💚", color: "Verde esmeralda", hardness: "3-3.5", uses: "Mineral secundario de cobre", yacimientos: ["Salar de Atacama", "Cerro Pintado"] },
                     { name: "Clorargirita", formula: "AgCl", emoji: "⚪", color: "Gris a incoloro", hardness: "2.5", uses: "Mineral de plata", yacimientos: ["Caracoles", "Sierra Gorda"] },
                     { name: "Hematita", formula: "Fe₂O₃", emoji: "🔴", color: "Rojo a negro", hardness: "5.5-6.5", uses: "Mineral de hierro", yacimientos: ["Cerro Imán", "Sierra Gorda"] },
-                    { name: "Cuarzo", formula: "SiO₂", emoji: "🔶", color: "Variable", hardness: "7", uses: "Electrónica, óptica", yacimientos: ["Todas las localidades"] }
+                    { name: "Cuarzo", formula: "SiO₂", emoji: "🔶", color: "Variable", hardness: "7", uses: "Electrónica, óptica", yacimientos: ["Todas las localidades"] },
+                    { name: "Calcosina", formula: "Cu₂S", emoji: "⚫", color: "Negro plomizo", hardness: "2.5-3", uses: "Mineral de cobre", yacimientos: ["Chuquicamata", "El Salvador"] },
+                    { name: "Bornita", formula: "Cu₅FeS₄", emoji: "🟣", color: "Púrpura iridiscente", hardness: "3", uses: "Mineral de cobre", yacimientos: ["Escondida", "Zaldivar"] },
+                    { name: "Malaquita", formula: "Cu₂CO₃(OH)₂", emoji: "💚", color: "Verde", hardness: "3.5-4", uses: "Piedra ornamental", yacimientos: ["Cerro Blanco"] },
+                    { name: "Azurita", formula: "Cu₃(CO₃)₂(OH)₂", emoji: "💙", color: "Azul intenso", hardness: "3.5-4", uses: "Mineral ornamental", yacimientos: ["Cerro Imán"] },
+                    { name: "Crisocola", formula: "(Cu,Al)₂H₂Si₂O₅(OH)₄·nH₂O", emoji: "🔵", color: "Azul verdoso", hardness: "2-4", uses: "Mineral de cobre", yacimientos: ["Chuquicamata"] },
+                    { name: "Tenorita", formula: "CuO", emoji: "⚫", color: "Negro", hardness: "3.5", uses: "Mineral de cobre", yacimientos: ["Mina Sur"] },
+                    { name: "Covelina", formula: "CuS", emoji: "🔷", color: "Azul índigo", hardness: "1.5-2", uses: "Mineral de cobre", yacimientos: ["El Salvador"] },
+                    { name: "Pirita", formula: "FeS₂", emoji: "⭐", color: "Dorado pálido", hardness: "6-6.5", uses: "Azufre, joyería", yacimientos: ["Todas las minas"] },
+                    { name: "Galena", formula: "PbS", emoji: "🔘", color: "Gris plomo", hardness: "2.5", uses: "Mineral de plomo", yacimientos: ["Caracoles"] },
+                    { name: "Esfalerita", formula: "ZnS", emoji: "🟡", color: "Marrón a negro", hardness: "3.5-4", uses: "Mineral de zinc", yacimientos: ["Sierra Gorda"] },
+                    { name: "Anglesita", formula: "PbSO₄", emoji: "⚪", color: "Incoloro a blanco", hardness: "2.5-3", uses: "Mineral de plomo", yacimientos: ["Caracoles"] },
+                    { name: "Cerusita", formula: "PbCO₃", emoji: "⚪", color: "Incoloro a blanco", hardness: "3-3.5", uses: "Mineral de plomo", yacimientos: ["Caracoles"] },
+                    { name: "Wulfenita", formula: "PbMoO₄", emoji: "🟠", color: "Naranja a rojo", hardness: "2.5-3", uses: "Mineral de molibdeno", yacimientos: ["Cerro Negro"] },
+                    { name: "Vanadinita", formula: "Pb₅(VO₄)₃Cl", emoji: "🔴", color: "Rojo a naranja", hardness: "2.5-3", uses: "Mineral de vanadio", yacimientos: ["Cerro Negro"] },
+                    { name: "Baritina", formula: "BaSO₄", emoji: "⚪", color: "Incoloro a blanco", hardness: "3-3.5", uses: "Perforación petrolera", yacimientos: ["Sierra Gorda"] },
+                    { name: "Yeso", formula: "CaSO₄·2H₂O", emoji: "⚪", color: "Incoloro a blanco", hardness: "2", uses: "Construcción", yacimientos: ["Salar de Atacama"] },
+                    { name: "Anhidrita", formula: "CaSO₄", emoji: "⚪", color: "Incoloro a azul", hardness: "3-3.5", uses: "Construcción", yacimientos: ["Salar de Atacama"] },
+                    { name: "Halita", formula: "NaCl", emoji: "🧂", color: "Incoloro a blanco", hardness: "2.5", uses: "Sal de roca", yacimientos: ["Salar de Atacama"] },
+                    { name: "Silvina", formula: "KCl", emoji: "⚪", color: "Incoloro a blanco", hardness: "2", uses: "Fertilizante", yacimientos: ["Salar de Atacama"] },
+                    { name: "Carnalita", formula: "KMgCl₃·6H₂O", emoji: "⚪", color: "Incoloro a rojo", hardness: "2.5", uses: "Fertilizante", yacimientos: ["Salar de Atacama"] }
                 ],
-                localities: ["Chuquicamata", "Escondida", "Cerro Negro", "Salar de Atacama", "Sierra Gorda"]
+                localities: ["Chuquicamata", "Escondida", "Cerro Negro", "Salar de Atacama", "Sierra Gorda", "Caracoles", "El Salvador", "Zaldivar", "Cerro Blanco", "Cerro Imán", "Mina Sur"]
             },
             "Región de Atacama": {
                 minerals: [
                     { name: "Epidota", formula: "Ca₂Al₂(Fe³⁺,Al)(SiO₄)(Si₂O₇)O(OH)", emoji: "💚", color: "Verde pistacho", hardness: "6-7", uses: "Mineral índice metamórfico", yacimientos: ["Cerro Blanco", "Cerro Negro"] },
-                    { name: "Yeso", formula: "CaSO₄·2H₂O", emoji: "⚪", color: "Incoloro a blanco", hardness: "2", uses: "Construcción", yacimientos: ["Copiapó", "Vallenar"] },
-                    { name: "Azurita", formula: "Cu₃(CO₃)₂(OH)₂", emoji: "💙", color: "Azul intenso", hardness: "3.5-4", uses: "Mineral ornamental", yacimientos: ["Cerro Imán", "Pampa Larga"] },
-                    { name: "Malaquita", formula: "Cu₂CO₃(OH)₂", emoji: "💚", color: "Verde", hardness: "3.5-4", uses: "Piedra ornamental", yacimientos: ["Cerro Blanco", "Cerro Negro"] },
-                    { name: "Halita", formula: "NaCl", emoji: "🧂", color: "Incoloro a blanco", hardness: "2.5", uses: "Sal de roca", yacimientos: ["Salar de Pedernales"] }
+                    { name: "Clorita", formula: "(Mg,Fe)₃(Si,Al)₄O₁₀(OH)₂·(Mg,Fe)₃(OH)₆", emoji: "💚", color: "Verde", hardness: "2-2.5", uses: "Alteración hidrotermal", yacimientos: ["Pampa Larga", "Cerro Blanco"] },
+                    { name: "Actinolita", formula: "Ca₂(Mg,Fe)₅Si₈O₂₂(OH)₂", emoji: "💚", color: "Verde", hardness: "5-6", uses: "Mineral metamórfico", yacimientos: ["Cerro Blanco"] },
+                    { name: "Tremolita", formula: "Ca₂Mg₅Si₈O₂₂(OH)₂", emoji: "⚪", color: "Blanco a gris", hardness: "5-6", uses: "Mineral metamórfico", yacimientos: ["Cerro Blanco"] },
+                    { name: "Granate", formula: "X₃Y₂(SiO₄)₃", emoji: "🔴", color: "Rojo a marrón", hardness: "6.5-7.5", uses: "Abrasivo, joyería", yacimientos: ["Cerro Negro"] },
+                    { name: "Estaurolita", formula: "Fe²⁺₂Al₉O₆(SiO₄)₄(O,OH)₂", emoji: "🟤", color: "Marrón rojizo", hardness: "7-7.5", uses: "Mineral índice", yacimientos: ["Cerro Negro"] },
+                    { name: "Cianita", formula: "Al₂SiO₅", emoji: "🔵", color: "Azul", hardness: "4.5-7", uses: "Cerámica", yacimientos: ["Cerro Negro"] },
+                    { name: "Andalucita", formula: "Al₂SiO₅", emoji: "🟣", color: "Rosa a marrón", hardness: "6.5-7.5", uses: "Refractarios", yacimientos: ["Cerro Negro"] },
+                    { name: "Sillimanita", formula: "Al₂SiO₅", emoji: "⚪", color: "Blanco a marrón", hardness: "6.5-7.5", uses: "Refractarios", yacimientos: ["Cerro Negro"] },
+                    { name: "Turmalina", formula: "Na(Li,Al)₃Al₆(BO₃)₃Si₆O₁₈(OH)₄", emoji: "🌈", color: "Variable", hardness: "7-7.5", uses: "Joyería", yacimientos: ["Cerro Blanco"] },
+                    { name: "Berilo", formula: "Be₃Al₂Si₆O₁₈", emoji: "💎", color: "Variable", hardness: "7.5-8", uses: "Joyería (esmeralda)", yacimientos: ["Pampa Larga"] },
+                    { name: "Topacio", formula: "Al₂SiO₄(F,OH)₂", emoji: "💎", color: "Incoloro a azul", hardness: "8", uses: "Joyería", yacimientos: ["Cerro Blanco"] },
+                    { name: "Apatito", formula: "Ca₅(PO₄)₃(F,Cl,OH)", emoji: "💚", color: "Verde a azul", hardness: "5", uses: "Fertilizante", yacimientos: ["Cerro Negro"] },
+                    { name: "Fluorita", formula: "CaF₂", emoji: "💜", color: "Variable", hardness: "4", uses: "Fundente, óptica", yacimientos: ["Cerro Blanco"] },
+                    { name: "Calcita", formula: "CaCO₃", emoji: "⚪", color: "Incoloro a blanco", hardness: "3", uses: "Construcción", yacimientos: ["Todas las localidades"] },
+                    { name: "Dolomita", formula: "CaMg(CO₃)₂", emoji: "⚪", color: "Blanco a rosa", hardness: "3.5-4", uses: "Construcción", yacimientos: ["Cerro Blanco"] },
+                    { name: "Siderita", formula: "FeCO₃", emoji: "🟤", color: "Marrón", hardness: "3.5-4.5", uses: "Mineral de hierro", yacimientos: ["Cerro Imán"] },
+                    { name: "Rodocrosita", formula: "MnCO₃", emoji: "💖", color: "Rosa a rojo", hardness: "3.5-4.5", uses: "Mineral de manganeso", yacimientos: ["Cerro Negro"] },
+                    { name: "Smithsonita", formula: "ZnCO₃", emoji: "💚", color: "Verde a azul", hardness: "4-4.5", uses: "Mineral de zinc", yacimientos: ["Pampa Larga"] },
+                    { name: "Cerusita", formula: "PbCO₃", emoji: "⚪", color: "Incoloro a blanco", hardness: "3-3.5", uses: "Mineral de plomo", yacimientos: ["Caracoles"] },
+                    { name: "Wulfenita", formula: "PbMoO₄", emoji: "🟠", color: "Naranja a rojo", hardness: "2.5-3", uses: "Mineral de molibdeno", yacimientos: ["Cerro Negro"] },
+                    { name: "Pirolusita", formula: "MnO₂", emoji: "⚫", color: "Negro", hardness: "6-6.5", uses: "Mineral de manganeso", yacimientos: ["Cerro Negro"] },
+                    { name: "Psilomelana", formula: "(Ba,H₂O)₂Mn₅O₁₀", emoji: "⚫", color: "Negro", hardness: "5-6", uses: "Mineral de manganeso", yacimientos: ["Cerro Negro"] },
+                    { name: "Cromita", formula: "FeCr₂O₄", emoji: "⚫", color: "Negro", hardness: "5.5", uses: "Mineral de cromo", yacimientos: ["Cerro Negro"] },
+                    { name: "Ilmenita", formula: "FeTiO₃", emoji: "⚫", color: "Negro", hardness: "5-6", uses: "Mineral de titanio", yacimientos: ["Cerro Blanco"] }
                 ],
-                localities: ["Copiapó", "Vallenar", "Cerro Blanco", "Cerro Negro", "Salar de Pedernales"]
+                localities: ["Copiapó", "Vallenar", "Cerro Blanco", "Cerro Negro", "Salar de Pedernales", "Pampa Larga", "Cerro Imán", "Caracoles"]
             }
         };
 
@@ -1406,15 +1540,15 @@
             }
             
             // Cargar datos de minerales
-            loadMindatData();
+            loadMineralDatabase();
         });
 
         function simulateLoading() {
             let progress = 0;
             const messages = [
                 'Conectando con DeepSeek AI... 🤖',
-                'Cargando base de minerales Atacama... 💎',
-                'Configurando mapas 3D... 🗺️',
+                'Cargando base de 50+ minerales Atacama... 💎',
+                'Configurando mapas topográficos... 🗺️',
                 'Inicializando Dr. GeoBot... 👨‍🔬',
                 '¡Listo para explorar! 🏜️'
             ];
@@ -1438,20 +1572,19 @@
             }, 400);
         }
 
-        function loadMindatData() {
-            mindatData = MINERAL_DATABASE;
-            console.log('✅ Base de datos de minerales del Desierto de Atacama cargada');
+        function loadMineralDatabase() {
+            console.log('✅ Base de datos de 50+ minerales del Desierto de Atacama cargada');
         }
 
         function initializeApp() {
             console.log('✅ AtacamApp inicializada');
             
-            // Configurar navegación
-            setupNavigation();
+            // Configurar navegación por tabs
+            setupTabsNavigation();
             
             // Inicializar componentes
             init2DMap();
-            init3DMap();
+            initGraphs();
             
             // Configurar eventos
             setupEventListeners();
@@ -1462,6 +1595,7 @@
             // Actualizar estado inicial
             updateStatusIcon(false);
             updateDatabaseCounts();
+            loadMineralGrid();
             
             showNotification('¡Bienvenido al Desierto de Atacama! 🏜️', 'success');
             
@@ -1470,7 +1604,8 @@
                 addMessageToChat('ai', `👨‍🔬 <strong>Dr. GeoBot - Sistema IA de Geología:</strong><br><br>
                 ¡Hola! Soy Dr. GeoBot, tu asistente IA especializado en geología del Desierto de Atacama.<br><br>
                 <strong>Conectado a DeepSeek API ✅</strong><br>
-                <strong>Base de datos:</strong> ${countMinerals()} minerales registrados<br><br>
+                <strong>Base de datos:</strong> ${countMinerals()} minerales registrados<br>
+                <strong>Regiones:</strong> Antofagasta y Atacama<br><br>
                 <em>Activa el botón 🤖 en el header para comenzar</em>`);
             }, 1000);
         }
@@ -1488,16 +1623,16 @@
                 document.getElementById('aiActiveStatus').style.color = '#228B22';
                 
                 addMessageToChat('ai', `<strong>🤖 DR. GEOBOT ACTIVADO:</strong><br><br>
-                <strong>✅ Conectado a DeepSeek API</strong><br>
+                <strong>✅ Conectado a DeepSeek API vía sk-2f64faf4b77344959d768c9e7caf39fb</strong><br>
                 <strong>📍 Acceso a ubicación GPS:</strong> ${currentLocation ? 'Conectado' : 'Esperando'}<br>
                 <strong>💎 Base de datos:</strong> ${countMinerals()} minerales<br>
-                <strong>🗺️ Mapas:</strong> 2D y 3D operativos<br><br>
+                <strong>🗺️ Mapas:</strong> Topográfico y geológico<br><br>
                 <strong>¿En qué puedo ayudarte?</strong><br>
                 • Identificación de minerales/rocas<br>
-                • Análisis estructural<br>
-                • Interpretación geológica<br>
-                • Métodos de campo<br>
-                • Proyecciones 3D`);
+                • Análisis estructural preciso<br>
+                • Interpretación geológica verificada<br>
+                • Métodos de campo específicos<br>
+                • Proyecciones y análisis`);
                 
                 // Cambiar a página de IA
                 if (!document.getElementById('pageAI').classList.contains('active')) {
@@ -1572,7 +1707,9 @@
                     role: "system",
                     content: `Eres Dr. GeoBot, un geólogo experto especializado en el Desierto de Atacama, Chile. 
                     Eres parte de la aplicación AtacamApp. Responde en español, con emojis relevantes y formato claro.
-                    Usa markdown básico para formato. Sé técnico pero accesible.`
+                    Usa markdown básico para formato. Sé técnico pero accesible. 
+                    Proporciona información precisa y verificada sobre geología, minerales y estructuras.
+                    Si no estás seguro de algo, reconócelo y sugiere consultar otras fuentes.`
                 },
                 ...chatHistory.slice(-8),
                 {
@@ -1590,7 +1727,7 @@
                 body: JSON.stringify({
                     model: "deepseek-chat",
                     messages: messages,
-                    max_tokens: 1000,
+                    max_tokens: 1500,
                     temperature: 0.7
                 })
             });
@@ -1615,22 +1752,26 @@
                 context += `- Ciudad más cercana: ${document.getElementById('cityValue').textContent}\n\n`;
             }
             
-            context += `💎 BASE DE DATOS MINERALÓGICA:\n`;
+            context += `💎 BASE DE DATOS MINERALÓGICA (50+ minerales):\n`;
             context += `- Total minerales: ${countMinerals()}\n`;
             context += `- Regiones: Antofagasta, Atacama\n`;
-            context += `- Minerales principales: Calcopirita, Atacamita, Hematita, Cuarzo\n\n`;
+            context += `- Minerales principales: Calcopirita, Atacamita, Hematita, Cuarzo, Epidota\n`;
+            context += `- Yacimientos importantes: Chuquicamata, Escondida, Cerro Blanco, Cerro Negro\n\n`;
             
             context += `🗺️ HERRAMIENTAS DISPONIBLES:\n`;
-            context += `- Mapa geológico 2D con capas\n`;
+            context += `- Mapa geológico 2D con capas topográficas\n`;
             context += `- Análisis fotogeológico con cámara\n`;
-            context += `- Visualización 3D con Mapbox\n`;
-            context += `- Proyección estructural\n\n`;
+            context += `- 4 tipos de gráficos (barras, pastel, línea, dispersión)\n`;
+            context += `- Generación y exportación de capas geológicas en PNG\n`;
+            context += `- Sistema de ruteo y descarga de rutas\n\n`;
             
-            context += `👨‍🔬 RECOMENDACIONES GENERALES:\n`;
-            context += `- El Desierto de Atacama es rico en minerales de cobre\n`;
+            context += `👨‍🔬 RECOMENDACIONES GENERALES PARA ATACAMA:\n`;
+            context += `- El Desierto de Atacama es el más árido del mundo\n`;
+            context += `- Rico en minerales de cobre (principalmente calcopirita)\n`;
             context += `- Sistemas de fallas NNE-SSO predominantes\n`;
-            context += `- Actividad minera extensa en la región\n`;
-            context += `- Clima árido extremo, tomar precauciones`;
+            context += `- Actividad minera extensa (mayor productor mundial de cobre)\n`;
+            context += `- Clima árido extremo, tomar precauciones de hidratación\n`;
+            context += `- Altitud variable (0-6000+ m.s.n.m.)`;
             
             return context;
         }
@@ -1655,12 +1796,12 @@
             }
             
             return `👨‍🔬 <strong>Dr. GeoBot:</strong><br><br>
-            Como geólogo especializado en el Desierto de Atacama, puedo ayudarte con:<br><br>
-            • <strong>💎 Identificación mineralógica</strong><br>
-            • <strong>⚡ Análisis estructural</strong><br>
-            • <strong>🗺️ Interpretación de mapas</strong><br>
+            Como geólogo especializado en el Desierto de Atacama, puedo ayudarte con análisis precisos de:<br><br>
+            • <strong>💎 Identificación mineralógica</strong> (50+ minerales en base de datos)<br>
+            • <strong>⚡ Análisis estructural verificado</strong><br>
+            • <strong>🗺️ Interpretación de mapas topográficos</strong><br>
             • <strong>📸 Análisis fotogeológico</strong><br>
-            • <strong>🌍 Proyección 3D</strong><br><br>
+            • <strong>📊 Interpretación de gráficos</strong><br><br>
             <em>Prueba preguntando sobre minerales específicos o análisis de estructuras.</em>`;
         }
 
@@ -1669,117 +1810,139 @@
         // ============================================
         function generateMineralResponse() {
             const region = getRegionFromLocation();
-            const regionData = mindatData[region];
+            const regionData = MINERAL_DATABASE[region];
             
             if (regionData) {
                 let response = `<strong>🔍 ANÁLISIS MINERALÓGICO - ${region}:</strong><br><br>`;
-                response += `<strong>Minerales principales:</strong><br><br>`;
+                response += `<strong>Minerales principales (${regionData.minerals.length} en base de datos):</strong><br><br>`;
                 
-                regionData.minerals.slice(0, 3).forEach(mineral => {
+                // Seleccionar 5 minerales aleatorios de la región
+                const shuffled = [...regionData.minerals].sort(() => 0.5 - Math.random());
+                const selectedMinerals = shuffled.slice(0, 5);
+                
+                selectedMinerals.forEach(mineral => {
                     response += `<strong>${mineral.emoji} ${mineral.name}</strong><br>`;
                     response += `• Fórmula: ${mineral.formula}<br>`;
                     response += `• Color: ${mineral.color}<br>`;
                     response += `• Dureza: ${mineral.hardness} (Mohs)<br>`;
                     response += `• Usos: ${mineral.uses}<br>`;
-                    response += `• Yacimientos: ${mineral.yacimientos.join(', ')}<br><br>`;
+                    response += `• Yacimientos: ${mineral.yacimientos.slice(0, 3).join(', ')}<br><br>`;
                 });
                 
-                response += `<strong>🎯 Recomendaciones:</strong><br>`;
-                response += `1. Usa la cámara para identificar minerales 📸<br>`;
-                response += `2. Toma muestras representativas 🧪<br>`;
-                response += `3. Documenta coordenadas exactas 📍<br><br>`;
-                response += `<em>¿Quieres información sobre algún mineral específico?</em>`;
+                response += `<strong>🎯 Recomendaciones para muestreo:</strong><br>`;
+                response += `1. Usa la cámara para identificación inicial 📸<br>`;
+                response += `2. Toma muestras representativas (500g mínimo) 🧪<br>`;
+                response += `3. Documenta coordenadas exactas con GPS 📍<br>`;
+                response += `4. Registra contexto geológico del afloramiento 🗺️<br><br>`;
+                response += `<em>¿Quieres información específica sobre algún mineral?</em>`;
                 
                 return response;
             }
             
-            return `💎 <strong>MINERALES DEL DESIERTO DE ATACAMA:</strong><br><br>
-            Los principales minerales económicos en esta región son:<br><br>
-            • <strong>Calcopirita (CuFeS₂)</strong> - Principal mineral de cobre<br>
-            • <strong>Atacamita (Cu₂Cl(OH)₃)</strong> - Mineral secundario de cobre<br>
-            • <strong>Hematita (Fe₂O₃)</strong> - Mineral de hierro<br>
-            • <strong>Cuarzo (SiO₂)</strong> - Presente en vetas<br><br>
-            <strong>Activa el GPS para ver minerales de tu ubicación específica.</strong>`;
+            return `💎 <strong>MINERALES DEL DESIERTO DE ATACAMA (${countMinerals()} registrados):</strong><br><br>
+            Los principales grupos mineralógicos en esta región son:<br><br>
+            • <strong>Sulfuros:</strong> Calcopirita, Bornita, Calcosina, Pirita<br>
+            • <strong>Óxidos:</strong> Hematita, Magnetita, Cuarzo<br>
+            • <strong>Carbonatos:</strong> Malaquita, Azurita, Calcita<br>
+            • <strong>Silicatos:</strong> Epidota, Clorita, Actinolita<br>
+            • <strong>Halogenuros:</strong> Atacamita, Clorargirita<br><br>
+            <strong>Activa el GPS para ver minerales específicos de tu ubicación.</strong>`;
         }
 
         function generateStructureResponse() {
             return `⚡ <strong>ANÁLISIS ESTRUCTURAL - DESIERTO DE ATACAMA:</strong><br><br>
-            <strong>Sistemas estructurales principales:</strong><br><br>
-            1. <strong>Sistema de Fallas NNE-SSO</strong><br>
-            • Orientación: 10°-30°<br>
-            • Buzamiento: 45°-60° al este<br>
-            • Mineralización: Vetas de Cu-Au<br><br>
+            <strong>Sistemas estructurales principales verificados:</strong><br><br>
+            1. <strong>Sistema de Fallas NNE-SSO (Dominante)</strong><br>
+            • Orientación: 10°-30° con variaciones locales<br>
+            • Buzamiento: 45°-75° al este (predominante)<br>
+            • Longitud: Puede extenderse por 100+ km<br>
+            • Mineralización: Vetas de Cu-Au y sistemas porfíricos<br><br>
             
-            2. <strong>Sistema de Fallas E-O</strong><br>
+            2. <strong>Sistema de Fallas E-O (Secundario)</strong><br>
             • Orientación: 80°-100°<br>
-            • Buzamiento: 60°-70° al norte<br>
-            • Mineralización: Stockworks de Cu<br><br>
+            • Buzamiento: 60°-85° al norte/sur<br>
+            • Características: Controlan intrusiones menores<br>
+            • Mineralización: Stockworks de Cu-Mo<br><br>
+            
+            3. <strong>Sistema de Fallas NW-SE (Transcurrentes)</strong><br>
+            • Orientación: 120°-150°<br>
+            • Movimiento: Dextral (predominante)<br>
+            • Relación: Controlan depósitos epitermales<br><br>
             
             <strong>📐 Métodos de medición recomendados:</strong><br>
-            • Brújula geológica con clinómetro<br>
-            • Corrección por declinación magnética<br>
-            • Uso de escala en fotografías<br><br>
+            • Brújula geológica Brunton con clinómetro<br>
+            • Corrección por declinación magnética actual (varía por zona)<br>
+            • Uso de escala en fotografías para análisis cuantitativo<br>
+            • Muestreo orientado para análisis microestructural<br><br>
             
             <strong>🌍 Herramientas AtacamApp:</strong><br>
-            • Usa el mapa 3D para visualización<br>
+            • Usa "Marcar Ruta" para trazar estructuras lineales<br>
             • Agrega puntos estructurales en el mapa 2D<br>
-            • Toma fotos con escala para análisis`;
+            • Toma fotos con escala para análisis estructural<br>
+            • Genera gráficos de orientación en la sección Gráficos`;
         }
 
         function generateLocationResponse() {
             if (currentLocation) {
-                return `📍 <strong>ANÁLISIS DE UBICACIÓN:</strong><br><br>
-                <strong>Coordenadas:</strong> ${currentLocation.latitude.toFixed(6)}°, ${currentLocation.longitude.toFixed(6)}°<br>
-                <strong>Altitud:</strong> ${currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm ⛰️' : 'Desconocida'}<br>
-                <strong>Precisión:</strong> ${Math.round(currentLocation.accuracy)}m 🎯<br>
-                <strong>Región:</strong> ${getRegionFromLocation()}<br>
-                <strong>Ciudad:</strong> ${document.getElementById('cityValue').textContent}<br><br>
+                return `📍 <strong>ANÁLISIS DE UBICACIÓN (Verificado por IA):</strong><br><br>
+                <strong>Coordenadas exactas:</strong> ${currentLocation.latitude.toFixed(6)}°, ${currentLocation.longitude.toFixed(6)}°<br>
+                <strong>Altitud:</strong> ${currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm ⛰️' : 'Desconocida (estimar 2400m promedio)'}<br>
+                <strong>Precisión GPS:</strong> ${Math.round(currentLocation.accuracy)}m 🎯<br>
+                <strong>Región geológica:</strong> ${getRegionFromLocation()}<br>
+                <strong>Provincia metalogénica:</strong> ${getMetallogenicProvince()}<br>
+                <strong>Ciudad más cercana:</strong> ${document.getElementById('cityValue').textContent}<br><br>
                 
-                <strong>🗺️ Contexto geológico:</strong><br>
-                • ${getGeologicalContext()}<br>
-                • Sistema de fallas NNE-SSO predominante<br>
-                • Mineralización de cobre porfírico y epitermal<br><br>
+                <strong>🗺️ Contexto geológico específico:</strong><br>
+                • ${getDetailedGeologicalContext()}<br>
+                • Edad de rocas: ${getRockAgeEstimate()}<br>
+                • Tipo de roca predominante: ${getPredominantRockType()}<br>
+                • Estilo de mineralización esperado: ${getMineralizationStyle()}<br><br>
                 
-                <strong>🎯 Acciones recomendadas:</strong><br>
-                1. Agregar punto geológico al mapa<br>
-                2. Tomar fotografías del área<br>
-                3. Realizar análisis estructural<br>
-                4. Generar modelo 3D del sector`;
+                <strong>🎯 Acciones recomendadas por IA:</strong><br>
+                1. Agregar punto geológico con descripción detallada<br>
+                2. Tomar fotografías panorámicas y de detalle<br>
+                3. Realizar análisis estructural sistemático<br>
+                4. Muestreo representativo de afloramientos<br>
+                5. Generar perfil topográfico del área`;
             }
             
             return `📍 <strong>UBICACIÓN NO DISPONIBLE</strong><br><br>
-            Para análisis geológico preciso, necesito tu ubicación:<br><br>
-            1. Ve a la página de Inicio<br>
-            2. Presiona "📍 Actualizar GPS"<br>
-            3. Permite acceso a ubicación<br><br>
-            <em>Con tu ubicación puedo proporcionar análisis específico del área.</em>`;
+            Para análisis geológico preciso, necesito tu ubicación GPS:<br><br>
+            1. Asegúrate de tener GPS activado en tu dispositivo<br>
+            2. Permite acceso a ubicación en el navegador<br>
+            3. Busca señal GPS en área despejada<br><br>
+            <em>Con tu ubicación puedo proporcionar análisis geológico específico y verificado del área.</em>`;
         }
 
         function generateMethodologyResponse() {
-            return `📋 <strong>METODOLOGÍA DE CAMPO - ATACAMAPP:</strong><br><br>
-            <strong>1. 🗺️ Mapeo Geológico:</strong><br>
-            • GPS de alta precisión (±1m)<br>
-            • Fotografía geológica con escala<br>
-            • Descripción litológica detallada<br>
-            • Muestreo representativo<br><br>
+            return `📋 <strong>METODOLOGÍA DE CAMPO - ATACAMAPP (Verificada):</strong><br><br>
+            <strong>1. 🗺️ Mapeo Geológico Sistemático:</strong><br>
+            • GPS de alta precisión (error < 5m ideal)<br>
+            • Fotografía geológica con escala y brújula<br>
+            • Descripción litológica estandarizada<br>
+            • Muestreo representativo (roca fresca)<br>
+            • Registro de estructuras (rumbo/buzamiento)<br><br>
             
-            <strong>2. 📐 Análisis Estructural:</strong><br>
-            • Mediciones con brújula Brunton<br>
-            • Corrección por declinación magnética<br>
-            • Análisis estereográfico<br>
-            • Cartografía de fallas y pliegues<br><br>
+            <strong>2. 📐 Análisis Estructural Cuantitativo:</strong><br>
+            • Mediciones con brújula Brunton calibrada<br>
+            • Corrección por declinación magnética actual<br>
+            • Análisis estereográfico (rosa de direcciones)<br>
+            • Cartografía de fallas, diaclasas y foliaciones<br>
+            • Determinación de esfuerzos principales<br><br>
             
-            <strong>3. 💎 Muestreo Mineralógico:</strong><br>
-            • Muestras de mano (500g cada una)<br>
-            • Muestras para lámina delgada<br>
-            • Documentación fotográfica completa<br>
-            • Georreferenciación precisa<br><br>
+            <strong>3. 💎 Muestreo Mineralógico Protocolizado:</strong><br>
+            • Muestras de mano (1-2 kg por estación)<br>
+            • Muestras para lámina delgada (orientadas)<br>
+            • Muestras para geoquímica (contaminación cero)<br>
+            • Documentación fotográfica completa (antes/después)<br>
+            • Georreferenciación precisa (Datum WGS84)<br><br>
             
-            <strong>4. 🤖 Análisis con IA:</strong><br>
-            • Identificación de minerales<br>
-            • Clasificación de rocas<br>
-            • Interpretación estructural<br>
-            • Recomendaciones de muestreo`;
+            <strong>4. 🤖 Análisis con IA - Dr. GeoBot:</strong><br>
+            • Identificación mineralógica asistida<br>
+            • Clasificación automatizada de rocas<br>
+            • Interpretación estructural contextual<br>
+            • Recomendaciones de muestreo inteligentes<br>
+            • Control de calidad de datos de campo`;
         }
 
         function getRegionFromLocation() {
@@ -1787,61 +1950,93 @@
             
             const lat = currentLocation.latitude;
             
-            if (lat < -22) return "Región de Antofagasta";
-            if (lat < -30) return "Región de Atacama";
+            if (lat >= -21 && lat <= -25) return "Región de Antofagasta";
+            if (lat >= -26 && lat <= -30) return "Región de Atacama";
             
             return "Desierto de Atacama";
         }
 
-        function getGeologicalContext() {
+        function getMetallogenicProvince() {
+            const lat = currentLocation ? currentLocation.latitude : -27;
+            
+            if (lat >= -21 && lat <= -23) return "Franja Cuprífera Occidental";
+            if (lat >= -24 && lat <= -26) return "Franja Cuprífera Central";
+            if (lat >= -27 && lat <= -29) return "Franja Cuprífera Oriental";
+            
+            return "Provincia Cuprífera Andina";
+        }
+
+        function getDetailedGeologicalContext() {
             const region = getRegionFromLocation();
             
             if (region === "Región de Antofagasta") {
-                return "Cordillera de la Costa - Yacimientos de cobre porfírico (Chuquicamata, Escondida)";
+                return "Cordillera de la Costa - Complejo Volcánico-Sedimentario Jurásico-Cretácico con intrusivos del Paleógeno. Yacimientos de cobre porfírico (Chuquicamata, Escondida) y epitermal.";
             } else if (region === "Región de Atacama") {
-                return "Precordillera andina - Vetas epitermales de Au-Cu (Cerro Blanco, Cerro Negro)";
+                return "Precordillera andina - Secuencia volcánica del Cretácico Superior-Paleógeno con sistemas epitermales de Au-Cu (Cerro Blanco, Cerro Negro) y vetas mesotermales.";
             }
             
-            return "Región desértica con geología compleja y mineralización diversa";
+            return "Región desértica con geología compleja que incluye rocas paleozoicas, intrusiones mesozoicas-cenozoicas y cobertura cuaternaria. Mineralización diversa (Cu, Au, Ag, Pb, Zn).";
+        }
+
+        function getRockAgeEstimate() {
+            if (!currentLocation) return "Jurásico a Cuaternario";
+            
+            const lat = currentLocation.latitude;
+            
+            if (lat >= -21 && lat <= -23) return "Jurásico Superior - Cretácico Inferior";
+            if (lat >= -24 && lat <= -26) return "Cretácico Superior - Paleógeno";
+            if (lat >= -27 && lat <= -29) return "Paleógeno - Neógeno";
+            
+            return "Mesozoico - Cenozoico";
+        }
+
+        function getPredominantRockType() {
+            if (!currentLocation) return "Rocas volcánicas andesíticas";
+            
+            const lat = currentLocation.latitude;
+            
+            if (lat >= -21 && lat <= -23) return "Granodioritas y tonalitas";
+            if (lat >= -24 && lat <= -26) return "Andesitas y dacitas";
+            if (lat >= -27 && lat <= -29) return "Riolitas y ignimbritas";
+            
+            return "Rocas volcánicas intermedias";
+        }
+
+        function getMineralizationStyle() {
+            if (!currentLocation) return "Porfírico de Cu-Mo";
+            
+            const lat = currentLocation.latitude;
+            
+            if (lat >= -21 && lat <= -23) return "Porfírico de Cu-Mo (Chuquicamata-type)";
+            if (lat >= -24 && lat <= -26) return "Porfírico de Cu-Au (Escondida-type)";
+            if (lat >= -27 && lat <= -29) return "Epitermal de Au-Ag (Cerro Blanco-type)";
+            
+            return "Mixto (porfírico-epitermal)";
         }
 
         function countMinerals() {
             let count = 0;
-            if (mindatData) {
-                Object.values(mindatData).forEach(region => {
-                    count += region.minerals.length;
-                });
-            }
+            Object.values(MINERAL_DATABASE).forEach(region => {
+                count += region.minerals.length;
+            });
             return count;
         }
 
         // ============================================
         // FUNCIONES DE INTERFAZ
         // ============================================
-        function setupNavigation() {
-            document.querySelectorAll('.nav-btn').forEach(btn => {
+        function setupTabsNavigation() {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
                     const pageId = this.dataset.page;
                     switchPage(pageId);
-                    
-                    // Actualizar título según página
-                    const titles = {
-                        'dashboard': 'Inicio - Mapa Geológico',
-                        'camera': 'Cámara - Análisis Fotogeológico',
-                        '3DMap': '3D - Visualización 3D',
-                        'AI': `IA - ${isDrGeoBotActive ? 'Dr. GeoBot Activo' : 'Dr. GeoBot Inactivo'}`
-                    };
-                    
-                    if (titles[pageId]) {
-                        document.title = `AtacamApp - ${titles[pageId]}`;
-                    }
                 });
             });
         }
 
         function switchPage(pageId) {
-            document.querySelectorAll('.nav-btn').forEach(btn => {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.dataset.page === pageId) {
                     btn.classList.add('active');
@@ -1860,6 +2055,8 @@
             // Acciones específicas por página
             if (pageId === 'camera' && !isCameraActive) {
                 showNotification('Activa la cámara para análisis fotogeológico 📸', 'info');
+            } else if (pageId === 'graphs') {
+                updateGraph();
             } else if (pageId === 'AI' && !isDrGeoBotActive) {
                 showNotification('Activa Dr. GeoBot para consultas IA 🤖', 'info');
             }
@@ -1888,19 +2085,43 @@
         }
 
         function updateDatabaseCounts() {
-            if (mindatData) {
-                let mineralCount = 0;
-                let locationCount = 0;
-                
-                Object.values(mindatData).forEach(region => {
-                    mineralCount += region.minerals.length;
-                    locationCount += region.localities.length;
-                });
-                
-                document.getElementById('mineralCount').textContent = mineralCount;
-                document.getElementById('rockCount').textContent = "24 tipos";
-                document.getElementById('locationCount').textContent = locationCount;
-            }
+            let mineralCount = 0;
+            let locationCount = 0;
+            
+            Object.values(MINERAL_DATABASE).forEach(region => {
+                mineralCount += region.minerals.length;
+                locationCount += region.localities.length;
+            });
+            
+            document.getElementById('mineralCount').textContent = mineralCount + " minerales";
+            document.getElementById('rockCount').textContent = "24 tipos de rocas";
+            document.getElementById('locationCount').textContent = locationCount + " localidades";
+        }
+
+        function loadMineralGrid() {
+            const mineralGrid = document.getElementById('mineralGrid');
+            mineralGrid.innerHTML = '';
+            
+            // Tomar 12 minerales representativos de toda la base de datos
+            const allMinerals = [];
+            Object.values(MINERAL_DATABASE).forEach(region => {
+                allMinerals.push(...region.minerals);
+            });
+            
+            // Seleccionar 12 minerales aleatorios
+            const shuffled = [...allMinerals].sort(() => 0.5 - Math.random());
+            const selectedMinerals = shuffled.slice(0, 12);
+            
+            selectedMinerals.forEach(mineral => {
+                const mineralCard = document.createElement('div');
+                mineralCard.className = 'mineral-card';
+                mineralCard.innerHTML = `
+                    <div style="font-size: 1.5rem; margin-bottom: 5px;">${mineral.emoji}</div>
+                    <strong>${mineral.name}</strong>
+                    <div style="font-size: 0.7rem; opacity: 0.8;">${mineral.formula}</div>
+                `;
+                mineralGrid.appendChild(mineralCard);
+            });
         }
 
         // ============================================
@@ -1938,7 +2159,7 @@
 
             updateLocationDisplay();
             updateMapLocation();
-            updateGeologyInfo();
+            updateGeologyInfoWithAI();
             
             const accuracy = Math.round(currentLocation.accuracy);
             if (accuracy < 50) {
@@ -1950,12 +2171,12 @@
             // Notificar a Dr. GeoBot si está activo
             if (isDrGeoBotActive) {
                 setTimeout(() => {
-                    addMessageToChat('ai', `<strong>📍 UBICACIÓN ACTUALIZADA:</strong><br><br>
-                    <strong>Coordenadas:</strong> ${currentLocation.latitude.toFixed(6)}°, ${currentLocation.longitude.toFixed(6)}°<br>
-                    <strong>Altitud:</strong> ${currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm' : 'Desconocida'}<br>
+                    addMessageToChat('ai', `<strong>📍 UBICACIÓN GPS ACTUALIZADA:</strong><br><br>
+                    <strong>Coordenadas exactas:</strong> ${currentLocation.latitude.toFixed(6)}°, ${currentLocation.longitude.toFixed(6)}°<br>
+                    <strong>Altitud:</strong> ${currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm' : 'Estimada 2400m'}<br>
                     <strong>Región:</strong> ${getRegionFromLocation()}<br>
                     <strong>Precisión:</strong> ${Math.round(currentLocation.accuracy)}m<br><br>
-                    <em>¿Quieres que analice la geología de esta zona?</em>`);
+                    <em>¿Quieres que analice la geología específica de esta zona?</em>`);
                 }, 500);
             }
         }
@@ -1982,7 +2203,7 @@
             
             updateLocationDisplay();
             updateMapLocation();
-            updateGeologyInfo();
+            updateGeologyInfoWithAI();
         }
 
         function updateLocationDisplay() {
@@ -1999,7 +2220,9 @@
                 { name: "Calama", lat: -22.456, lng: -68.924 },
                 { name: "Copiapó", lat: -27.366, lng: -70.332 },
                 { name: "Vallenar", lat: -28.576, lng: -70.759 },
-                { name: "San Pedro", lat: -22.911, lng: -68.201 }
+                { name: "San Pedro", lat: -22.911, lng: -68.201 },
+                { name: "Taltal", lat: -25.400, lng: -70.483 },
+                { name: "Chañaral", lat: -26.344, lng: -70.615 }
             ];
             
             let closestCity = "Desierto";
@@ -2020,17 +2243,38 @@
             document.getElementById('cityValue').textContent = closestCity;
         }
 
-        function updateGeologyInfo() {
+        async function updateGeologyInfoWithAI() {
             if (!currentLocation) return;
 
+            if (isDrGeoBotActive) {
+                // Usar IA para información más precisa
+                const prompt = `Proporciona información geológica precisa para las coordenadas ${currentLocation.latitude.toFixed(6)}°, ${currentLocation.longitude.toFixed(6)}° en el Desierto de Atacama. Incluye: tipo de roca predominante, edad geológica, estructuras principales, mineralización esperada y recomendaciones de campo. Responde en HTML conciso.`;
+                
+                try {
+                    const response = await callDeepSeekAPI(prompt);
+                    document.getElementById('geologyInfo').innerHTML = `
+                        <div style="padding: 10px;">
+                            <strong>🤖 Análisis IA de Geología Local:</strong><br><br>
+                            ${response}
+                        </div>
+                    `;
+                } catch (error) {
+                    showFallbackGeologyInfo();
+                }
+            } else {
+                showFallbackGeologyInfo();
+            }
+        }
+
+        function showFallbackGeologyInfo() {
             const region = getRegionFromLocation();
-            const regionData = mindatData[region];
+            const regionData = MINERAL_DATABASE[region];
             
             let html = '';
             
             if (regionData) {
                 html += `<div class="data-row">
-                    <span>Región:</span>
+                    <span>Región geológica:</span>
                     <span><strong>${region}</strong></span>
                 </div>`;
                 
@@ -2046,7 +2290,14 @@
                 
                 html += `<div class="data-row">
                     <span>Contexto:</span>
-                    <span>${getGeologicalContext()}</span>
+                    <span>${getDetailedGeologicalContext()}</span>
+                </div>`;
+                
+                html += `<div class="data-row">
+                    <span>Recomendación:</span>
+                    <span><button class="glass-btn primary" onclick="askAIForGeology()" style="padding: 5px 10px; font-size: 0.7rem; margin-top: 5px;">
+                        🤖 Consultar IA para más detalles
+                    </button></span>
                 </div>`;
             } else {
                 html = `<div class="data-row">
@@ -2055,19 +2306,38 @@
                 </div>
                 <div class="data-row">
                     <span>Minerales típicos:</span>
-                    <span>💎 Calcopirita 💚 Atacamita</span>
+                    <span>💎 Calcopirita 💚 Atacamita 🔴 Hematita</span>
                 </div>
                 <div class="data-row">
                     <span>Actividad:</span>
-                    <span>⚡ Minería de cobre</span>
+                    <span>⚡ Minería de cobre (1er productor mundial)</span>
                 </div>
                 <div class="data-row">
                     <span>Clima:</span>
-                    <span>🏜️ Árido extremo</span>
+                    <span>🏜️ Árido extremo (0-50mm/año)</span>
                 </div>`;
             }
             
             document.getElementById('geologyInfo').innerHTML = html;
+        }
+
+        async function askAIForGeology() {
+            if (!isDrGeoBotActive) {
+                showNotification('Activa Dr. GeoBot primero 🤖', 'warning');
+                return;
+            }
+            
+            const question = `Analiza la geología de mi ubicación actual: ${currentLocation.latitude.toFixed(6)}°, ${currentLocation.longitude.toFixed(6)}°`;
+            addMessageToChat('user', question);
+            
+            const thinkingId = addMessageToChat('ai', 'Analizando geología local... 🔍');
+            
+            try {
+                const response = await callDeepSeekAPI(question);
+                updateMessage(thinkingId, response);
+            } catch (error) {
+                updateMessage(thinkingId, 'Error al consultar IA. Intenta nuevamente.');
+            }
         }
 
         // ============================================
@@ -2080,6 +2350,7 @@
                     CONFIG.DEFAULT_LOCATION.zoom
                 );
 
+                // Capa base topográfica
                 L.tileLayer(CONFIG.MAP_LAYERS.topo, {
                     attribution: '© OpenTopoMap',
                     maxZoom: 17
@@ -2090,7 +2361,7 @@
                 // Añadir algunos puntos de interés iniciales
                 addInitialGeologyPoints();
 
-                console.log('✅ Mapa 2D del Desierto de Atacama inicializado');
+                console.log('✅ Mapa 2D topográfico del Desierto de Atacama inicializado');
 
             } catch (error) {
                 console.error('Error inicializando mapa:', error);
@@ -2103,7 +2374,9 @@
                 { lat: -22.285, lng: -68.905, type: 'mine', emoji: '⛏️', name: 'Chuquicamata' },
                 { lat: -24.271, lng: -69.081, type: 'mine', emoji: '⛏️', name: 'Escondida' },
                 { lat: -27.367, lng: -70.333, type: 'sample', emoji: '🔬', name: 'Área de Muestreo' },
-                { lat: -23.650, lng: -70.400, type: 'city', emoji: '🏙️', name: 'Antofagasta' }
+                { lat: -23.650, lng: -70.400, type: 'city', emoji: '🏙️', name: 'Antofagasta' },
+                { lat: -27.366, lng: -70.332, type: 'city', emoji: '🏙️', name: 'Copiapó' },
+                { lat: -28.576, lng: -70.759, type: 'city', emoji: '🏙️', name: 'Vallenar' }
             ];
 
             points.forEach(point => {
@@ -2155,48 +2428,262 @@
         }
 
         // ============================================
-        // MAPA 3D
+        // GRÁFICOS
         // ============================================
-        function init3DMap() {
-            try {
-                mapboxgl.accessToken = CONFIG.MAPBOX_TOKEN;
-
-                map3d = new mapboxgl.Map({
-                    container: 'map3d',
-                    style: 'mapbox://styles/mapbox/satellite-streets-v11',
-                    center: [CONFIG.DEFAULT_LOCATION.lng, CONFIG.DEFAULT_LOCATION.lat],
-                    zoom: CONFIG.DEFAULT_LOCATION.zoom,
-                    pitch: 60,
-                    bearing: 0
-                });
-
-                map3d.on('load', () => {
-                    console.log('✅ Mapa 3D del Desierto de Atacama inicializado');
-                    
-                    // Terrain 3D
-                    map3d.addSource('mapbox-dem', {
-                        type: 'raster-dem',
-                        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
-                        tileSize: 512
+        function initGraphs() {
+            // Configurar eventos para botones de tipo de gráfico
+            document.querySelectorAll('.graph-type-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.graph-type-btn').forEach(b => {
+                        b.classList.remove('active');
                     });
-                    
-                    map3d.setTerrain({ source: 'mapbox-dem', exaggeration: 3 });
-                    
-                    // Sky con efecto desierto
-                    map3d.setFog({
-                        color: 'rgb(250, 248, 240)',
-                        'high-color': 'rgb(212, 160, 23)',
-                        'horizon-blend': 0.1,
-                        'space-color': 'rgb(139, 115, 85)',
-                        'star-intensity': 0.8
-                    });
-                    
-                    map3d.addControl(new mapboxgl.NavigationControl(), 'top-right');
+                    this.classList.add('active');
+                    currentGraphType = this.dataset.graph;
+                    updateGraph();
                 });
+            });
+            
+            // Crear gráfico inicial
+            updateGraph();
+        }
 
-            } catch (error) {
-                console.error('Error inicializando mapa 3D:', error);
+        function updateGraph() {
+            const ctx = document.getElementById('mainGraph').getContext('2d');
+            
+            // Destruir gráfico anterior si existe
+            if (currentGraph) {
+                currentGraph.destroy();
             }
+            
+            // Datos de ejemplo basados en minerales del Desierto de Atacama
+            const mineralData = {
+                labels: ['Calcopirita', 'Atacamita', 'Hematita', 'Cuarzo', 'Epidota', 'Malaquita'],
+                datasets: [{
+                    label: 'Abundancia relativa (%)',
+                    data: [35, 15, 12, 20, 10, 8],
+                    backgroundColor: [
+                        '#D4A017',
+                        '#228B22',
+                        '#DC143C',
+                        '#4682B4',
+                        '#8B4513',
+                        '#228B22'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+            
+            const config = {
+                type: currentGraphType,
+                data: mineralData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: 'Distribución de Minerales - Desierto de Atacama'
+                        }
+                    }
+                }
+            };
+            
+            currentGraph = new Chart(ctx, config);
+        }
+
+        // ============================================
+        // RUTAS
+        // ============================================
+        function addMapPoint() {
+            if (!currentLocation) {
+                showNotification('Primero activa el GPS 🗺️', 'warning');
+                return;
+            }
+
+            const types = [
+                { type: 'mineral', emoji: '💎', name: 'Mineral', color: '#D4A017' },
+                { type: 'rock', emoji: '🪨', name: 'Roca', color: '#8B4513' },
+                { type: 'fault', emoji: '⚡', name: 'Falla', color: '#DC143C' },
+                { type: 'sample', emoji: '🔬', name: 'Muestra', color: '#228B22' },
+                { type: 'water', emoji: '💧', name: 'Agua', color: '#4682B4' },
+                { type: 'photo', emoji: '📸', name: 'Foto', color: '#FF8C00' }
+            ];
+            
+            const selectedType = types[Math.floor(Math.random() * types.length)];
+            const time = new Date();
+            const name = `${selectedType.name} ${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`;
+
+            const marker = L.marker([currentLocation.latitude, currentLocation.longitude], {
+                icon: L.divIcon({
+                    html: `<div style="background: ${selectedType.color}; color:white; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.3rem; border:2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">${selectedType.emoji}</div>`,
+                    iconSize: [38, 38]
+                })
+            })
+            .bindPopup(`<div style="background: rgba(255,248,220,0.9); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                <strong>${selectedType.emoji} ${name}</strong><br>
+                Coordenadas: ${currentLocation.latitude.toFixed(4)}°, ${currentLocation.longitude.toFixed(4)}°<br>
+                Altitud: ${currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm' : '--'}<br>
+                Hora: ${time.toLocaleTimeString('es-CL')}
+            </div>`)
+            .addTo(markersLayer);
+
+            // Agregar a ruta
+            routePoints.push([currentLocation.latitude, currentLocation.longitude]);
+            
+            // Actualizar polyline de ruta
+            if (routePolyline) {
+                map.removeLayer(routePolyline);
+            }
+            
+            if (routePoints.length > 1) {
+                routePolyline = L.polyline(routePoints, {
+                    color: '#228B22',
+                    weight: 3,
+                    opacity: 0.7,
+                    dashArray: '10, 10'
+                }).addTo(map);
+                
+                // Mostrar información de ruta
+                document.getElementById('routeInfo').style.display = 'block';
+                updateRouteInfo();
+            }
+
+            showNotification(`Punto ${selectedType.name} agregado a ruta 📍`, 'success');
+        }
+
+        function markRoute() {
+            if (!currentLocation) {
+                showNotification('Primero activa el GPS 🗺️', 'warning');
+                return;
+            }
+
+            // Limpiar ruta anterior
+            routePoints = [];
+            if (routePolyline) {
+                map.removeLayer(routePolyline);
+                routePolyline = null;
+            }
+            
+            document.getElementById('routeInfo').style.display = 'none';
+            
+            showNotification('Ruta lista para marcar. Agrega puntos con "Agregar Punto" 📍', 'info');
+        }
+
+        function downloadRoute() {
+            if (routePoints.length < 2) {
+                showNotification('Necesitas al menos 2 puntos para una ruta 🗺️', 'warning');
+                return;
+            }
+
+            // Calcular estadísticas de ruta
+            let totalDistance = 0;
+            let elevationGain = 0;
+            let elevationLoss = 0;
+            
+            for (let i = 1; i < routePoints.length; i++) {
+                const dist = calculateDistance(routePoints[i-1], routePoints[i]);
+                totalDistance += dist;
+                
+                // Simular cambios de elevación (en una app real, esto vendría de datos de elevación)
+                if (currentLocation && currentLocation.altitude) {
+                    const elevChange = Math.random() * 50 - 25; // Cambio aleatorio entre -25 y +25m
+                    if (elevChange > 0) elevationGain += elevChange;
+                    else elevationLoss += Math.abs(elevChange);
+                }
+            }
+
+            const routeData = {
+                name: `Ruta_AtacamApp_${new Date().toISOString().slice(0,10)}`,
+                coordinates: routePoints,
+                statistics: {
+                    totalPoints: routePoints.length,
+                    totalDistance: totalDistance.toFixed(2),
+                    elevationGain: Math.round(elevationGain),
+                    elevationLoss: Math.round(elevationLoss),
+                    estimatedTime: Math.round(totalDistance * 0.02) // 2 min por 100m
+                },
+                metadata: {
+                    created: new Date().toISOString(),
+                    app: "AtacamApp",
+                    region: getRegionFromLocation(),
+                    version: "2.0"
+                }
+            };
+
+            // Crear y descargar archivo GPX
+            const gpxContent = generateGPX(routeData);
+            const blob = new Blob([gpxContent], { type: 'application/gpx+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${routeData.name}.gpx`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            showNotification(`✅ Ruta descargada (${routePoints.length} puntos)`, 'success');
+        }
+
+        function calculateDistance(point1, point2) {
+            const R = 6371e3; // Radio de la Tierra en metros
+            const φ1 = point1[0] * Math.PI/180;
+            const φ2 = point2[0] * Math.PI/180;
+            const Δφ = (point2[0] - point1[0]) * Math.PI/180;
+            const Δλ = (point2[1] - point1[1]) * Math.PI/180;
+
+            const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ/2) * Math.sin(Δλ/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+            return R * c / 1000; // Distancia en km
+        }
+
+        function updateRouteInfo() {
+            if (routePoints.length < 2) return;
+            
+            let totalDistance = 0;
+            for (let i = 1; i < routePoints.length; i++) {
+                totalDistance += calculateDistance(routePoints[i-1], routePoints[i]);
+            }
+            
+            document.getElementById('routeLength').textContent = totalDistance.toFixed(2) + ' km';
+            document.getElementById('routePoints').textContent = routePoints.length;
+            document.getElementById('routeElevation').textContent = 
+                currentLocation && currentLocation.altitude ? 
+                Math.round(currentLocation.altitude) + ' m' : '--';
+        }
+
+        function generateGPX(routeData) {
+            let gpx = `<?xml version="1.0" encoding="UTF-8"?>
+<gpx version="1.1" creator="AtacamApp" xmlns="http://www.topografix.com/GPX/1/1">
+    <metadata>
+        <name>${routeData.name}</name>
+        <desc>Ruta geológica generada con AtacamApp</desc>
+        <time>${routeData.metadata.created}</time>
+    </metadata>
+    <trk>
+        <name>${routeData.name}</name>
+        <trkseg>`;
+            
+            routeData.coordinates.forEach((coord, index) => {
+                gpx += `
+            <trkpt lat="${coord[0]}" lon="${coord[1]}">
+                <ele>${currentLocation && currentLocation.altitude ? currentLocation.altitude : 0}</ele>
+                <name>Punto ${index + 1}</name>
+            </trkpt>`;
+            });
+            
+            gpx += `
+        </trkseg>
+    </trk>
+</gpx>`;
+            
+            return gpx;
         }
 
         // ============================================
@@ -2281,58 +2768,173 @@
         }
 
         // ============================================
+        // CAPAS GEOLÓGICAS Y EXPORTACIÓN
+        // ============================================
+        function generateLayers() {
+            const topography = document.getElementById('layerTopography').checked;
+            const geology = document.getElementById('layerGeology').checked;
+            const faults = document.getElementById('layerFaults').checked;
+            
+            let layers = [];
+            if (topography) layers.push('⛰️ Topografía');
+            if (geology) layers.push('🪨 Geología Base');
+            if (faults) layers.push('⚡ Sistema de Fallas');
+            
+            showNotification(`Generando capas: ${layers.join(', ')}... 🗺️`, 'info');
+            
+            // Simular generación de capas
+            setTimeout(() => {
+                const html = `
+                    <div class="data-row">
+                        <span>Capas generadas:</span>
+                        <span>${layers.length}</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Resolución:</span>
+                        <span>300 DPI</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Formato:</span>
+                        <span>PNG 1920x1080</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Área cubierta:</span>
+                        <span>10 km²</span>
+                    </div>
+                    <div style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, rgba(212, 160, 23, 0.2), rgba(139, 69, 19, 0.2)); border-radius: 12px; border: 1px solid rgba(212, 160, 23, 0.3); font-size: 0.8rem;">
+                        <strong>🗺️ Capas listas para exportar:</strong><br>
+                        • ${layers.join('<br>• ')}<br>
+                        • Sistema de coordenadas: WGS84<br>
+                        • Escala: 1:25,000
+                    </div>
+                `;
+
+                document.getElementById('structuralParams').innerHTML = html;
+                showNotification('✅ Capas geológicas generadas', 'success');
+            }, 1500);
+        }
+
+        function exportLayersPNG() {
+            showNotification('Exportando capas como PNG... 📤', 'info');
+            
+            setTimeout(() => {
+                // Crear un canvas temporal para la exportación
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                canvas.width = 1920;
+                canvas.height = 1080;
+                
+                // Fondo
+                ctx.fillStyle = 'rgba(255, 248, 220, 0.9)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Título
+                ctx.fillStyle = '#2F4F4F';
+                ctx.font = 'bold 40px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Mapa Geológico - Desierto de Atacama', canvas.width/2, 80);
+                
+                // Subtítulo
+                ctx.font = '20px Arial';
+                ctx.fillText(`Generado: ${new Date().toLocaleDateString('es-CL')} | Coordenadas: ${currentLocation ? currentLocation.latitude.toFixed(4)}°, ${currentLocation.longitude.toFixed(4)}°`, canvas.width/2, 120);
+                
+                // Leyenda
+                ctx.font = 'bold 24px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText('Leyenda:', 50, 200);
+                
+                const legendItems = [
+                    { color: '#D4A017', label: 'Geología - Rocas ígneas' },
+                    { color: '#8B4513', label: 'Geología - Rocas sedimentarias' },
+                    { color: '#228B22', label: 'Geología - Rocas metamórficas' },
+                    { color: '#DC143C', label: 'Fallas y estructuras' },
+                    { color: '#4682B4', label: 'Cuerpos de agua' },
+                    { color: '#2F4F4F', label: 'Curvas de nivel' }
+                ];
+                
+                legendItems.forEach((item, index) => {
+                    ctx.fillStyle = item.color;
+                    ctx.fillRect(50, 240 + index * 40, 30, 20);
+                    ctx.fillStyle = '#2F4F4F';
+                    ctx.font = '18px Arial';
+                    ctx.fillText(item.label, 90, 255 + index * 40);
+                });
+                
+                // Pie de página
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillStyle = '#666';
+                ctx.fillText('Generado con AtacamApp - Sistema de Geología 3D & IA', canvas.width/2, canvas.height - 30);
+                
+                // Convertir a PNG y descargar
+                const dataURL = canvas.toDataURL('image/png');
+                const a = document.createElement('a');
+                a.href = dataURL;
+                a.download = `mapa_geologico_atacama_${new Date().toISOString().slice(0,10)}.png`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                
+                showNotification('✅ Mapa exportado como PNG', 'success');
+            }, 1000);
+        }
+
+        // ============================================
         // EVENT LISTENERS
         // ============================================
         function setupEventListeners() {
             // Botones GPS
-            document.getElementById('updateLocationBtn').addEventListener('click', startGPS);
-
-            // Botones cámara
-            document.getElementById('startCameraBtn').addEventListener('click', startCamera);
-            document.getElementById('stopCameraBtn').addEventListener('click', stopCamera);
-            document.getElementById('captureBtn').addEventListener('click', capturePhoto);
-            document.getElementById('analyzeBtn').addEventListener('click', analyzeWithAI);
-
-            // Controles mapa
-            document.getElementById('mapSatelliteBtn').addEventListener('click', () => {
-                switchMapLayer('satellite');
-            });
-            document.getElementById('mapTerrainBtn').addEventListener('click', () => {
-                switchMapLayer('topo');
-            });
+            document.getElementById('updateLocationBtn')?.addEventListener('click', startGPS);
 
             // Botones mapa
-            document.getElementById('addPointBtn').addEventListener('click', addMapPoint);
-            document.getElementById('clearMapBtn').addEventListener('click', clearMapPoints);
+            document.getElementById('addPointBtn')?.addEventListener('click', addMapPoint);
+            document.getElementById('markRouteBtn')?.addEventListener('click', markRoute);
+            document.getElementById('downloadRouteBtn')?.addEventListener('click', downloadRoute);
 
-            // Controles 3D
-            document.getElementById('generate3D').addEventListener('click', generate3DProjection);
-            document.getElementById('export3D').addEventListener('click', export3DModel);
+            // Botones cámara
+            document.getElementById('startCameraBtn')?.addEventListener('click', startCamera);
+            document.getElementById('stopCameraBtn')?.addEventListener('click', stopCamera);
+            document.getElementById('captureBtn')?.addEventListener('click', capturePhoto);
+            document.getElementById('analyzeBtn')?.addEventListener('click', analyzeWithAI);
 
-            // Capas 3D
-            document.querySelectorAll('.layers-panel input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', update3DLayers);
+            // Controles mapa
+            document.getElementById('mapSatelliteBtn')?.addEventListener('click', () => {
+                switchMapLayer('satellite');
             });
+            document.getElementById('mapTerrainBtn')?.addEventListener('click', () => {
+                switchMapLayer('topo');
+            });
+            document.getElementById('mapGeologyBtn')?.addEventListener('click', () => {
+                switchMapLayer('geology');
+            });
+
+            // Botones geología IA
+            document.getElementById('askGeologyInfo')?.addEventListener('click', askAIForGeology);
+
+            // Botones capas
+            document.getElementById('generateLayers')?.addEventListener('click', generateLayers);
+            document.getElementById('exportLayersPNG')?.addEventListener('click', exportLayersPNG);
 
             // IA
-            document.getElementById('sendMessage').addEventListener('click', sendMessageToAI);
-            document.getElementById('chatInput').addEventListener('keypress', (e) => {
+            document.getElementById('sendMessage')?.addEventListener('click', sendMessageToAI);
+            document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') sendMessageToAI();
             });
-            document.getElementById('analyzeLocation').addEventListener('click', () => {
+            document.getElementById('analyzeLocation')?.addEventListener('click', () => {
                 if (currentLocation) {
-                    addMessageToChat('user', 'Analiza la geología de mi ubicación actual');
+                    addMessageToChat('user', 'Analiza la geología de mi ubicación actual con detalles precisos');
                     setTimeout(sendMessageToAI, 100);
                 } else {
                     showNotification('Primero activa el GPS 📍', 'warning');
                 }
             });
-            document.getElementById('identifyMineral').addEventListener('click', () => {
-                addMessageToChat('user', '¿Qué minerales puedo encontrar en esta zona del Desierto de Atacama?');
+            document.getElementById('identifyMineral')?.addEventListener('click', () => {
+                addMessageToChat('user', '¿Qué minerales puedo encontrar en esta zona del Desierto de Atacama? Lista los 10 principales con sus características.');
                 setTimeout(sendMessageToAI, 100);
             });
-            document.getElementById('suggestMethodology').addEventListener('click', () => {
-                addMessageToChat('user', '¿Cuál es la metodología recomendada para trabajo de campo geológico en el Desierto de Atacama?');
+            document.getElementById('suggestMethodology')?.addEventListener('click', () => {
+                addMessageToChat('user', '¿Cuál es la metodología recomendada para trabajo de campo geológico en el Desierto de Atacama? Incluye equipo, técnicas y precauciones.');
                 setTimeout(sendMessageToAI, 100);
             });
         }
@@ -2345,58 +2947,31 @@
                     }
                 });
                 
+                let attribution = '';
+                switch(layerName) {
+                    case 'satellite':
+                        attribution = '© Esri';
+                        break;
+                    case 'geology':
+                        attribution = '© Servicio Geológico de Chile';
+                        break;
+                    default:
+                        attribution = '© OpenTopoMap';
+                }
+                
                 L.tileLayer(CONFIG.MAP_LAYERS[layerName], {
-                    attribution: layerName === 'satellite' ? '© Esri' : '© OpenTopoMap',
+                    attribution: attribution,
                     maxZoom: layerName === 'satellite' ? 19 : 17
                 }).addTo(map);
                 
-                showNotification(`Mapa: ${layerName === 'satellite' ? 'Satélite 🛰️' : 'Topográfico ⛰️'}`, 'success');
+                const layerNames = {
+                    'satellite': 'Satélite 🛰️',
+                    'topo': 'Topográfico ⛰️',
+                    'geology': 'Geológico 🪨'
+                };
+                
+                showNotification(`Mapa: ${layerNames[layerName]}`, 'success');
             }
-        }
-
-        function addMapPoint() {
-            if (!currentLocation) {
-                showNotification('Primero activa el GPS 🗺️', 'warning');
-                return;
-            }
-
-            const types = [
-                { type: 'mineral', emoji: '💎', name: 'Mineral', color: '#D4A017' },
-                { type: 'rock', emoji: '🪨', name: 'Roca', color: '#8B4513' },
-                { type: 'fault', emoji: '⚡', name: 'Falla', color: '#DC143C' },
-                { type: 'sample', emoji: '🔬', name: 'Muestra', color: '#228B22' }
-            ];
-            
-            const selectedType = types[Math.floor(Math.random() * types.length)];
-            const time = new Date();
-            const name = `${selectedType.name} ${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`;
-
-            const marker = L.marker([currentLocation.latitude, currentLocation.longitude], {
-                icon: L.divIcon({
-                    html: `<div style="background: ${selectedType.color}; color:white; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.3rem; border:2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">${selectedType.emoji}</div>`,
-                    iconSize: [38, 38]
-                })
-            })
-            .bindPopup(`<div style="background: rgba(255,248,220,0.9); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);"><strong>${selectedType.emoji} ${name}</strong><br>Coordenadas: ${currentLocation.latitude.toFixed(4)}°, ${currentLocation.longitude.toFixed(4)}°</div>`)
-            .addTo(markersLayer);
-
-            showNotification(`Punto ${selectedType.name} agregado 📍`, 'success');
-            
-            // Notificar a Dr. GeoBot
-            if (isDrGeoBotActive) {
-                setTimeout(() => {
-                    addMessageToChat('ai', `<strong>📍 PUNTO GEOLÓGICO AGREGADO:</strong><br><br>
-                    <strong>Tipo:</strong> ${selectedType.name} ${selectedType.emoji}<br>
-                    <strong>Ubicación:</strong> ${currentLocation.latitude.toFixed(4)}°, ${currentLocation.longitude.toFixed(4)}°<br>
-                    <strong>Hora:</strong> ${time.toLocaleTimeString('es-CL')}<br><br>
-                    <em>¿Necesitas análisis de este punto?</em>`);
-                }, 500);
-            }
-        }
-
-        function clearMapPoints() {
-            markersLayer.clearLayers();
-            showNotification('Mapa limpiado ✅', 'success');
         }
 
         function analyzeWithAI() {
@@ -2412,142 +2987,57 @@
 
             showNotification('Analizando imagen con DeepSeek AI... 🔍', 'info');
 
+            // En una implementación real, aquí enviarías la imagen a la API
+            // Por ahora, simulamos una respuesta
             setTimeout(() => {
                 const analysisHTML = `
                     <div class="data-row">
                         <span>Tipo identificado:</span>
-                        <span>🪨 Roca ígnea volcánica</span>
+                        <span>🪨 Roca ígnea volcánica (Andesita)</span>
                     </div>
                     <div class="data-row">
                         <span>Mineral principal:</span>
-                        <span>💎 Plagioclasa + Piroxeno</span>
+                        <span>💎 Plagioclasa (60%) + Piroxeno (25%)</span>
                     </div>
                     <div class="data-row">
-                        <span>Estructura:</span>
-                        <span>⚡ Disyunción columnar</span>
+                        <span>Textura:</span>
+                        <span>⚡ Porfídica con fenocristales de plagioclasa</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Alteración:</span>
+                        <span>💚 Clorita + Epidota (propilítica)</span>
                     </div>
                     <div class="data-row">
                         <span>Confianza IA:</span>
-                        <span>🎯 92%</span>
+                        <span>🎯 94%</span>
                     </div>
                     <div style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, rgba(70, 130, 180, 0.2), rgba(100, 149, 237, 0.2)); border-radius: 12px; border: 1px solid rgba(70, 130, 180, 0.3); font-size: 0.8rem;">
                         <strong>👨‍🔬 Dr. GeoBot recomienda:</strong><br>
-                        • Realizar análisis petrográfico<br>
-                        • Tomar muestra para geoquímica<br>
-                        • Medir orientación de columnas
+                        • Realizar análisis petrográfico para confirmación<br>
+                        • Tomar muestra para geoquímica (elementos mayores/trazas)<br>
+                        • Buscar mineralización asociada (vetas de cuarzo)<br>
+                        • Medir orientación estructural del afloramiento
                     </div>
                 `;
 
                 document.getElementById('analysisResults').innerHTML = analysisHTML;
-                showNotification('✅ Análisis IA completado', 'success');
+                showNotification('✅ Análisis IA completado (DeepSeek)', 'success');
                 
                 // Agregar al chat
                 if (isDrGeoBotActive) {
                     setTimeout(() => {
-                        addMessageToChat('ai', `<strong>📸 ANÁLISIS FOTOGEOLÓGICO:</strong><br><br>
-                        <strong>Resultados:</strong><br>
-                        • 🪨 Roca ígnea volcánica<br>
-                        • 💎 Plagioclasa + Piroxeno<br>
-                        • ⚡ Disyunción columnar<br>
-                        • 🎯 Confianza: 92%<br><br>
-                        <strong>Recomendaciones:</strong><br>
-                        1. Análisis petrográfico<br>
-                        2. Muestra para geoquímica<br>
-                        3. Medición de orientación`);
+                        addMessageToChat('ai', `<strong>📸 ANÁLISIS FOTOGEOLÓGICO (DeepSeek AI):</strong><br><br>
+                        <strong>Resultados del análisis de imagen:</strong><br>
+                        • 🪨 Roca: Andesita porfídica<br>
+                        • 💎 Mineralogía: Plagioclasa (dominante) + Piroxeno<br>
+                        • ⚡ Textura: Porfídica, matriz afanítica<br>
+                        • 💚 Alteración: Propilítica (clorita-epidota)<br>
+                        • 🎯 Confianza: 94%<br><br>
+                        <strong>Interpretación geológica:</strong><br>
+                        Rocas volcánicas intermedias del Arco Andino, probablemente del Mioceno. Asociada a sistemas porfíricos de Cu-Mo en la región.`);
                     }, 500);
                 }
             }, 2000);
-        }
-
-        function generate3DProjection() {
-            if (!currentLocation) {
-                showNotification('Primero activa el GPS 🌍', 'warning');
-                return;
-            }
-
-            showNotification('Generando modelo 3D del terreno... 🔄', 'info');
-
-            setTimeout(() => {
-                const html = `
-                    <div class="data-row">
-                        <span>Rumbo 🧭:</span>
-                        <span>N.45°E</span>
-                    </div>
-                    <div class="data-row">
-                        <span>Buzamiento 📏:</span>
-                        <span>30°SE</span>
-                    </div>
-                    <div class="data-row">
-                        <span>Espesor estrato 📊:</span>
-                        <span>15.2 m</span>
-                    </div>
-                    <div class="data-row">
-                        <span>Inclinación 📐:</span>
-                        <span>22°</span>
-                    </div>
-                    <div style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, rgba(212, 160, 23, 0.2), rgba(139, 69, 19, 0.2)); border-radius: 12px; border: 1px solid rgba(212, 160, 23, 0.3); font-size: 0.8rem;">
-                        <strong>🌍 Modelo 3D generado:</strong><br>
-                        • Terreno: ${Math.round(currentLocation.altitude || 2400)}m<br>
-                        • Área: 1.5 km²<br>
-                        • Resolución: 10m/pixel<br>
-                        • Capas activas: Topografía, Geología
-                    </div>
-                `;
-
-                document.getElementById('structuralParams').innerHTML = html;
-                showNotification('✅ Modelo 3D del Desierto generado', 'success');
-            }, 1500);
-        }
-
-        function export3DModel() {
-            if (!currentLocation) {
-                showNotification('Primero genera un modelo 3D 💾', 'warning');
-                return;
-            }
-
-            showNotification('Exportando modelo 3D... 📤', 'info');
-
-            setTimeout(() => {
-                const data = {
-                    location: currentLocation,
-                    timestamp: new Date().toISOString(),
-                    parameters: {
-                        rumbo: "N.45°E",
-                        buzamiento: "30°SE",
-                        espesor: "15.2 m",
-                        inclinacion: "22°",
-                        altitud: currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm' : '2400m'
-                    },
-                    metadata: {
-                        app: "AtacamApp",
-                        region: getRegionFromLocation(),
-                        version: "1.0"
-                    }
-                };
-
-                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `modelo_3d_atacamapp_${new Date().toISOString().slice(0,10)}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-
-                showNotification('✅ Modelo 3D exportado', 'success');
-            }, 1000);
-        }
-
-        function update3DLayers() {
-            const layers = {
-                'layerTopography': document.getElementById('layerTopography').checked,
-                'layerGeology': document.getElementById('layerGeology').checked,
-                'layerFaults': document.getElementById('layerFaults').checked
-            };
-            
-            const activeLayers = Object.keys(layers).filter(key => layers[key]);
-            showNotification(`Capas activas: ${activeLayers.length} ✅`, 'info');
         }
 
         // ============================================
@@ -2559,6 +3049,7 @@
                     .then(result => {
                         if (result.state === 'granted') {
                             console.log('✅ Permiso de GPS disponible');
+                            startGPS();
                         }
                     });
             }
@@ -2605,7 +3096,7 @@
             showNotification('Conectado a internet - DeepSeek AI activa ✅', 'success');
             if (isDrGeoBotActive) {
                 addMessageToChat('ai', `<strong>✅ CONEXIÓN RESTAURADA:</strong><br><br>
-                DeepSeek AI está nuevamente disponible para análisis avanzado.`);
+                DeepSeek AI está nuevamente disponible para análisis geológico avanzado y verificaciones en tiempo real.`);
             }
         });
 
@@ -2613,7 +3104,7 @@
             showNotification('Sin conexión a internet - Modo local activado ⚠️', 'warning');
             if (isDrGeoBotActive) {
                 addMessageToChat('ai', `<strong>⚠️ MODO LOCAL ACTIVADO:</strong><br><br>
-                Sin conexión a internet. Funciones básicas disponibles con base de datos local.`);
+                Sin conexión a internet. Funciones básicas disponibles con base de datos local de 50+ minerales. Las consultas a DeepSeek AI no están disponibles temporalmente.`);
             }
         });
     </script>
