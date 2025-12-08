@@ -4,22 +4,48 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AtacamApp - Geología 3D & IA</title>
+    
+    <!-- Meta Tags HTML5 -->
+    <meta name="description" content="Aplicación de geología 3D con IA especializada para análisis geológico en campo">
+    <meta name="keywords" content="geología, 3D, IA, mapeo, minerales, rocas, exploración">
+    <meta name="author" content="AtacamApp Team">
+    <meta name="theme-color" content="#4A6FA5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏜️</text></svg>">
+    
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+    
     <style>
+        /* Variables CSS - Tema Glassmorphism Desierto */
         :root {
-            --primary: #c45c26;
-            --secondary: #d9a066;
-            --accent: #e6b800;
-            --danger: #c0392b;
-            --success: #27ae60;
-            --warning: #f39c12;
-            --info: #3498db;
-            --dark: #2c3e50;
-            --light: #f5e6ca;
+            --primary: #4A6FA5; /* Azul atardecer */
+            --primary-dark: #385C8E;
+            --primary-light: #6B93D6;
+            --secondary: #E67E22; /* Naranja desierto */
+            --accent: #F1C40F; /* Amarillo sol */
+            --danger: #E74C3C;
+            --success: #2ECC71;
+            --warning: #F39C12;
+            --info: #3498DB;
+            --dark: #2C3E50;
+            --light: rgba(255, 255, 255, 0.9);
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --border-radius: 16px;
+            --blur: blur(20px);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        /* Reset y Base */
         * {
             margin: 0;
             padding: 0;
@@ -27,19 +53,23 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        html, body {
-            width: 100%;
+        html {
+            font-size: 14px;
             height: 100%;
-            overflow: hidden;
+            -webkit-text-size-adjust: 100%;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5e6ca 0%, #e8d1a3 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            color: var(--text-primary);
+            line-height: 1.4;
+            min-height: 100vh;
+            overflow-x: hidden;
             position: relative;
         }
 
-        /* Fondo desértico */
+        /* Fondo principal con imagen de desierto */
         body::before {
             content: "";
             position: fixed;
@@ -48,48 +78,66 @@
             width: 100%;
             height: 100%;
             background-image: 
-                radial-gradient(circle at 20% 80%, rgba(230, 184, 0, 0.1) 0%, transparent 20%),
-                radial-gradient(circle at 80% 20%, rgba(196, 92, 38, 0.1) 0%, transparent 20%);
-            z-index: -1;
+                linear-gradient(rgba(26, 41, 128, 0.85), rgba(38, 208, 206, 0.85)),
+                url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: -2;
         }
 
-        /* Sol desierto */
+        /* Patrón de cerros decorativo */
         body::after {
-            content: "☀️";
+            content: "";
             position: fixed;
-            top: 15px;
-            right: 15px;
-            font-size: 1.5rem;
-            opacity: 0.3;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20%;
+            background-image: 
+                linear-gradient(to top, rgba(26, 41, 128, 0.9), transparent),
+                url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: bottom;
             z-index: -1;
-            animation: sunGlow 8s infinite alternate;
+            opacity: 0.6;
         }
 
-        @keyframes sunGlow {
-            0% { opacity: 0.2; transform: scale(1); }
-            100% { opacity: 0.4; transform: scale(1.1); }
+        /* Efecto de partículas */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
 
-        /* Splash Screen */
+        /* Splash Screen Glassmorphism */
         #splashScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #c45c26 0%, #d9a066 100%);
+            background: linear-gradient(135deg, rgba(74, 111, 165, 0.9), rgba(230, 126, 34, 0.9));
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 9999;
             color: white;
+            transition: opacity 0.5s ease;
+            backdrop-filter: blur(10px);
         }
 
         .splash-content {
             text-align: center;
             animation: fadeIn 1s ease;
-            padding: 20px;
+            padding: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border-radius: 25px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
         }
 
         @keyframes fadeIn {
@@ -97,248 +145,294 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        .splash-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.05); }
+        }
+
         .progress-bar {
-            width: 250px;
+            width: 200px;
             height: 4px;
             background: rgba(255,255,255,0.2);
-            margin: 20px auto;
+            margin: 1.5rem auto;
             border-radius: 2px;
             overflow: hidden;
         }
 
         .progress-fill {
             height: 100%;
-            background: var(--accent);
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
             width: 0%;
-            transition: width 0.3s;
+            transition: width 0.3s ease;
+            border-radius: 2px;
         }
 
-        /* Main App */
+        /* Main App Container */
         #appContainer {
             display: none;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
+            min-height: 100vh;
+            padding-bottom: 70px;
         }
 
-        /* Header - Más compacto */
+        /* Header Compacto */
         .app-header {
-            background: rgba(196, 92, 38, 0.95);
-            color: white;
+            background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.95));
             padding: 10px 15px;
-            backdrop-filter: blur(10px);
             position: sticky;
             top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            border-bottom: 2px solid var(--accent);
-            height: 70px;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .header-top {
+        .header-content {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            height: 100%;
+            justify-content: space-between;
+            margin-bottom: 8px;
         }
 
+        /* Logo muy compacto */
         .app-brand {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 5px;
         }
 
-        .app-brand i {
-            color: var(--accent);
-            font-size: 1.5rem;
-        }
-
-        .app-brand h2 {
-            font-size: 1.2rem;
-            line-height: 1;
-        }
-
-        .app-brand small {
-            font-size: 0.7rem;
-            opacity: 0.9;
-        }
-
-        .header-actions {
+        .brand-center {
             display: flex;
-            gap: 8px;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
-        .action-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.1);
-            border: 2px solid rgba(255,255,255,0.2);
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s;
+        .app-logo {
+            font-size: 2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        .brand-text h1 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #f0f0f0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .brand-text small {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            font-weight: 300;
+        }
+
+        /* Status Bar Muy Compacta - Solo el emoji */
+        .status-bar {
+            display: flex;
+            justify-content: flex-end;
+            padding: 5px 0;
+        }
+
+        .status-item {
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: var(--transition);
+            cursor: pointer;
+            font-size: 0.8rem;
         }
 
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        .status-icon {
+            font-size: 1.2rem;
         }
 
-        .action-btn.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: var(--primary);
+        .status-value {
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        .action-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
+        /* GPS Data Bar - Una sola línea */
+        .gps-data-bar {
+            display: flex;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border-radius: 12px;
+            padding: 10px 15px;
+            margin: 10px 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.75rem;
+        }
+
+        .gps-data-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            padding: 0 5px;
+        }
+
+        .gps-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .gps-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
         }
 
         /* Main Content - Optimizado para móvil */
         .main-content {
-            height: calc(100vh - 140px); /* 70px header + 70px nav */
-            overflow-y: auto;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+
+        /* Glass Cards Compactas */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border-radius: var(--border-radius);
             padding: 15px;
-            -webkit-overflow-scrolling: touch;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            transition: var(--transition);
         }
 
-        .page {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        /* Cards - Más compactas */
-        .card {
-            background: white;
-            border-radius: 12px;
-            padding: 15px;
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            border: 1px solid rgba(196, 92, 38, 0.1);
-            position: relative;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .card::before {
-            content: "🏜️";
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 1.2rem;
-            opacity: 0.1;
+        .card-header i {
+            font-size: 1.4rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+
+        /* Map Containers Compactos */
+        .map-container {
+            width: 100%;
+            height: 220px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+        }
+
+        #map, #map3d {
+            width: 100%;
+            height: 100%;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            gap: 8px;
+        }
+
+        .map-control-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
-            color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 1.1rem;
+            justify-content: center;
+            transition: var(--transition);
         }
 
-        .card-title i {
-            color: var(--accent);
-            font-size: 1.1rem;
-        }
-
-        /* GPS Data - Grid más compacto */
-        .gps-data-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
+        /* Quick Actions en una línea */
+        .quick-actions {
+            display: flex;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-top: 15px;
         }
 
-        .gps-data-item {
-            background: #f8f9fa;
+        .quick-actions .glass-btn {
+            flex: 1;
             padding: 12px;
-            border-radius: 8px;
-            text-align: center;
-            border: 1px solid #eee;
-            transition: transform 0.3s;
-        }
-
-        .gps-data-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-
-        .gps-label {
             font-size: 0.8rem;
-            color: #666;
-            margin-bottom: 4px;
         }
 
-        .gps-value {
-            font-size: 1.1rem;
-            font-weight: bold;
-            color: var(--primary);
-        }
-
-        /* Buttons - Más compactos */
-        .btn {
-            padding: 12px 20px;
+        /* Glass Buttons Compactos */
+        .glass-btn {
+            padding: 14px 18px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: all 0.3s;
+            transition: var(--transition);
             width: 100%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
         }
 
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        .glass-btn.primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
         }
 
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #a34c20;
-        }
-
-        .btn-success {
-            background: var(--success);
-            color: white;
-        }
-
-        .btn-warning {
-            background: var(--warning);
-            color: white;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        /* Camera Container - Tamaño ajustado */
+        /* Camera Container Compacto */
         .camera-container {
             width: 100%;
-            height: 250px;
-            background: #000;
-            border-radius: 8px;
+            height: 180px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
             overflow: hidden;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             position: relative;
-            border: 2px solid var(--primary);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         #cameraFeed {
@@ -347,160 +441,144 @@
             object-fit: cover;
         }
 
-        .camera-overlay {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            right: 8px;
-            color: white;
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.8rem;
-            background: rgba(0,0,0,0.5);
-            padding: 5px 8px;
-            border-radius: 4px;
+        .camera-controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 15px;
         }
 
-        /* Map Containers - Tamaño optimizado */
-        .map-container {
-            width: 100%;
-            height: 300px;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 12px;
-            border: 2px solid var(--primary);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-
-        #map3d {
-            width: 100%;
-            height: 300px;
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 12px;
-            border: 2px solid var(--primary);
-            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-        }
-
-        /* AI Chat - Más compacto */
-        .ai-chat-container {
-            background: #f8f9fa;
-            border-radius: 8px;
-            padding: 12px;
+        /* Chat Interface Compacto */
+        .chat-container {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
             height: 250px;
             overflow-y: auto;
-            margin-bottom: 12px;
-            border: 1px solid #ddd;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .chat-message {
-            margin-bottom: 12px;
-            padding: 8px 12px;
-            border-radius: 8px;
             max-width: 85%;
+            padding: 10px 15px;
+            border-radius: 15px;
             position: relative;
-            font-size: 0.9rem;
+            word-wrap: break-word;
+            backdrop-filter: blur(10px);
+            font-size: 0.85rem;
         }
 
-        .chat-message::before {
-            position: absolute;
-            top: -4px;
-            font-size: 0.7rem;
+        .chat-message.ai {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(41, 128, 185, 0.2));
+            align-self: flex-start;
+            border: 1px solid rgba(52, 152, 219, 0.3);
+            margin-left: 25px;
         }
 
         .chat-message.ai::before {
             content: "👨‍🔬";
-            left: -20px;
+            position: absolute;
+            left: -25px;
+            font-size: 1.2rem;
+        }
+
+        .chat-message.user {
+            background: linear-gradient(135deg, rgba(74, 111, 165, 0.2), rgba(56, 92, 142, 0.2));
+            align-self: flex-end;
+            border: 1px solid rgba(74, 111, 165, 0.3);
+            margin-right: 25px;
         }
 
         .chat-message.user::before {
             content: "🧑‍💼";
-            right: -20px;
+            position: absolute;
+            right: -25px;
+            font-size: 1.2rem;
         }
 
-        .chat-message.ai {
-            background: #e3f2fd;
-            margin-right: auto;
-            border-bottom-left-radius: 0;
-            border-left: 2px solid var(--info);
-        }
-
-        .chat-message.user {
-            background: var(--primary);
-            color: white;
-            margin-left: auto;
-            border-bottom-right-radius: 0;
-            border-right: 2px solid var(--accent);
-        }
-
-        .chat-input-container {
+        .chat-input-group {
             display: flex;
-            gap: 8px;
-            margin-bottom: 10px;
-        }
-
-        .chat-input {
-            flex: 1;
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            background: white;
-        }
-
-        /* 2D Layers Control - Mejorado */
-        .layers-control-2d {
-            background: #f8f9fa;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border: 1px solid #ddd;
-        }
-
-        .layer-item-2d {
-            display: flex;
-            align-items: center;
             gap: 10px;
-            padding: 8px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
+            margin-top: 10px;
         }
 
-        .layer-item-2d:last-child {
+        .glass-input {
+            flex: 1;
+            padding: 14px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: var(--transition);
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: var(--text-primary);
+        }
+
+        /* Geology Data Compacto */
+        .geology-data {
+            background: linear-gradient(135deg, rgba(74, 111, 165, 0.15), rgba(230, 126, 34, 0.15));
+            backdrop-filter: blur(10px);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-left: 4px solid var(--accent);
+        }
+
+        .data-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+        }
+
+        .data-row:last-child {
             border-bottom: none;
         }
 
-        .layer-item-2d:hover {
-            background: #e9ecef;
-            border-radius: 4px;
+        /* Layers Panel Compacto */
+        .layers-panel {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .layer-color {
-            width: 16px;
-            height: 16px;
-            border-radius: 3px;
-            border: 1px solid #ddd;
+        .layer-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
         }
 
-        /* Bottom Navigation - Más compacta */
+        /* Bottom Navigation Compacta */
         .bottom-nav {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: white;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 320px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
             display: flex;
             justify-content: space-around;
-            padding: 8px 0;
-            box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
-            z-index: 100;
-            border-top: 2px solid var(--primary);
-            height: 70px;
+            padding: 8px 10px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border: 1px solid var(--glass-border);
         }
 
         .nav-btn {
@@ -508,109 +586,46 @@
             flex-direction: column;
             align-items: center;
             text-decoration: none;
-            color: #666;
-            font-size: 0.75rem;
-            padding: 6px 10px;
-            border-radius: 8px;
-            transition: all 0.3s;
-            width: 22%;
-            height: 100%;
-            justify-content: center;
-        }
-
-        .nav-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .nav-btn.active {
-            background: var(--primary);
-            color: white;
-            transform: translateY(-3px);
-        }
-
-        .nav-btn.active::after {
-            content: "⬆️";
-            position: absolute;
-            top: -12px;
-            font-size: 0.7rem;
-        }
-
-        .nav-btn i {
-            font-size: 1.2rem;
-            margin-bottom: 4px;
-        }
-
-        /* Loading */
-        .loading {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 2px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Geological Data Display */
-        .geology-data {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--accent);
+            color: var(--text-secondary);
+            font-size: 0.65rem;
+            padding: 4px 6px;
+            border-radius: 10px;
+            transition: var(--transition);
+            min-width: 55px;
             position: relative;
         }
 
-        .geology-data::before {
-            content: "⛏️";
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            font-size: 1rem;
-            opacity: 0.3;
+        .nav-btn span {
+            font-size: 1.3rem;
+            margin-bottom: 2px;
         }
 
-        .data-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid #dee2e6;
-            font-size: 0.9rem;
+        .nav-btn.active {
+            color: var(--text-primary);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
 
-        .data-item:last-child {
-            border-bottom: none;
-        }
-
-        /* Button Grids */
-        .button-grid-2 {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-
-        /* Notification - Más pequeño */
+        /* Notification */
         .notification {
             position: fixed;
-            top: 15px;
-            right: 15px;
-            background: white;
+            top: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
             padding: 12px 16px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
-            z-index: 1000;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            z-index: 2000;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
             animation: slideInRight 0.3s ease;
+            max-width: 280px;
+            border: 1px solid var(--glass-border);
             border-left: 4px solid var(--success);
-            max-width: 300px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         @keyframes slideInRight {
@@ -618,258 +633,282 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        .notification::before {
-            font-size: 1rem;
-        }
-
-        .notification.success::before {
-            content: "✅";
-        }
-
-        .notification.error::before {
-            content: "❌";
-            border-left-color: var(--danger);
-        }
-
-        .notification.warning::before {
-            content: "⚠️";
-            border-left-color: var(--warning);
-        }
-
-        .notification.info::before {
-            content: "ℹ️";
-            border-left-color: var(--info);
-        }
-
-        /* Emoticones decorativos - Menos intrusivos */
-        .emoji-decor {
+        /* Map Legend Compacto */
+        .map-legend {
             position: absolute;
-            font-size: 1rem;
-            opacity: 0.05;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        /* Geological Legend */
-        .legend-container {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 6px;
+            bottom: 10px;
+            left: 10px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
             padding: 8px;
-            margin-top: 8px;
-            font-size: 0.8rem;
+            border-radius: 8px;
+            box-shadow: var(--glass-shadow);
+            z-index: 1000;
+            font-size: 0.7rem;
+            border: 1px solid var(--glass-border);
         }
 
         .legend-item {
             display: flex;
             align-items: center;
             gap: 6px;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
-        /* Responsive Optimizations */
-        @media (max-width: 480px) {
-            .gps-data-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .button-grid-2 {
-                grid-template-columns: 1fr;
-            }
-            
-            .camera-container {
-                height: 200px;
-            }
-            
-            .map-container, #map3d {
-                height: 250px;
-            }
-            
-            .ai-chat-container {
-                height: 200px;
-            }
-            
-            .main-content {
-                padding: 12px;
-            }
-            
-            .card {
-                padding: 12px;
-            }
-            
-            .nav-btn span {
-                font-size: 0.7rem;
-            }
-            
-            .nav-btn i {
-                font-size: 1rem;
-            }
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        @media (max-width: 360px) {
-            .app-brand h2 {
-                font-size: 1rem;
-            }
-            
-            .card-title {
-                font-size: 1rem;
-            }
-            
-            .btn {
-                padding: 10px 15px;
-                font-size: 0.85rem;
-            }
+        /* Custom Checkbox Compacto */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
         }
 
-        /* Scrollbar personalizado */
-        .main-content::-webkit-scrollbar {
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 30px 15px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .empty-state span {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            display: block;
+            opacity: 0.5;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
             width: 6px;
         }
 
-        .main-content::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
         }
 
-        .main-content::-webkit-scrollbar-thumb {
-            background: var(--primary);
-            border-radius: 3px;
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 6px;
         }
 
-        .ai-chat-container::-webkit-scrollbar {
-            width: 4px;
+        /* Responsive Design para móviles pequeños */
+        @media (max-width: 360px) {
+            html { font-size: 12px; }
+            
+            .main-content { padding: 8px; }
+            
+            .gps-data-bar {
+                margin: 8px;
+                padding: 8px;
+                flex-wrap: wrap;
+            }
+            
+            .gps-data-item {
+                flex: 1 0 45%;
+                margin-bottom: 8px;
+            }
+            
+            .map-container { height: 180px; }
+            
+            .camera-container { height: 150px; }
+            
+            .quick-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .bottom-nav {
+                width: 95%;
+                padding: 6px 8px;
+                border-radius: 12px;
+            }
+            
+            .nav-btn {
+                min-width: 50px;
+                font-size: 0.6rem;
+            }
+            
+            .nav-btn span {
+                font-size: 1.2rem;
+            }
         }
 
-        .ai-chat-container::-webkit-scrollbar-thumb {
-            background: var(--info);
-            border-radius: 2px;
+        @media (max-width: 480px) and (min-width: 361px) {
+            .gps-data-bar {
+                font-size: 0.7rem;
+            }
+            
+            .gps-value {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Landscape mode */
+        @media (orientation: landscape) and (max-height: 500px) {
+            .map-container { height: 150px; }
+            .camera-container { height: 120px; }
+            .chat-container { height: 180px; }
+            .bottom-nav { bottom: 5px; }
         }
     </style>
 </head>
 <body>
-    <!-- Emoticones decorativos sutiles -->
-    <div class="emoji-decor" style="top: 10%; left: 5%;">🏔️</div>
-    <div class="emoji-decor" style="top: 20%; right: 10%;">🌵</div>
-    <div class="emoji-decor" style="bottom: 30%; left: 15%;">🪨</div>
+    <!-- Background Particles -->
+    <div class="particles"></div>
 
     <!-- Splash Screen -->
     <div id="splashScreen">
         <div class="splash-content">
-            <div style="font-size: 3rem; margin-bottom: 15px;">🏜️</div>
-            <h1 style="font-size: 1.8rem; margin-bottom: 8px;">AtacamApp</h1>
-            <p style="margin-bottom: 20px; opacity: 0.9; font-size: 0.9rem;">Geología 3D & Proyección Estructural</p>
+            <div class="splash-icon">🏜️</div>
+            <h1 style="font-size: 2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #fff, #f0f0f0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AtacamApp</h1>
+            <p style="margin-bottom: 1rem; opacity: 0.9; font-size: 1rem;">Geología 3D & Proyección Estructural</p>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <p id="loadingText" style="margin-top: 15px; font-size: 0.85rem;">Inicializando sistema... 🚀</p>
+            <p id="loadingText" style="margin-top: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.8);">Inicializando sistema...</p>
         </div>
     </div>
 
     <!-- Main App Container -->
     <div id="appContainer">
-        <!-- Header -->
+        <!-- Header Compacto -->
         <header class="app-header">
-            <div class="header-top">
+            <div class="header-content">
                 <div class="app-brand">
-                    <div style="font-size: 1.5rem;">🏜️</div>
-                    <div>
-                        <h2>AtacamApp</h2>
-                        <small>Geología 3D & IA</small>
+                    <div class="brand-center">
+                        <div class="app-logo">🏜️</div>
+                        <div class="brand-text">
+                            <h1>AtacamApp</h1>
+                            <small>Geología 3D & IA</small>
+                        </div>
                     </div>
                 </div>
-                <div class="header-actions">
-                    <button class="action-btn" id="gpsBtn" title="GPS">
-                        <i class="fas fa-satellite"></i>
-                    </button>
-                    <button class="action-btn" id="cameraBtn" title="Cámara">
-                        <i class="fas fa-camera"></i>
-                    </button>
+                <div class="status-bar">
+                    <div class="status-item" id="statusIcon" onclick="toggleDrGeoBot()">
+                        <span class="status-icon">🤖</span>
+                        <span class="status-value" id="aiStatusValue">OFF</span>
+                    </div>
                 </div>
             </div>
         </header>
+
+        <!-- GPS Data Bar Compacta -->
+        <div class="gps-data-bar" id="gpsDataBar">
+            <div class="gps-data-item">
+                <div class="gps-label"><span>🌐</span>Latitud</div>
+                <div class="gps-value" id="latitudeValue">--</div>
+            </div>
+            <div class="gps-data-item">
+                <div class="gps-label"><span>🌐</span>Longitud</div>
+                <div class="gps-value" id="longitudeValue">--</div>
+            </div>
+            <div class="gps-data-item">
+                <div class="gps-label"><span>⛰️</span>Altitud</div>
+                <div class="gps-value" id="altitudeValue">--</div>
+            </div>
+            <div class="gps-data-item">
+                <div class="gps-label"><span>🏙️</span>Ciudad</div>
+                <div class="gps-value" id="cityValue">--</div>
+            </div>
+        </div>
 
         <!-- Main Content -->
         <main class="main-content">
             <!-- Page 1: Dashboard -->
             <div class="page active" id="pageDashboard">
-                <div class="card">
-                    <h3 class="card-title">
-                        <i class="fas fa-satellite"></i>
-                        Ubicación GPS 🛰️
-                    </h3>
-                    
-                    <div class="gps-data-grid">
-                        <div class="gps-data-item">
-                            <div class="gps-label">Latitud 🌐</div>
-                            <div class="gps-value" id="latitudeValue">--</div>
-                        </div>
-                        <div class="gps-data-item">
-                            <div class="gps-label">Longitud 🌐</div>
-                            <div class="gps-value" id="longitudeValue">--</div>
-                        </div>
-                        <div class="gps-data-item">
-                            <div class="gps-label">Altitud ⛰️</div>
-                            <div class="gps-value" id="altitudeValue">--</div>
-                        </div>
-                        <div class="gps-data-item">
-                            <div class="gps-label">Precisión 🎯</div>
-                            <div class="gps-value" id="accuracyValue">--</div>
-                        </div>
+                <!-- 2D Map Section -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <span>🗺️</span>
+                        <h2 class="card-title">Mapa Geológico</h2>
                     </div>
                     
-                    <button class="btn btn-primary" id="connectGPSBtn">
-                        <i class="fas fa-satellite"></i>
-                        Conectar GPS 📡
-                    </button>
-                </div>
-
-                <div class="card">
-                    <h3 class="card-title">
-                        <i class="fas fa-map-marked-alt"></i>
-                        Mapa 2D Geológico 🗺️
-                    </h3>
                     <div class="map-container">
                         <div id="map"></div>
-                    </div>
-                    
-                    <!-- Controles de capas 2D -->
-                    <div class="layers-control-2d">
-                        <h4 style="margin-bottom: 10px; color: var(--primary); font-size: 0.9rem;">
-                            <i class="fas fa-layer-group"></i> Capas Geológicas 2D
-                        </h4>
-                        <div class="layer-item-2d" data-layer="geology">
-                            <input type="checkbox" id="layerGeology2D" checked>
-                            <label for="layerGeology2D">Geología Base 🪨</label>
-                            <div class="layer-color" style="background: #c45c26;"></div>
+                        <div class="map-overlay">
+                            <button class="map-control-btn" id="mapSatelliteBtn" title="Vista satélite">
+                                <span>🛰️</span>
+                            </button>
+                            <button class="map-control-btn" id="mapTerrainBtn" title="Vista topográfica">
+                                <span>⛰️</span>
+                            </button>
                         </div>
-                        <div class="layer-item-2d" data-layer="faults">
-                            <input type="checkbox" id="layerFaults2D" checked>
-                            <label for="layerFaults2D">Sistema de Fallas ⚡</label>
-                            <div class="layer-color" style="background: #c0392b;"></div>
-                        </div>
-                        <div class="layer-item-2d" data-layer="mineralization">
-                            <input type="checkbox" id="layerMineralization2D">
-                            <label for="layerMineralization2D">Zonas Mineralizadas 💎</label>
-                            <div class="layer-color" style="background: #e6b800;"></div>
-                        </div>
-                        <div class="layer-item-2d" data-layer="sampling">
-                            <input type="checkbox" id="layerSampling2D">
-                            <label for="layerSampling2D">Puntos de Muestreo 🔬</label>
-                            <div class="layer-color" style="background: #3498db;"></div>
+                        <div class="map-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #4A6FA5;"></div>
+                                <span>Geología 🪨</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: #E74C3C;"></div>
+                                <span>Fallas ⚡</span>
+                            </div>
                         </div>
                     </div>
                     
-                    <div class="legend-container">
-                        <div class="legend-item">
-                            <div class="layer-color" style="background: #c45c26;"></div>
-                            <span>Rocas sedimentarias</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="layer-color" style="background: #8B4513;"></div>
-                            <span>Rocas ígneas</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="layer-color" style="background: #556B2F;"></div>
-                            <span>Rocas metamórficas</span>
+                    <div class="quick-actions">
+                        <button class="glass-btn primary" id="updateLocationBtn">
+                            <span>📍</span>
+                            Actualizar GPS
+                        </button>
+                        <button class="glass-btn" id="addPointBtn">
+                            <span>➕</span>
+                            Agregar Punto
+                        </button>
+                        <button class="glass-btn" id="clearMapBtn">
+                            <span>🗑️</span>
+                            Limpiar
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Geology Info -->
+                <div class="glass-card">
+                    <div class="card-header">
+                        <span>📊</span>
+                        <h2 class="card-title">Datos Geológicos</h2>
+                    </div>
+                    
+                    <div id="geologyInfo" class="geology-data">
+                        <div class="empty-state">
+                            <span>🔍</span>
+                            <p>Activa el GPS para ver datos geológicos</p>
                         </div>
                     </div>
                 </div>
@@ -877,96 +916,91 @@
 
             <!-- Page 2: Camera & Analysis -->
             <div class="page" id="pageCamera">
-                <div class="card">
-                    <h3 class="card-title">
-                        <i class="fas fa-camera"></i>
-                        Análisis Fotogeológico 📸
-                    </h3>
+                <div class="glass-card">
+                    <div class="card-header">
+                        <span>📸</span>
+                        <h2 class="card-title">Análisis Fotogeológico</h2>
+                    </div>
                     
                     <div class="camera-container">
                         <video id="cameraFeed" autoplay playsinline></video>
-                        <div class="camera-overlay">
-                            <div>
-                                <i class="fas fa-crosshairs"></i> Apunte a formación geológica
-                            </div>
-                            <div id="cameraStatusText">
-                                <i class="fas fa-circle" style="color: #ff4444;"></i> Inactiva
-                            </div>
+                        <div style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 8px;">
+                            <span id="cameraStatusText" style="color: white; font-size: 0.8rem;">
+                                <span>🔴</span> Cámara inactiva
+                            </span>
                         </div>
                         <canvas id="photoCanvas" style="display: none;"></canvas>
                     </div>
                     
-                    <div class="button-grid-2">
-                        <button class="btn btn-primary" id="startCameraBtn">
-                            <i class="fas fa-video"></i> Activar Cámara
+                    <div class="camera-controls">
+                        <button class="glass-btn primary" id="startCameraBtn">
+                            <span>🎥</span>
+                            Activar Cámara
                         </button>
-                        <button class="btn btn-warning" id="captureBtn" disabled>
-                            <i class="fas fa-camera"></i> Capturar
+                        <button class="glass-btn warning" id="captureBtn" disabled>
+                            <span>📸</span>
+                            Capturar
                         </button>
-                        <button class="btn btn-success" id="analyzeBtn" disabled>
-                            <i class="fas fa-robot"></i> Analizar IA
+                        <button class="glass-btn success" id="analyzeBtn" disabled>
+                            <span>🤖</span>
+                            Analizar IA
                         </button>
-                        <button class="btn btn-danger" id="stopCameraBtn" disabled>
-                            <i class="fas fa-stop"></i> Detener
+                        <button class="glass-btn danger" id="stopCameraBtn" disabled>
+                            <span>⏹️</span>
+                            Detener
                         </button>
                     </div>
                 </div>
 
-                <div class="card">
-                    <h3 class="card-title">
-                        <i class="fas fa-chart-bar"></i>
-                        Resultados del Análisis 📊
-                    </h3>
+                <div class="glass-card">
+                    <div class="card-header">
+                        <span>📊</span>
+                        <h2 class="card-title">Resultados</h2>
+                    </div>
+                    
                     <div id="analysisResults" class="geology-data">
-                        <p style="text-align: center; color: #666; padding: 15px; font-size: 0.9rem;">
-                            <i class="fas fa-microscope"></i><br>
-                            Capture una imagen para iniciar el análisis 🔍
-                        </p>
+                        <div class="empty-state">
+                            <span>🔍</span>
+                            <p>Capture una imagen para analizar</p>
+                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Page 3: 3D Map -->
             <div class="page" id="page3DMap">
-                <div class="card">
-                    <h3 class="card-title">
-                        <i class="fas fa-globe-americas"></i>
-                        Mapa 3D - Proyección Geológica 🌍
-                    </h3>
+                <div class="glass-card">
+                    <div class="card-header">
+                        <span>🌍</span>
+                        <h2 class="card-title">Visualización 3D</h2>
+                    </div>
                     
-                    <div id="map3d"></div>
+                    <div class="map-container">
+                        <div id="map3d"></div>
+                    </div>
                     
-                    <div class="button-grid-2">
-                        <button class="btn btn-primary" id="generate3D">
-                            <i class="fas fa-cube"></i> Generar 3D
+                    <div class="quick-actions">
+                        <button class="glass-btn primary" id="generate3D">
+                            <span>🔄</span>
+                            Generar 3D
                         </button>
-                        <button class="btn btn-success" id="export3D">
-                            <i class="fas fa-download"></i> Exportar
+                        <button class="glass-btn" id="export3D">
+                            <span>💾</span>
+                            Exportar
                         </button>
                     </div>
                 </div>
 
-                <div class="card">
-                    <h3 class="card-title">
-                        <i class="fas fa-ruler-combined"></i>
-                        Parámetros Estructurales 📐
-                    </h3>
+                <div class="glass-card">
+                    <div class="card-header">
+                        <span>📐</span>
+                        <h2 class="card-title">Parámetros Estructurales</h2>
+                    </div>
+                    
                     <div id="structuralParams" class="geology-data">
-                        <div class="data-item">
-                            <span>Rumbo 🧭:</span>
-                            <span id="paramRumbo">N.45°E</span>
-                        </div>
-                        <div class="data-item">
-                            <span>Buzamiento 📏:</span>
-                            <span id="paramBuzamiento">30°SE</span>
-                        </div>
-                        <div class="data-item">
-                            <span>Espesor Estrato 📊:</span>
-                            <span id="paramThickness">15.2 m</span>
-                        </div>
-                        <div class="data-item">
-                            <span>Inclinación 📐:</span>
-                            <span id="paramInclination">22°</span>
+                        <div class="empty-state">
+                            <span>📏</span>
+                            <p>Genera modelo 3D para ver parámetros</p>
                         </div>
                     </div>
                 </div>
@@ -974,79 +1008,78 @@
 
             <!-- Page 4: AI Assistant -->
             <div class="page" id="pageAI">
-                <div class="card">
-                    <h3 class="card-title">
-                        <i class="fas fa-robot"></i>
-                        Dr. GeoBot - Doctor en Geología 👨‍🔬
-                    </h3>
+                <div class="glass-card">
+                    <div class="card-header">
+                        <span>🤖</span>
+                        <h2 class="card-title">Dr. GeoBot - Asistente IA</h2>
+                    </div>
                     
-                    <div class="ai-chat-container" id="chatContainer">
+                    <div class="chat-container" id="chatContainer">
                         <div class="chat-message ai">
-                            <strong>Dr. GeoBot 👨‍🔬:</strong> ¡Hola! Soy el Dr. GeoBot, Doctor en Geología especializado en Mineralogía y Proyección de Labores Mineras. ¿En qué puedo ayudarte hoy? 🎯
+                            <strong>Dr. GeoBot:</strong> ¡Hola! Soy tu asistente IA especializado en geología. Puedo ayudarte con análisis de rocas, interpretación de datos, cálculos estructurales y más. ¿En qué puedo ayudarte?
                         </div>
                     </div>
                     
-                    <div class="chat-input-container">
-                        <input type="text" class="chat-input" id="chatInput" 
-                               placeholder="Escribe tu consulta geológica...">
-                        <button class="btn btn-primary" id="sendMessage">
-                            <i class="fas fa-paper-plane"></i>
+                    <div class="chat-input-group">
+                        <input type="text" class="glass-input" id="chatInput" 
+                               placeholder="Escribe tu consulta...">
+                        <button class="glass-btn primary" id="sendMessage" style="width: auto; padding: 14px 20px;">
+                            <span>✈️</span>
                         </button>
                     </div>
                     
-                    <div class="button-grid-2">
-                        <button class="btn btn-success" id="analyzeLocation">
-                            <i class="fas fa-map-marker-alt"></i> Analizar Ubicación
+                    <div class="quick-actions">
+                        <button class="glass-btn success" id="analyzeLocation">
+                            <span>📍</span>
+                            Analizar Ubicación
                         </button>
-                        <button class="btn btn-warning" id="suggestMethodology">
-                            <i class="fas fa-flask"></i> Sugerir Metodología
+                        <button class="glass-btn warning" id="identifyMineral">
+                            <span>💎</span>
+                            Identificar Mineral
                         </button>
                     </div>
                 </div>
 
-                <div class="card">
-                    <h3 class="card-title">
-                        <i class="fas fa-database"></i>
-                        Base de Datos Geológica 💾
-                    </h3>
+                <div class="glass-card">
+                    <div class="card-header">
+                        <span>💾</span>
+                        <h2 class="card-title">Base de Datos</h2>
+                    </div>
+                    
                     <div id="geologyDatabase" class="geology-data">
-                        <div class="data-item">
-                            <span>Rocas Identificadas 🪨:</span>
-                            <span id="rockCount">12</span>
-                        </div>
-                        <div class="data-item">
+                        <div class="data-row">
                             <span>Minerales 💎:</span>
-                            <span id="mineralCount">24</span>
+                            <span id="mineralCount">Cargando...</span>
                         </div>
-                        <div class="data-item">
-                            <span>Estructuras ⚡:</span>
-                            <span id="structureCount">8</span>
+                        <div class="data-row">
+                            <span>Rocas 🪨:</span>
+                            <span id="rockCount">Cargando...</span>
                         </div>
-                        <div class="data-item">
-                            <span>Muestras Analizadas 🔬:</span>
-                            <span id="sampleCount">5</span>
+                        <div class="data-row">
+                            <span>Localidades 🏜️:</span>
+                            <span id="locationCount">Cargando...</span>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- Bottom Navigation -->
+        <!-- Bottom Navigation Compacta -->
         <nav class="bottom-nav">
             <a href="#" class="nav-btn active" data-page="dashboard">
-                <i class="fas fa-home"></i>
+                <span>🏠</span>
                 <span>Inicio</span>
             </a>
             <a href="#" class="nav-btn" data-page="camera">
-                <i class="fas fa-camera"></i>
+                <span>📸</span>
                 <span>Cámara</span>
             </a>
             <a href="#" class="nav-btn" data-page="3DMap">
-                <i class="fas fa-globe"></i>
+                <span>🌍</span>
                 <span>3D</span>
             </a>
             <a href="#" class="nav-btn" data-page="AI">
-                <i class="fas fa-robot"></i>
+                <span>🤖</span>
                 <span>IA</span>
             </a>
         </nav>
@@ -1054,68 +1087,100 @@
 
     <!-- Notification -->
     <div class="notification" id="notification" style="display: none;">
+        <span id="notificationIcon">✅</span>
         <span id="notificationText">Mensaje de notificación</span>
     </div>
 
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    
     <script>
         // ============================================
         // CONFIGURACIÓN Y VARIABLES GLOBALES
         // ============================================
         const CONFIG = {
             MAPBOX_TOKEN: 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA',
-            GEOLOGY_DATABASE: {
-                rocks: [
-                    { name: 'Granito', type: 'Ígnea', hardness: 7, color: '#8B4513' },
-                    { name: 'Basalto', type: 'Ígnea', hardness: 6, color: '#2F4F4F' },
-                    { name: 'Esquisto', type: 'Metamórfica', hardness: 4, color: '#556B2F' },
-                    { name: 'Mármol', type: 'Metamórfica', hardness: 3, color: '#D3D3D3' },
-                    { name: 'Arenisca', type: 'Sedimentaria', hardness: 6, color: '#D2B48C' },
-                    { name: 'Caliza', type: 'Sedimentaria', hardness: 3, color: '#F5F5DC' }
-                ],
-                minerals: [
-                    { name: 'Cuarzo', formula: 'SiO₂', hardness: 7, color: 'Incoloro' },
-                    { name: 'Feldespato', formula: 'KAlSi₃O₈', hardness: 6, color: 'Blanco/Rosa' },
-                    { name: 'Mica', formula: 'KAl₂(AlSi₃O₁₀)(OH)₂', hardness: 2.5, color: 'Negro/Plateado' },
-                    { name: 'Calcita', formula: 'CaCO₃', hardness: 3, color: 'Incoloro/Blanco' },
-                    { name: 'Hematita', formula: 'Fe₂O₃', hardness: 6, color: 'Rojo/Marrón' },
-                    { name: 'Magnetita', formula: 'Fe₃O₄', hardness: 6, color: 'Negro' }
-                ]
+            DEFAULT_LOCATION: {
+                lat: -27.3667,
+                lng: -70.3333,
+                zoom: 10
+            },
+            OPENAI_API_KEY: 'TU_API_KEY_AQUI', // Reemplaza con tu API key real
+            MAP_LAYERS: {
+                topo: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+                satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
             }
         };
 
+        // Variables globales
         let map = null;
         let map3d = null;
         let currentLocation = null;
         let cameraStream = null;
         let isCameraActive = false;
-        let watchId = null;
         let currentPhoto = null;
-        
-        // Capas 2D
-        let geologyLayer = null;
-        let faultsLayer = null;
-        let mineralizationLayer = null;
-        let samplingLayer = null;
+        let markersLayer = null;
+        let isDrGeoBotActive = false;
+        let mindatData = null;
 
         // ============================================
-        // INICIALIZACIÓN DE LA APLICACIÓN
+        // BASE DE DATOS MINERALES (Mindat.org - Chile)
+        // ============================================
+        const MINERAL_DATABASE = {
+            "Chile": {
+                "Región de Antofagasta": {
+                    minerals: [
+                        { name: "Calcopirita", formula: "CuFeS₂", emoji: "💎", color: "Amarillo latón", hardness: "3.5-4", uses: "Principal mineral de cobre" },
+                        { name: "Atacamita", formula: "Cu₂Cl(OH)₃", emoji: "💚", color: "Verde esmeralda", hardness: "3-3.5", uses: "Mineral secundario de cobre" },
+                        { name: "Chalcantita", formula: "CuSO₄·5H₂O", emoji: "🔵", color: "Azul", hardness: "2.5", uses: "Mineral secundario" },
+                        { name: "Halita", formula: "NaCl", emoji: "🧂", color: "Incoloro a blanco", hardness: "2.5", uses: "Sal de roca" },
+                        { name: "Yeso", formula: "CaSO₄·2H₂O", emoji: "⚪", color: "Incoloro a blanco", hardness: "2", uses: "Construcción" }
+                    ],
+                    localities: ["Salar de Atacama", "Chuquicamata", "Escondida", "Cerro Negro"]
+                },
+                "Región de Tarapacá": {
+                    minerals: [
+                        { name: "Azurita", formula: "Cu₃(CO₃)₂(OH)₂", emoji: "💙", color: "Azul intenso", hardness: "3.5-4", uses: "Mineral ornamental" },
+                        { name: "Malaquita", formula: "Cu₂CO₃(OH)₂", emoji: "💚", color: "Verde", hardness: "3.5-4", uses: "Piedra ornamental" },
+                        { name: "Clorargirita", formula: "AgCl", emoji: "⚪", color: "Gris a incoloro", hardness: "2.5", uses: "Mineral de plata" }
+                    ],
+                    localities: ["Pampa del Tamarugal", "Iquique", "Pica"]
+                },
+                "Región de Atacama": {
+                    minerals: [
+                        { name: "Epidota", formula: "Ca₂Al₂(Fe³⁺,Al)(SiO₄)(Si₂O₇)O(OH)", emoji: "💚", color: "Verde pistacho", hardness: "6-7", uses: "Mineral índice metamórfico" },
+                        { name: "Cuarzo", formula: "SiO₂", emoji: "🔶", color: "Variable", hardness: "7", uses: "Electrónica, óptica" },
+                        { name: "Hematita", formula: "Fe₂O₃", emoji: "🔴", color: "Rojo a negro", hardness: "5.5-6.5", uses: "Principal mineral de hierro" }
+                    ],
+                    localities: ["Copiapó", "Vallenar", "Chañaral"]
+                }
+            }
+        };
+
+        // ============================================
+        // FUNCIONES DE INICIALIZACIÓN
         // ============================================
         document.addEventListener('DOMContentLoaded', () => {
             console.log('🚀 AtacamApp - Iniciando aplicación...');
             simulateLoading();
+            
+            // Inicializar Service Worker para PWA
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').catch(console.error);
+            }
+            
+            // Cargar datos de Mindat
+            loadMindatData();
         });
 
         function simulateLoading() {
             let progress = 0;
             const messages = [
-                'Cargando módulo GPS... 🛰️',
-                'Inicializando cámara... 📸',
-                'Configurando mapas... 🗺️',
-                'Conectando con Dr. GeoBot... 👨‍🔬',
-                'Cargando base de datos... 💾',
+                'Inicializando sistema... 🔄',
+                'Cargando base de minerales... 💎',
+                'Configurando Dr. GeoBot... 🤖',
+                'Cargando mapas... 🗺️',
                 '¡Listo para explorar! 🏜️'
             ];
             
@@ -1127,35 +1192,284 @@
                 if (progress >= 100) {
                     clearInterval(interval);
                     setTimeout(() => {
-                        document.getElementById('splashScreen').style.display = 'none';
-                        document.getElementById('appContainer').style.display = 'block';
-                        initializeApp();
+                        document.getElementById('splashScreen').style.opacity = '0';
+                        setTimeout(() => {
+                            document.getElementById('splashScreen').style.display = 'none';
+                            document.getElementById('appContainer').style.display = 'block';
+                            initializeApp();
+                        }, 500);
                     }, 500);
                 }
             }, 300);
         }
 
+        function loadMindatData() {
+            // En un entorno real, aquí cargarías datos de una API
+            // Por ahora usamos los datos estáticos
+            mindatData = MINERAL_DATABASE;
+            console.log('✅ Base de datos de minerales cargada');
+        }
+
         function initializeApp() {
-            console.log('✅ Aplicación cargada - Inicializando componentes...');
+            console.log('✅ Aplicación cargada');
             
-            // Inicializar navegación
+            // Configurar navegación
             setupNavigation();
             
-            // Inicializar mapas
+            // Inicializar componentes
             init2DMap();
             init3DMap();
             
             // Configurar eventos
             setupEventListeners();
             
-            // Solicitar permisos iniciales
-            setTimeout(() => {
-                showNotification('¡Bienvenido a AtacamApp! 🏜️', 'success');
-            }, 1000);
+            // Solicitar permisos
+            requestPermissions();
+            
+            // Actualizar estado inicial
+            updateStatusIcon(false);
+            
+            showNotification('¡Bienvenido a AtacamApp! 🏜️', 'success');
+            
+            // Iniciar actualización de datos
+            updateDatabaseCounts();
+            
+            // Configurar Dr. GeoBot
+            initializeDrGeoBot();
         }
 
         // ============================================
-        // NAVEGACIÓN
+        // DR. GEOBOT - ASISTENTE IA CON OPENAI
+        // ============================================
+        function initializeDrGeoBot() {
+            console.log('🤖 Dr. GeoBot inicializado');
+            
+            // Mensaje inicial personalizado
+            setTimeout(() => {
+                addMessageToChat('ai', `👨‍🔬 <strong>Dr. GeoBot - Sistema IA de Geología:</strong><br><br>
+                ¡Hola! Soy Dr. GeoBot, tu asistente IA especializado en geología del Desierto de Atacama.<br><br>
+                <strong>Puedo ayudarte con:</strong><br>
+                • 🪨 Identificación de rocas y minerales<br>
+                • 📐 Análisis estructural avanzado<br>
+                • 🗺️ Interpretación de mapas geológicos<br>
+                • 💎 Datos de yacimientos minerales<br>
+                • 📊 Cálculos geológicos en tiempo real<br><br>
+                <em>Para usar todas mis funciones, actívalo con el botón 🤖 en el header</em>`);
+            }, 1000);
+        }
+
+        function toggleDrGeoBot() {
+            isDrGeoBotActive = !isDrGeoBotActive;
+            updateStatusIcon(isDrGeoBotActive);
+            
+            if (isDrGeoBotActive) {
+                showNotification('Dr. GeoBot ACTIVADO 🤖', 'success');
+                addMessageToChat('ai', `<strong>🤖 DR. GEOBOT ACTIVADO:</strong><br><br>
+                ¡Sistema IA completamente operativo!<br>
+                Puedo ahora acceder a:<br>
+                • 📍 Tu ubicación GPS en tiempo real<br>
+                • 🗺️ Datos geológicos de la región<br>
+                • 💎 Base de datos de minerales (${Object.values(mindatData.Chile).flatMap(r => r.minerals).length} minerales)<br>
+                • 🧠 Análisis avanzado con IA<br><br>
+                <strong>¿En qué puedo ayudarte?</strong>`);
+                
+                // Cambiar a página de IA si no está allí
+                if (!document.getElementById('pageAI').classList.contains('active')) {
+                    switchPage('AI');
+                }
+            } else {
+                showNotification('Dr. GeoBot DESACTIVADO ⏹️', 'warning');
+            }
+        }
+
+        function updateStatusIcon(active) {
+            const statusIcon = document.getElementById('statusIcon');
+            const aiStatusValue = document.getElementById('aiStatusValue');
+            
+            if (active) {
+                statusIcon.style.background = 'linear-gradient(135deg, rgba(46, 204, 113, 0.3), rgba(39, 174, 96, 0.3))';
+                statusIcon.style.borderColor = 'rgba(46, 204, 113, 0.5)';
+                aiStatusValue.textContent = 'ON';
+                aiStatusValue.style.color = '#51cf66';
+            } else {
+                statusIcon.style.background = 'linear-gradient(135deg, rgba(231, 76, 60, 0.3), rgba(192, 57, 43, 0.3))';
+                statusIcon.style.borderColor = 'rgba(231, 76, 60, 0.5)';
+                aiStatusValue.textContent = 'OFF';
+                aiStatusValue.style.color = '#ff6b6b';
+            }
+        }
+
+        async function sendMessageToAI() {
+            if (!isDrGeoBotActive) {
+                showNotification('Primero activa Dr. GeoBot 🤖', 'warning');
+                return;
+            }
+
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            addMessageToChat('user', message);
+            input.value = '';
+            input.focus();
+
+            const thinkingId = addMessageToChat('ai', 'Procesando tu consulta... 🔍');
+
+            try {
+                // Integración con OpenAI
+                const response = await callOpenAI(message);
+                updateMessage(thinkingId, response);
+            } catch (error) {
+                console.error('Error con OpenAI:', error);
+                // Si falla OpenAI, usar respuesta local
+                const localResponse = generateLocalAIResponse(message);
+                updateMessage(thinkingId, localResponse);
+            }
+        }
+
+        async function callOpenAI(prompt) {
+            // Esta es una implementación de ejemplo
+            // En producción, necesitarías una API key real y un endpoint seguro
+            
+            const context = buildGeologyContext();
+            const fullPrompt = `${context}\n\nUsuario: ${prompt}\n\nDr. GeoBot:`;
+            
+            // Simulación de respuesta (reemplazar con llamada real a API)
+            return simulateOpenAIResponse(prompt);
+        }
+
+        function buildGeologyContext() {
+            let context = `Eres Dr. GeoBot, un geólogo experto especializado en el Desierto de Atacama, Chile.\n`;
+            context += `Tienes acceso a:\n`;
+            
+            if (currentLocation) {
+                context += `- Ubicación actual: ${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}\n`;
+                context += `- Altitud: ${currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm' : 'Desconocida'}\n`;
+            }
+            
+            context += `- Base de datos de minerales: ${countMinerals()} minerales registrados\n`;
+            context += `- Especialidades: Geología estructural, petrología, mineralogía, yacimientos minerales\n\n`;
+            context += `Responde en español, con emojis relevantes y formato claro.`;
+            
+            return context;
+        }
+
+        function simulateOpenAIResponse(prompt) {
+            const lowerPrompt = prompt.toLowerCase();
+            
+            // Respuestas inteligentes basadas en el prompt
+            if (lowerPrompt.includes('mineral') || lowerPrompt.includes('roca')) {
+                const region = getRegionFromLocation();
+                const minerals = region ? mindatData.Chile[region].minerals.slice(0, 3) : [];
+                
+                let response = `<strong>🔍 Análisis Mineralógico:</strong><br><br>`;
+                
+                if (minerals.length > 0) {
+                    response += `En tu región (${region}) los minerales comunes son:<br><br>`;
+                    minerals.forEach(mineral => {
+                        response += `• <strong>${mineral.emoji} ${mineral.name}</strong> (${mineral.formula})<br>`;
+                        response += `  Color: ${mineral.color} | Dureza: ${mineral.hardness}<br>`;
+                        response += `  Usos: ${mineral.uses}<br><br>`;
+                    });
+                } else {
+                    response += `En el Desierto de Atacama encuentras minerales como:<br><br>`;
+                    response += `• <strong>💎 Calcopirita</strong> (CuFeS₂) - Principal mineral de cobre<br>`;
+                    response += `• <strong>💚 Atacamita</strong> - Mineral secundario de cobre<br>`;
+                    response += `• <strong>🧂 Halita</strong> (NaCl) - Sal de roca en salares<br>`;
+                }
+                
+                response += `<br><em>¿Quieres identificar un mineral específico? Toma una foto con la cámara 📸</em>`;
+                return response;
+            }
+            
+            if (lowerPrompt.includes('estructura') || lowerPrompt.includes('falla')) {
+                return `<strong>⚡ Análisis Estructural:</strong><br><br>
+                En el Desierto de Atacama predominan:<br><br>
+                • <strong>Sistema de fallas NNE-SSO</strong><br>
+                • <strong>Buzamientos:</strong> 45-60° al este<br>
+                • <strong>Mineralización asociada:</strong> Vetas de Cu-Au<br>
+                • <strong>Tectónica:</strong> Compresión andina<br><br>
+                <strong>Recomendación:</strong> Usa el mapa 3D para visualizar estructuras 🌍`;
+            }
+            
+            if (lowerPrompt.includes('mapa') || lowerPrompt.includes('ubicación')) {
+                if (currentLocation) {
+                    return `<strong>🗺️ Análisis de Ubicación:</strong><br><br>
+                    <strong>Coordenadas:</strong> ${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}<br>
+                    <strong>Precisión:</strong> ${Math.round(currentLocation.accuracy)}m<br>
+                    <strong>Contexto geológico:</strong> ${getGeologicalContext()}<br><br>
+                    <strong>Acciones recomendadas:</strong><br>
+                    1. Agrega un punto geológico al mapa<br>
+                    2. Toma fotos para análisis<br>
+                    3. Genera modelo 3D del área`;
+                } else {
+                    return `<strong>📍 Ubicación requerida:</strong><br><br>
+                    Primero activa el GPS para obtener tu ubicación actual.<br>
+                    Usa el botón "📍 Actualizar GPS" en la página de inicio.`;
+                }
+            }
+            
+            // Respuesta por defecto inteligente
+            return `<strong>👨‍🔬 Dr. GeoBot:</strong><br><br>
+            Como geólogo especializado en el Desierto de Atacama, puedo ayudarte con:<br><br>
+            • <strong>🪨 Identificación</strong> de rocas y minerales<br>
+            • <strong>📐 Mediciones</strong> estructurales precisas<br>
+            • <strong>🗺️ Interpretación</strong> de mapas geológicos<br>
+            • <strong>💎 Análisis</strong> de yacimientos minerales<br>
+            • <strong>📊 Cálculos</strong> geológicos en tiempo real<br><br>
+            <strong>Prueba preguntando:</strong><br>
+            "¿Qué minerales hay en esta zona?"<br>
+            "Analiza mi ubicación geológica"<br>
+            "¿Cómo mido una falla?"<br><br>
+            <em>También puedes usar la cámara para análisis fotogeológico 📸</em>`;
+        }
+
+        function generateLocalAIResponse(prompt) {
+            // Respuesta local si OpenAI falla
+            return simulateOpenAIResponse(prompt);
+        }
+
+        // ============================================
+        // FUNCIONES AUXILIARES
+        // ============================================
+        function getRegionFromLocation() {
+            if (!currentLocation) return null;
+            
+            const lat = currentLocation.latitude;
+            
+            if (lat < -18) return "Región de Tarapacá";
+            if (lat < -26) return "Región de Antofagasta";
+            if (lat < -30) return "Región de Atacama";
+            
+            return "Desierto de Atacama";
+        }
+
+        function getGeologicalContext() {
+            const region = getRegionFromLocation();
+            if (!region) return "Zona desértica con actividad minera";
+            
+            const contexts = {
+                "Región de Antofagasta": "Cordillera de la Costa con yacimientos de cobre porfírico",
+                "Región de Tarapacá": "Depresión Intermedia con salares y evaporitas",
+                "Región de Atacama": "Precordillera andina con vetas epitermales"
+            };
+            
+            return contexts[region] || "Región desértica con geología compleja";
+        }
+
+        function countMinerals() {
+            let count = 0;
+            if (mindatData && mindatData.Chile) {
+                Object.values(mindatData.Chile).forEach(region => {
+                    count += region.minerals.length;
+                });
+            }
+            return count;
+        }
+
+        // ============================================
+        // FUNCIONES DE INTERFAZ
         // ============================================
         function setupNavigation() {
             document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -1168,126 +1482,84 @@
         }
 
         function switchPage(pageId) {
-            // Ocultar todas las páginas
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // Mostrar página seleccionada
-            const targetPage = document.getElementById('page' + pageId.charAt(0).toUpperCase() + pageId.slice(1));
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
-            
-            // Actualizar navegación
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.dataset.page === pageId) {
                     btn.classList.add('active');
                 }
             });
+
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
             
-            // Acciones específicas por página
-            switch(pageId) {
-                case 'camera':
-                    if (!isCameraActive) {
-                        showNotification('Activa la cámara para análisis 📸', 'info');
-                    }
-                    break;
-                case '3DMap':
-                    if (currentLocation && map3d) {
-                        update3DMapLocation();
-                    }
-                    break;
+            const targetPage = document.getElementById('page' + pageId.charAt(0).toUpperCase() + pageId.slice(1));
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+        }
+
+        function addMessageToChat(sender, text) {
+            const chatContainer = document.getElementById('chatContainer');
+            const messageId = 'msg-' + Date.now();
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${sender}`;
+            messageDiv.id = messageId;
+            messageDiv.innerHTML = text;
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            return messageId;
+        }
+
+        function updateMessage(messageId, text) {
+            const messageDiv = document.getElementById(messageId);
+            if (messageDiv) {
+                messageDiv.innerHTML = text;
+            }
+        }
+
+        function updateDatabaseCounts() {
+            if (mindatData && mindatData.Chile) {
+                let mineralCount = 0;
+                let rockCount = 24; // Valor estimado
+                let locationCount = 0;
+                
+                Object.values(mindatData.Chile).forEach(region => {
+                    mineralCount += region.minerals.length;
+                    locationCount += region.localities.length;
+                });
+                
+                document.getElementById('mineralCount').textContent = mineralCount;
+                document.getElementById('rockCount').textContent = rockCount;
+                document.getElementById('locationCount').textContent = locationCount;
             }
         }
 
         // ============================================
-        // GPS - CONEXIÓN SIMPLIFICADA
+        // GPS Y LOCALIZACIÓN
         // ============================================
-        function setupEventListeners() {
-            // Botón GPS simplificado
-            document.getElementById('gpsBtn').addEventListener('click', toggleGPS);
-            document.getElementById('connectGPSBtn').addEventListener('click', toggleGPS);
-
-            // Botón cámara
-            document.getElementById('cameraBtn').addEventListener('click', toggleCamera);
-
-            // Controles de cámara
-            document.getElementById('startCameraBtn').addEventListener('click', () => toggleCamera(true));
-            document.getElementById('stopCameraBtn').addEventListener('click', () => toggleCamera(false));
-            document.getElementById('captureBtn').addEventListener('click', capturePhoto);
-            document.getElementById('analyzeBtn').addEventListener('click', analyzeWithAI);
-
-            // Controles 3D
-            document.getElementById('generate3D').addEventListener('click', generate3DProjection);
-            document.getElementById('export3D').addEventListener('click', export3DModel);
-
-            // IA
-            document.getElementById('sendMessage').addEventListener('click', sendMessageToAI);
-            document.getElementById('chatInput').addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') sendMessageToAI();
-            });
-            document.getElementById('analyzeLocation').addEventListener('click', analyzeLocationWithAI);
-            document.getElementById('suggestMethodology').addEventListener('click', suggestMethodology);
-
-            // Controles de capas 2D
-            document.querySelectorAll('.layer-item-2d input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', update2DLayers);
-            });
-        }
-
-        function toggleGPS() {
+        function startGPS() {
             if (!navigator.geolocation) {
-                showNotification('GPS no soportado ❌', 'error');
+                showNotification('GPS no disponible ❌', 'error');
                 return;
             }
-            
-            const gpsBtn = document.getElementById('gpsBtn');
-            const connectBtn = document.getElementById('connectGPSBtn');
-            
-            if (currentLocation) {
-                // Desconectar GPS
-                if (watchId) {
-                    navigator.geolocation.clearWatch(watchId);
-                    watchId = null;
-                }
-                currentLocation = null;
-                gpsBtn.classList.remove('active');
-                connectBtn.innerHTML = '<i class="fas fa-satellite"></i> Conectar GPS 📡';
-                updateLocationDisplay();
-                showNotification('GPS desconectado 📡', 'info');
-            } else {
-                // Conectar GPS
-                gpsBtn.innerHTML = '<span class="loading"></span>';
-                gpsBtn.disabled = true;
-                connectBtn.innerHTML = '<span class="loading"></span>';
-                connectBtn.disabled = true;
-                
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        handleGPSPosition(position);
-                        gpsBtn.innerHTML = '<i class="fas fa-satellite"></i>';
-                        gpsBtn.classList.add('active');
-                        gpsBtn.disabled = false;
-                        connectBtn.innerHTML = '<i class="fas fa-satellite"></i> Desconectar GPS 📡';
-                        connectBtn.disabled = false;
-                        startGPSWatching();
-                    },
-                    (error) => {
-                        handleGPSError(error);
-                        gpsBtn.innerHTML = '<i class="fas fa-satellite"></i>';
-                        gpsBtn.disabled = false;
-                        connectBtn.innerHTML = '<i class="fas fa-satellite"></i> Conectar GPS 📡';
-                        connectBtn.disabled = false;
-                    },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 0
-                    }
-                );
-            }
+
+            const options = {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 0
+            };
+
+            navigator.geolocation.getCurrentPosition(
+                handleGPSPosition,
+                handleGPSError,
+                options
+            );
+
+            showNotification('Obteniendo ubicación... 🛰️', 'info');
         }
 
         function handleGPSPosition(position) {
@@ -1296,110 +1568,218 @@
                 longitude: position.coords.longitude,
                 altitude: position.coords.altitude || 0,
                 accuracy: position.coords.accuracy,
-                heading: position.coords.heading || 0,
-                speed: position.coords.speed || 0,
                 timestamp: new Date(position.timestamp)
             };
 
             updateLocationDisplay();
-            update2DMapLocation();
-            update3DMapLocation();
-            updateGeologicalData();
-
-            showNotification(`GPS conectado (${Math.round(currentLocation.accuracy)}m) 🎯`, 'success');
+            updateMapLocation();
+            updateGeologyInfo();
+            
+            showNotification(`📍 Ubicación obtenida (${Math.round(currentLocation.accuracy)}m)`, 'success');
+            
+            // Si Dr. GeoBot está activo, notificar
+            if (isDrGeoBotActive) {
+                setTimeout(() => {
+                    addMessageToChat('ai', `<strong>📍 Ubicación actualizada:</strong><br><br>
+                    <strong>Coordenadas:</strong> ${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}<br>
+                    <strong>Altitud:</strong> ${currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm ⛰️' : 'Desconocida'}<br>
+                    <strong>Región:</strong> ${getRegionFromLocation()}<br><br>
+                    <em>¿Quieres analizar la geología de esta zona?</em>`);
+                }, 1000);
+            }
         }
 
         function handleGPSError(error) {
             console.error('GPS Error:', error);
             
-            let message = 'Error GPS: ';
+            let message = '';
             switch(error.code) {
                 case 1:
-                    message += 'Permiso denegado 🔒';
+                    message = 'Permiso de ubicación denegado 🔒';
                     break;
                 case 2:
-                    message += 'Posición no disponible 📡';
+                    message = 'Ubicación no disponible 📡';
                     break;
                 case 3:
-                    message += 'Timeout ⏰';
+                    message = 'Tiempo de espera agotado ⏰';
                     break;
                 default:
-                    message += 'Error desconocido ❌';
+                    message = 'Error de GPS ❌';
             }
             
-            showNotification(message, 'error');
-        }
-
-        function startGPSWatching() {
-            if (watchId) {
-                navigator.geolocation.clearWatch(watchId);
-            }
-
-            watchId = navigator.geolocation.watchPosition(
-                handleGPSPosition,
-                handleGPSError,
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
+            showNotification(`${message}`, 'warning');
+            
+            // Usar ubicación por defecto
+            currentLocation = {
+                latitude: CONFIG.DEFAULT_LOCATION.lat,
+                longitude: CONFIG.DEFAULT_LOCATION.lng,
+                accuracy: 1000,
+                altitude: 0
+            };
+            
+            updateLocationDisplay();
+            updateMapLocation();
+            updateGeologyInfo();
         }
 
         function updateLocationDisplay() {
-            if (!currentLocation) {
-                document.getElementById('latitudeValue').textContent = '--';
-                document.getElementById('longitudeValue').textContent = '--';
-                document.getElementById('altitudeValue').textContent = '--';
-                document.getElementById('accuracyValue').textContent = '--';
-                return;
-            }
+            if (!currentLocation) return;
 
             document.getElementById('latitudeValue').textContent = currentLocation.latitude.toFixed(6);
             document.getElementById('longitudeValue').textContent = currentLocation.longitude.toFixed(6);
             document.getElementById('altitudeValue').textContent = 
-                currentLocation.altitude ? `${currentLocation.altitude.toFixed(0)} m` : '--';
-            document.getElementById('accuracyValue').textContent = `${Math.round(currentLocation.accuracy)} m`;
-        }
-
-        // ============================================
-        // CÁMARA
-        // ============================================
-        async function toggleCamera(activate = null) {
-            const cameraBtn = document.getElementById('cameraBtn');
+                currentLocation.altitude ? `${Math.round(currentLocation.altitude)}m` : '--';
             
-            if (activate === null) {
-                activate = !isCameraActive;
-            }
+            // Obtener ciudad más cercana (simulado)
+            const cities = [
+                { name: "Antofagasta", lat: -23.650, lng: -70.400 },
+                { name: "Calama", lat: -22.456, lng: -68.924 },
+                { name: "Copiapó", lat: -27.366, lng: -70.332 },
+                { name: "Vallenar", lat: -28.576, lng: -70.759 }
+            ];
             
-            if (activate && !isCameraActive) {
-                // Activar cámara
-                cameraBtn.innerHTML = '<span class="loading"></span>';
-                cameraBtn.disabled = true;
+            let closestCity = "Desierto";
+            let minDistance = Infinity;
+            
+            cities.forEach(city => {
+                const distance = Math.sqrt(
+                    Math.pow(city.lat - currentLocation.latitude, 2) + 
+                    Math.pow(city.lng - currentLocation.longitude, 2)
+                );
                 
-                const success = await startCamera();
-                if (success) {
-                    cameraBtn.innerHTML = '<i class="fas fa-camera"></i>';
-                    cameraBtn.classList.add('active');
-                    cameraBtn.disabled = false;
-                } else {
-                    cameraBtn.innerHTML = '<i class="fas fa-camera"></i>';
-                    cameraBtn.disabled = false;
+                if (distance < minDistance && distance < 1) {
+                    minDistance = distance;
+                    closestCity = city.name;
                 }
-            } else if (!activate && isCameraActive) {
-                // Desactivar cámara
-                stopCamera();
-                cameraBtn.classList.remove('active');
+            });
+            
+            document.getElementById('cityValue').textContent = closestCity;
+        }
+
+        function updateGeologyInfo() {
+            if (!currentLocation) return;
+
+            const region = getRegionFromLocation();
+            const regionData = mindatData.Chile[region];
+            
+            let html = '';
+            
+            if (regionData) {
+                html += `<div class="data-row">
+                    <span>Región:</span>
+                    <span>${region}</span>
+                </div>`;
+                
+                html += `<div class="data-row">
+                    <span>Minerales comunes:</span>
+                    <span>${regionData.minerals.slice(0, 2).map(m => m.emoji).join(' ')}</span>
+                </div>`;
+                
+                html += `<div class="data-row">
+                    <span>Localidades:</span>
+                    <span>${regionData.localities[0]}</span>
+                </div>`;
+                
+                html += `<div class="data-row">
+                    <span>Contexto:</span>
+                    <span>${getGeologicalContext()}</span>
+                </div>`;
+            } else {
+                html = `<div class="empty-state">
+                    <span>🏜️</span>
+                    <p>Zona del Desierto de Atacama</p>
+                </div>`;
+            }
+            
+            document.getElementById('geologyInfo').innerHTML = html;
+        }
+
+        // ============================================
+        // MAPA 2D
+        // ============================================
+        function init2DMap() {
+            try {
+                map = L.map('map').setView(
+                    [CONFIG.DEFAULT_LOCATION.lat, CONFIG.DEFAULT_LOCATION.lng],
+                    CONFIG.DEFAULT_LOCATION.zoom
+                );
+
+                L.tileLayer(CONFIG.MAP_LAYERS.topo, {
+                    attribution: '© OpenTopoMap',
+                    maxZoom: 17
+                }).addTo(map);
+
+                markersLayer = L.layerGroup().addTo(map);
+
+                console.log('✅ Mapa 2D inicializado');
+
+            } catch (error) {
+                console.error('Error inicializando mapa:', error);
+                showNotification('Error al cargar el mapa ❌', 'error');
             }
         }
 
+        function updateMapLocation() {
+            if (!map || !currentLocation) return;
+
+            const latLng = [currentLocation.latitude, currentLocation.longitude];
+            
+            map.flyTo(latLng, 14, {
+                duration: 1.5
+            });
+
+            // Agregar marcador
+            L.marker(latLng, {
+                icon: L.divIcon({
+                    className: 'current-location',
+                    html: `<div style="background: linear-gradient(135deg, #4A6FA5, #E67E22); color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; font-size:1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">📍</div>`,
+                    iconSize: [40, 40]
+                })
+            }).addTo(markersLayer);
+
+            // Círculo de precisión
+            L.circle(latLng, {
+                color: 'rgba(74, 111, 165, 0.3)',
+                fillColor: 'rgba(74, 111, 165, 0.1)',
+                radius: currentLocation.accuracy,
+                weight: 1
+            }).addTo(map);
+        }
+
+        // ============================================
+        // MAPA 3D
+        // ============================================
+        function init3DMap() {
+            try {
+                mapboxgl.accessToken = CONFIG.MAPBOX_TOKEN;
+
+                map3d = new mapboxgl.Map({
+                    container: 'map3d',
+                    style: 'mapbox://styles/mapbox/satellite-streets-v11',
+                    center: [CONFIG.DEFAULT_LOCATION.lng, CONFIG.DEFAULT_LOCATION.lat],
+                    zoom: CONFIG.DEFAULT_LOCATION.zoom,
+                    pitch: 45
+                });
+
+                map3d.on('load', () => {
+                    console.log('✅ Mapa 3D inicializado');
+                });
+
+            } catch (error) {
+                console.error('Error inicializando mapa 3D:', error);
+            }
+        }
+
+        // ============================================
+        // CÁMARA Y ANÁLISIS
+        // ============================================
         async function startCamera() {
             try {
                 const constraints = {
                     video: {
                         facingMode: 'environment',
-                        width: { ideal: 1280 },
-                        height: { ideal: 720 }
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
                     },
                     audio: false
                 };
@@ -1415,22 +1795,13 @@
                     };
                 });
 
-                document.getElementById('captureBtn').disabled = false;
-                document.getElementById('analyzeBtn').disabled = false;
-                document.getElementById('stopCameraBtn').disabled = false;
-                document.getElementById('startCameraBtn').disabled = true;
-
-                document.getElementById('cameraStatusText').innerHTML = 
-                    '<i class="fas fa-circle" style="color:#00ff00;"></i> ACTIVA';
-
                 isCameraActive = true;
+                updateCameraControls(true);
                 showNotification('Cámara activada 📸', 'success');
-                return true;
 
             } catch (error) {
                 console.error('Error cámara:', error);
                 showNotification('Error al activar cámara ❌', 'error');
-                return false;
             }
         }
 
@@ -1442,24 +1813,25 @@
 
             const video = document.getElementById('cameraFeed');
             video.srcObject = null;
-
-            document.getElementById('captureBtn').disabled = true;
-            document.getElementById('analyzeBtn').disabled = true;
-            document.getElementById('stopCameraBtn').disabled = true;
-            document.getElementById('startCameraBtn').disabled = false;
-
-            document.getElementById('cameraStatusText').innerHTML = 
-                '<i class="fas fa-circle" style="color:#ff4444;"></i> INACTIVA';
-
             isCameraActive = false;
-            showNotification('Cámara detenida 📷', 'info');
+            updateCameraControls(false);
+            showNotification('Cámara detenida ⏹️', 'info');
+        }
+
+        function updateCameraControls(active) {
+            document.getElementById('startCameraBtn').disabled = active;
+            document.getElementById('captureBtn').disabled = !active;
+            document.getElementById('analyzeBtn').disabled = true;
+            document.getElementById('stopCameraBtn').disabled = !active;
+            
+            const statusText = document.getElementById('cameraStatusText');
+            statusText.innerHTML = active ? 
+                '<span>🟢</span> Cámara activa' :
+                '<span>🔴</span> Cámara inactiva';
         }
 
         function capturePhoto() {
-            if (!isCameraActive) {
-                showNotification('Activa la cámara primero 📸', 'warning');
-                return;
-            }
+            if (!isCameraActive) return;
 
             const video = document.getElementById('cameraFeed');
             const canvas = document.getElementById('photoCanvas');
@@ -1472,312 +1844,216 @@
             currentPhoto = {
                 data: canvas.toDataURL('image/jpeg'),
                 timestamp: new Date().toISOString(),
-                location: currentLocation,
-                analysis: null
+                location: currentLocation
             };
 
-            showNotification('Foto capturada! Analiza con IA 🤖', 'success');
-            document.getElementById('analyzeBtn').focus();
+            document.getElementById('analyzeBtn').disabled = false;
+            showNotification('¡Foto capturada! 📸', 'success');
         }
 
         // ============================================
-        // MAPA 2D - MEJORADO CON CAPAS GEOLÓGICAS
+        // EVENT LISTENERS
         // ============================================
-        function init2DMap() {
-            try {
-                map = L.map('map').setView([-27.3667, -70.3333], 10);
+        function setupEventListeners() {
+            // Botones GPS
+            document.getElementById('updateLocationBtn').addEventListener('click', startGPS);
 
-                // Capa base OpenStreetMap
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap',
-                    maxZoom: 19
-                }).addTo(map);
+            // Botones cámara
+            document.getElementById('startCameraBtn').addEventListener('click', startCamera);
+            document.getElementById('stopCameraBtn').addEventListener('click', stopCamera);
+            document.getElementById('captureBtn').addEventListener('click', capturePhoto);
+            document.getElementById('analyzeBtn').addEventListener('click', analyzeWithAI);
 
-                // Capa satelital
-                const satelliteLayer = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-                    attribution: 'Google Satellite',
-                    maxZoom: 20
-                });
-
-                // Capas base
-                const baseLayers = {
-                    "Mapa 🗺️": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
-                    "Satélite 🛰️": satelliteLayer
-                };
-
-                L.control.layers(baseLayers).addTo(map);
-
-                // Inicializar capas geológicas
-                initGeologicalLayers();
-
-                console.log('✅ Mapa 2D inicializado');
-
-            } catch (error) {
-                console.error('Error inicializando mapa 2D:', error);
-                showNotification('Error al cargar mapa ❌', 'error');
-            }
-        }
-
-        function initGeologicalLayers() {
-            // Capa de geología
-            geologyLayer = L.layerGroup();
-            
-            // Capa de fallas
-            faultsLayer = L.layerGroup();
-            
-            // Capa de mineralización
-            mineralizationLayer = L.layerGroup();
-            
-            // Capa de muestreo
-            samplingLayer = L.layerGroup();
-            
-            // Añadir capas al mapa
-            geologyLayer.addTo(map);
-            faultsLayer.addTo(map);
-            
-            // Capas de control
-            const overlayLayers = {
-                "Geología 🪨": geologyLayer,
-                "Fallas ⚡": faultsLayer,
-                "Mineralización 💎": mineralizationLayer,
-                "Muestreo 🔬": samplingLayer
-            };
-            
-            L.control.layers(null, overlayLayers).addTo(map);
-        }
-
-        function update2DMapLocation() {
-            if (!map || !currentLocation) return;
-
-            const latLng = [currentLocation.latitude, currentLocation.longitude];
-            map.setView(latLng, 15);
-
-            // Limpiar marcadores
-            map.eachLayer(layer => {
-                if (layer instanceof L.Marker && layer._icon && layer._icon.className.includes('current-marker')) {
-                    map.removeLayer(layer);
-                }
+            // Controles mapa
+            document.getElementById('mapSatelliteBtn').addEventListener('click', () => {
+                switchMapLayer('satellite');
+            });
+            document.getElementById('mapTerrainBtn').addEventListener('click', () => {
+                switchMapLayer('topo');
             });
 
-            // Añadir marcador actual
-            L.marker(latLng, {
-                icon: L.divIcon({
-                    className: 'current-marker',
-                    html: '<div style="background:#c45c26;color:white;width:35px;height:35px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid white;"><i class="fas fa-map-marker-alt"></i></div>',
-                    iconSize: [35, 35],
-                    iconAnchor: [17, 35]
-                })
-            }).addTo(map).bindPopup('Ubicación actual 🎯');
+            // Botones mapa
+            document.getElementById('addPointBtn').addEventListener('click', addMapPoint);
+            document.getElementById('clearMapBtn').addEventListener('click', clearMapPoints);
 
-            // Actualizar datos geológicos
-            updateGeologicalData2D();
+            // Controles 3D
+            document.getElementById('generate3D').addEventListener('click', generate3DProjection);
+            document.getElementById('export3D').addEventListener('click', export3DModel);
+
+            // IA
+            document.getElementById('sendMessage').addEventListener('click', sendMessageToAI);
+            document.getElementById('chatInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessageToAI();
+            });
+            document.getElementById('analyzeLocation').addEventListener('click', () => {
+                if (currentLocation) {
+                    const message = addMessageToChat('user', 'Analiza mi ubicación geológica');
+                    setTimeout(() => {
+                        sendMessageToAI();
+                    }, 100);
+                } else {
+                    showNotification('Primero activa el GPS 📍', 'warning');
+                }
+            });
+            document.getElementById('identifyMineral').addEventListener('click', () => {
+                addMessageToChat('user', '¿Qué minerales puedo encontrar aquí?');
+                setTimeout(() => {
+                    sendMessageToAI();
+                }, 100);
+            });
         }
 
-        function updateGeologicalData2D() {
-            if (!map || !currentLocation || !geologyLayer) return;
-
-            // Limpiar capas existentes
-            geologyLayer.clearLayers();
-            faultsLayer.clearLayers();
-            mineralizationLayer.clearLayers();
-            samplingLayer.clearLayers();
-
-            const centerLat = currentLocation.latitude;
-            const centerLng = currentLocation.longitude;
-
-            // Generar datos geológicos simulados
-            for (let i = 0; i < 15; i++) {
-                const lat = centerLat + (Math.random() - 0.5) * 0.015;
-                const lng = centerLng + (Math.random() - 0.5) * 0.015;
+        function switchMapLayer(layerName) {
+            if (map) {
+                map.eachLayer((layer) => {
+                    if (layer instanceof L.TileLayer) {
+                        map.removeLayer(layer);
+                    }
+                });
                 
-                // Puntos geológicos
-                L.circleMarker([lat, lng], {
-                    color: '#c45c26',
-                    fillColor: '#c45c26',
-                    radius: 4,
-                    fillOpacity: 0.7
-                }).addTo(geologyLayer);
-
-                // Líneas de falla
-                if (i % 3 === 0) {
-                    const lat2 = lat + Math.random() * 0.008;
-                    const lng2 = lng + Math.random() * 0.008;
-                    L.polyline([[lat, lng], [lat2, lng2]], {
-                        color: '#c0392b',
-                        weight: 2,
-                        opacity: 0.6,
-                        dashArray: '5, 5'
-                    }).addTo(faultLayer);
-                }
-
-                // Zonas mineralizadas
-                if (i % 5 === 0) {
-                    L.circle([lat, lng], {
-                        color: '#e6b800',
-                        fillColor: '#e6b800',
-                        fillOpacity: 0.2,
-                        radius: 80
-                    }).addTo(mineralizationLayer);
-                }
-
-                // Puntos de muestreo
-                if (i % 4 === 0) {
-                    L.marker([lat, lng], {
-                        icon: L.divIcon({
-                            className: 'sample-marker',
-                            html: '<div style="background:#3498db;color:white;width:25px;height:25px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;">🔬</div>',
-                            iconSize: [25, 25],
-                            iconAnchor: [12, 25]
-                        })
-                    }).addTo(samplingLayer).bindPopup(`Muestra ${i+1}<br>Coords: ${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-                }
-            }
-
-            // Añadir círculo de precisión GPS
-            L.circle([centerLat, centerLng], {
-                color: '#3498db',
-                fillColor: '#3498db',
-                fillOpacity: 0.1,
-                radius: currentLocation.accuracy
-            }).addTo(map);
-        }
-
-        function update2DLayers() {
-            const layers = {
-                'geology': document.getElementById('layerGeology2D').checked,
-                'faults': document.getElementById('layerFaults2D').checked,
-                'mineralization': document.getElementById('layerMineralization2D').checked,
-                'sampling': document.getElementById('layerSampling2D').checked
-            };
-
-            // Mostrar/ocultar capas
-            if (geologyLayer) {
-                if (layers.geology) {
-                    map.addLayer(geologyLayer);
-                } else {
-                    map.removeLayer(geologyLayer);
-                }
-            }
-            
-            if (faultsLayer) {
-                if (layers.faults) {
-                    map.addLayer(faultsLayer);
-                } else {
-                    map.removeLayer(faultsLayer);
-                }
-            }
-            
-            if (mineralizationLayer) {
-                if (layers.mineralization) {
-                    map.addLayer(mineralizationLayer);
-                } else {
-                    map.removeLayer(mineralizationLayer);
-                }
-            }
-            
-            if (samplingLayer) {
-                if (layers.sampling) {
-                    map.addLayer(samplingLayer);
-                } else {
-                    map.removeLayer(samplingLayer);
-                }
+                L.tileLayer(CONFIG.MAP_LAYERS[layerName], {
+                    attribution: layerName === 'satellite' ? '© Esri' : '© OpenTopoMap',
+                    maxZoom: layerName === 'satellite' ? 19 : 17
+                }).addTo(map);
+                
+                showNotification(`Mapa: ${layerName === 'satellite' ? 'Satélite 🛰️' : 'Topográfico ⛰️'}`, 'success');
             }
         }
 
-        // ============================================
-        // MAPA 3D
-        // ============================================
-        function init3DMap() {
-            try {
-                mapboxgl.accessToken = CONFIG.MAPBOX_TOKEN;
+        function addMapPoint() {
+            if (!currentLocation) {
+                showNotification('Primero activa el GPS 🗺️', 'warning');
+                return;
+            }
 
-                map3d = new mapboxgl.Map({
-                    container: 'map3d',
-                    style: 'mapbox://styles/mapbox/satellite-v9',
-                    center: [-70.3333, -27.3667],
-                    zoom: 10,
-                    pitch: 45,
-                    bearing: 0
-                });
+            const types = [
+                { type: 'rock', emoji: '🪨', name: 'Roca' },
+                { type: 'mineral', emoji: '💎', name: 'Mineral' },
+                { type: 'fault', emoji: '⚡', name: 'Falla' }
+            ];
+            
+            const selectedType = types[Math.floor(Math.random() * types.length)];
+            const name = `${selectedType.name} ${new Date().getHours()}:${new Date().getMinutes()}`;
 
-                map3d.on('load', () => {
-                    console.log('✅ Mapa 3D inicializado');
-                    
-                    map3d.addSource('mapbox-dem', {
-                        'type': 'raster-dem',
-                        'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-                        'tileSize': 512,
-                        'maxzoom': 14
-                    });
-                    
-                    map3d.setTerrain({ 'source': 'mapbox-dem', 'exaggeration': 1.5 });
-                });
+            L.marker([currentLocation.latitude, currentLocation.longitude], {
+                icon: L.divIcon({
+                    html: `<div style="background: ${selectedType.type === 'rock' ? '#4A6FA5' : selectedType.type === 'mineral' ? '#F1C40F' : '#E74C3C'}; color:white; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; border:2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">${selectedType.emoji}</div>`,
+                    iconSize: [35, 35]
+                })
+            }).addTo(markersLayer);
 
-            } catch (error) {
-                console.error('Error inicializando mapa 3D:', error);
+            showNotification('Punto agregado 📍', 'success');
+            
+            // Notificar a Dr. GeoBot si está activo
+            if (isDrGeoBotActive) {
+                setTimeout(() => {
+                    addMessageToChat('ai', `<strong>📍 Punto geológico agregado:</strong><br><br>
+                    <strong>Tipo:</strong> ${selectedType.name} ${selectedType.emoji}<br>
+                    <strong>Ubicación:</strong> ${currentLocation.latitude.toFixed(4)}, ${currentLocation.longitude.toFixed(4)}<br><br>
+                    <em>Puedo ayudarte a analizar este punto. ¿Qué información necesitas?</em>`);
+                }, 500);
             }
         }
 
-        function update3DMapLocation() {
-            if (!map3d || !currentLocation) return;
+        function clearMapPoints() {
+            markersLayer.clearLayers();
+            showNotification('Mapa limpiado ✅', 'success');
+        }
 
-            map3d.flyTo({
-                center: [currentLocation.longitude, currentLocation.latitude],
-                zoom: 14,
-                pitch: 60,
-                bearing: 0,
-                duration: 1500
-            });
+        function analyzeWithAI() {
+            if (!currentPhoto) {
+                showNotification('Primero captura una imagen 📸', 'warning');
+                return;
+            }
+
+            if (!isDrGeoBotActive) {
+                showNotification('Primero activa Dr. GeoBot 🤖', 'warning');
+                return;
+            }
+
+            showNotification('Analizando imagen con IA... 🤖', 'info');
+
+            setTimeout(() => {
+                const analysisHTML = `
+                    <div class="data-row">
+                        <span>Tipo identificado:</span>
+                        <span>🪨 Roca ígnea</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Mineral principal:</span>
+                        <span>💎 Cuarzo + Feldespato</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Dureza estimada:</span>
+                        <span>📏 6-7 (Mohs)</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Confianza:</span>
+                        <span>🎯 88%</span>
+                    </div>
+                    <div style="margin-top: 15px; padding: 12px; background: rgba(52, 152, 219, 0.2); border-radius: 12px; border: 1px solid rgba(52, 152, 219, 0.3); font-size: 0.8rem;">
+                        <strong>👨‍🔬 Dr. GeoBot recomienda:</strong><br>
+                        • Realizar análisis petrográfico<br>
+                        • Tomar muestra para geoquímica
+                    </div>
+                `;
+
+                document.getElementById('analysisResults').innerHTML = analysisHTML;
+                showNotification('✅ Análisis completado', 'success');
+            }, 2000);
         }
 
         function generate3DProjection() {
             if (!currentLocation) {
-                showNotification('Conecta GPS primero 🛰️', 'warning');
+                showNotification('Primero activa el GPS 🌍', 'warning');
                 return;
             }
 
-            showNotification('Generando proyección 3D... 🔄', 'info');
+            showNotification('Generando modelo 3D... 🔄', 'info');
 
             setTimeout(() => {
-                updateStructuralParameters();
-                showNotification('Proyección 3D generada! 🌍', 'success');
+                const html = `
+                    <div class="data-row">
+                        <span>Rumbo 🧭:</span>
+                        <span>N.45°E</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Buzamiento 📏:</span>
+                        <span>30°SE</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Espesor 📊:</span>
+                        <span>15.2 m</span>
+                    </div>
+                    <div class="data-row">
+                        <span>Inclinación 📐:</span>
+                        <span>22°</span>
+                    </div>
+                `;
+
+                document.getElementById('structuralParams').innerHTML = html;
+                showNotification('✅ Modelo 3D generado', 'success');
             }, 1500);
-        }
-
-        function updateStructuralParameters() {
-            if (!currentLocation) return;
-
-            const rumbos = ['N.45°E', 'N.30°E', 'N.60°E', 'N.15°W'];
-            const buzamientos = ['30°SE', '45°NW', '25°SW', '60°NE'];
-            const espesores = ['15.2 m', '22.8 m', '8.5 m', '31.6 m'];
-            const inclinaciones = ['22°', '35°', '18°', '42°'];
-
-            const index = Math.floor(Math.random() * 4);
-
-            document.getElementById('paramRumbo').textContent = rumbos[index];
-            document.getElementById('paramBuzamiento').textContent = buzamientos[index];
-            document.getElementById('paramThickness').textContent = espesores[index];
-            document.getElementById('paramInclination').textContent = inclinaciones[index];
         }
 
         function export3DModel() {
             if (!currentLocation) {
-                showNotification('Genera proyección 3D primero 🌍', 'warning');
+                showNotification('Primero genera un modelo 3D 💾', 'warning');
                 return;
             }
 
-            showNotification('Exportando modelo 3D... 📤', 'info');
+            showNotification('Exportando modelo... 📤', 'info');
 
             setTimeout(() => {
                 const data = {
                     location: currentLocation,
+                    timestamp: new Date().toISOString(),
                     parameters: {
-                        rumbo: document.getElementById('paramRumbo').textContent,
-                        buzamiento: document.getElementById('paramBuzamiento').textContent,
-                        espesor: document.getElementById('paramThickness').textContent,
-                        inclinacion: document.getElementById('paramInclination').textContent
-                    },
-                    timestamp: new Date().toISOString()
+                        rumbo: "N.45°E",
+                        buzamiento: "30°SE",
+                        espesor: "15.2 m",
+                        inclinacion: "22°"
+                    }
                 };
 
                 const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -1790,231 +2066,64 @@
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
 
-                showNotification('Modelo exportado! 💾', 'success');
+                showNotification('✅ Modelo exportado', 'success');
             }, 1000);
-        }
-
-        // ============================================
-        // IA - DR. GEOBOT
-        // ============================================
-        async function sendMessageToAI() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            
-            if (!message) return;
-
-            addMessageToChat('user', message);
-            input.value = '';
-            input.focus();
-
-            const thinkingId = addMessageToChat('ai', 'Analizando... 🔍');
-
-            setTimeout(() => {
-                const response = generateAIResponse(message);
-                updateMessage(thinkingId, 'ai', response);
-            }, 1200);
-        }
-
-        function addMessageToChat(sender, text) {
-            const chatContainer = document.getElementById('chatContainer');
-            const messageId = 'msg-' + Date.now();
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `chat-message ${sender}`;
-            messageDiv.id = messageId;
-            messageDiv.innerHTML = `<strong>${sender === 'ai' ? 'Dr. GeoBot 👨‍🔬:' : 'Tú 🧑‍💼:'}</strong> ${text}`;
-            
-            chatContainer.appendChild(messageDiv);
-            chatContainer.scrollTop = chatContainer.scrollHeight;
-            
-            return messageId;
-        }
-
-        function updateMessage(messageId, sender, text) {
-            const messageDiv = document.getElementById(messageId);
-            if (messageDiv) {
-                messageDiv.innerHTML = `<strong>${sender === 'ai' ? 'Dr. GeoBot 👨‍🔬:' : 'Tú 🧑‍💼:'}</strong> ${text}`;
-            }
-        }
-
-        function generateAIResponse(message) {
-            const lowerMessage = message.toLowerCase();
-            
-            if (lowerMessage.includes('roca') || lowerMessage.includes('identificar')) {
-                return `🏜️ <strong>Análisis Litológico:</strong><br><br>
-                • <strong>Andesita:</strong> Volcánica, plagioclasa + piroxeno<br>
-                • <strong>Granito:</strong> Ígnea intrusiva, textura fanerítica<br>
-                • <strong>Esquisto:</strong> Metamórfica, foliación marcada<br>
-                • <strong>Arenisca:</strong> Sedimentaria, clastos de cuarzo<br><br>
-                <strong>Recomendación:</strong> Análisis petrográfico 🔬`;
-            }
-            
-            if (lowerMessage.includes('falla') || lowerMessage.includes('estructura')) {
-                return `⚡ <strong>Análisis Estructural:</strong><br><br>
-                • <strong>Orientación:</strong> NNE-SSO predominante<br>
-                • <strong>Tipo:</strong> Falla inversa con componente dextral<br>
-                • <strong>Buzamiento:</strong> 45-60° hacia el SE<br>
-                • <strong>Mineralización:</strong> Control estructural de vetas Cu-Mo<br><br>
-                <strong>Metodología:</strong> Mapeo + estereograma 📐`;
-            }
-            
-            if (lowerMessage.includes('mineral') || lowerMessage.includes('yacimiento')) {
-                return `💎 <strong>Análisis Mineralógico:</strong><br><br>
-                • <strong>Paragénesis:</strong> Cuarzo + Calcopirita + Bornita<br>
-                • <strong>Temperatura:</strong> 250-350°C (inclusiones fluidas)<br>
-                • <strong>Ley estimada:</strong> 0.8-1.2% Cu, 0.3-0.5 g/t Au<br>
-                • <strong>Potencial:</strong> Pórfido cuprífero económico<br><br>
-                <strong>Recomendación:</strong> Perforación diamantina ⛏️`;
-            }
-            
-            return `👨‍🔬 <strong>Dr. GeoBot:</strong><br><br>
-            Especialista en:<br>
-            • Geología económica y mineralogía<br>
-            • Proyección 3D de yacimientos<br>
-            • Diseño de labores mineras<br>
-            • Análisis estructural avanzado<br><br>
-            ¿En qué aspecto necesitas ayuda? 🎯`;
-        }
-
-        function analyzeLocationWithAI() {
-            if (!currentLocation) {
-                showNotification('Conecta GPS primero 🛰️', 'warning');
-                return;
-            }
-
-            const message = addMessageToChat('ai', 'Analizando ubicación... 🗺️');
-
-            setTimeout(() => {
-                const response = `📍 <strong>Análisis de Ubicación:</strong><br><br>
-                <strong>Coordenadas:</strong> ${currentLocation.latitude.toFixed(4)}°S, ${currentLocation.longitude.toFixed(4)}°W<br>
-                <strong>Contexto:</strong> Desierto de Atacama - Cordillera de los Andes<br>
-                <strong>Litología:</strong> Volcánicos andesíticos + sedimentos terciarios<br>
-                <strong>Estructuras:</strong> Sistema de fallas NNE-SSO<br>
-                <strong>Potencial:</strong> Mineralización cuprífera tipo pórfido<br><br>
-                <strong>Recomendaciones:</strong><br>
-                1. Mapeo geológico detallado<br>
-                2. Geoquímica de suelos<br>
-                3. Perforación exploratoria`;
-                
-                updateMessage(message, 'ai', response);
-            }, 1500);
-        }
-
-        function suggestMethodology() {
-            const message = addMessageToChat('ai', 'Generando metodología... 📋');
-
-            setTimeout(() => {
-                const response = `🔬 <strong>Metodología de Campo:</strong><br><br>
-                <strong>1. Mapeo:</strong><br>
-                • GPS alta precisión (±1m)<br>
-                • Fotografía geológica con escala<br>
-                • Descripción litológica detallada<br><br>
-                <strong>2. Muestreo:</strong><br>
-                • Sistemático cada 50m<br>
-                • Muestras de mano (500g)<br>
-                • Documentación fotográfica<br><br>
-                <strong>3. Análisis:</strong><br>
-                • Petrográfico (láminas delgadas)<br>
-                • Geoquímico (ICP-MS)<br>
-                • Estructural (estereograma)<br><br>
-                <strong>Equipo:</strong> Brújula, martillo, lupa, GPS`;
-                
-                updateMessage(message, 'ai', response);
-            }, 1200);
-        }
-
-        function analyzeWithAI() {
-            if (!currentPhoto) {
-                showNotification('Captura una imagen primero 📸', 'warning');
-                return;
-            }
-
-            showNotification('Analizando imagen... 🤖', 'info');
-
-            setTimeout(() => {
-                const rockTypes = CONFIG.GEOLOGY_DATABASE.rocks;
-                const minerals = CONFIG.GEOLOGY_DATABASE.minerals;
-                
-                const randomRock = rockTypes[Math.floor(Math.random() * rockTypes.length)];
-                const randomMineral = minerals[Math.floor(Math.random() * minerals.length)];
-                const confidence = (90 + Math.random() * 8).toFixed(1);
-
-                const analysisHTML = `
-                    <div style="margin-bottom: 10px;">
-                        <strong>🎯 Análisis IA - ${confidence}% Confianza</strong>
-                    </div>
-                    <div class="data-item">
-                        <span>Roca:</span>
-                        <span>${randomRock.name} (${randomRock.type})</span>
-                    </div>
-                    <div class="data-item">
-                        <span>Mineral:</span>
-                        <span>${randomMineral.name}</span>
-                    </div>
-                    <div class="data-item">
-                        <span>Dureza:</span>
-                        <span>${randomRock.hardness}/10</span>
-                    </div>
-                    <div class="data-item">
-                        <span>Ubicación:</span>
-                        <span>${currentLocation ? `${currentLocation.latitude.toFixed(4)}°, ${currentLocation.longitude.toFixed(4)}°` : '--'}</span>
-                    </div>
-                `;
-
-                document.getElementById('analysisResults').innerHTML = analysisHTML;
-                showNotification('Análisis completado! ✅', 'success');
-
-                updateDatabaseCounts();
-            }, 2000);
-        }
-
-        function updateGeologicalData() {
-            if (!currentLocation) return;
-            updateDatabaseCounts();
-        }
-
-        function updateDatabaseCounts() {
-            document.getElementById('rockCount').textContent = CONFIG.GEOLOGY_DATABASE.rocks.length;
-            document.getElementById('mineralCount').textContent = CONFIG.GEOLOGY_DATABASE.minerals.length;
-            document.getElementById('structureCount').textContent = '8';
-            
-            if (currentPhoto) {
-                const currentCount = parseInt(document.getElementById('sampleCount').textContent);
-                document.getElementById('sampleCount').textContent = currentCount + 1;
-            }
         }
 
         // ============================================
         // UTILIDADES
         // ============================================
-        function showNotification(message, type = 'info', permanent = false) {
-            const notification = document.getElementById('notification');
-            const notificationText = document.getElementById('notificationText');
-
-            notification.className = `notification ${type}`;
-            notificationText.textContent = message;
-            notification.style.display = 'flex';
-
-            if (!permanent) {
-                setTimeout(() => {
-                    notification.style.display = 'none';
-                }, 2500);
+        function requestPermissions() {
+            if (navigator.permissions) {
+                navigator.permissions.query({ name: 'geolocation' })
+                    .then(result => {
+                        if (result.state === 'granted') {
+                            console.log('Permiso de GPS disponible 🛰️');
+                        }
+                    });
             }
         }
 
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            const notificationIcon = document.getElementById('notificationIcon');
+
+            notification.className = `notification ${type}`;
+            notificationText.textContent = message;
+            
+            switch(type) {
+                case 'success':
+                    notificationIcon.textContent = '✅';
+                    break;
+                case 'error':
+                    notificationIcon.textContent = '❌';
+                    break;
+                case 'warning':
+                    notificationIcon.textContent = '⚠️';
+                    break;
+                case 'info':
+                    notificationIcon.textContent = 'ℹ️';
+                    break;
+            }
+            
+            notification.style.display = 'flex';
+
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
         // ============================================
-        // INICIALIZACIÓN AUTOMÁTICA
+        // MANEJO OFFLINE/ONLINE
         // ============================================
-        setTimeout(() => {
-            addMessageToChat('ai', `👨‍🔬 <strong>Dr. GeoBot:</strong><br><br>
-            ¡Bienvenido a AtacamApp! 🏜️<br><br>
-            <strong>Para comenzar:</strong><br>
-            1. 📡 Conecta GPS para ubicación<br>
-            2. 📸 Activa cámara para análisis<br>
-            3. 🗺️ Explora capas geológicas 2D<br>
-            4. 🌍 Genera proyecciones 3D<br><br>
-            <strong>¡Listo para explorar el desierto!</strong> 🚀`);
-        }, 1500);
+        window.addEventListener('online', () => {
+            showNotification('Conectado a internet ✅', 'success');
+        });
+
+        window.addEventListener('offline', () => {
+            showNotification('Sin conexión a internet ⚠️', 'warning');
+        });
     </script>
 </body>
 </html>
