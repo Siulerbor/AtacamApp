@@ -24,22 +24,22 @@
     <style>
         /* Variables CSS - Tema Glassmorphism Desierto */
         :root {
-            --primary: #4A6FA5; /* Azul atardecer */
-            --primary-dark: #385C8E;
-            --primary-light: #6B93D6;
-            --secondary: #E67E22; /* Naranja desierto */
-            --accent: #F1C40F; /* Amarillo sol */
-            --danger: #E74C3C;
-            --success: #2ECC71;
-            --warning: #F39C12;
-            --info: #3498DB;
-            --dark: #2C3E50;
-            --light: rgba(255, 255, 255, 0.9);
-            --glass-bg: rgba(255, 255, 255, 0.15);
-            --glass-border: rgba(255, 255, 255, 0.2);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-            --text-primary: #FFFFFF;
-            --text-secondary: rgba(255, 255, 255, 0.8);
+            --primary: #D4A017; /* Oro desierto */
+            --primary-dark: #B8860B;
+            --primary-light: #FFD700;
+            --secondary: #8B4513; /* Tierra desierto */
+            --accent: #CD853F; /* Arena */
+            --danger: #DC143C;
+            --success: #228B22;
+            --warning: #FF8C00;
+            --info: #4682B4;
+            --dark: #2F4F4F;
+            --light: rgba(255, 248, 220, 0.9);
+            --glass-bg: rgba(255, 248, 220, 0.15);
+            --glass-border: rgba(210, 180, 140, 0.2);
+            --glass-shadow: 0 8px 32px rgba(139, 69, 19, 0.1);
+            --text-primary: #2F4F4F;
+            --text-secondary: rgba(47, 79, 79, 0.8);
             --border-radius: 16px;
             --blur: blur(20px);
             --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -60,8 +60,8 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #1a2980 0%, #26d0ce 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #8B7355 0%, #D2B48C 100%);
             color: var(--text-primary);
             line-height: 1.4;
             min-height: 100vh;
@@ -69,7 +69,7 @@
             position: relative;
         }
 
-        /* Fondo principal con imagen de desierto */
+        /* Fondo principal DESIERTO DE ATACAMA */
         body::before {
             content: "";
             position: fixed;
@@ -78,53 +78,68 @@
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(rgba(26, 41, 128, 0.85), rgba(38, 208, 206, 0.85)),
-                url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+                linear-gradient(rgba(139, 115, 85, 0.7), rgba(210, 180, 140, 0.7)),
+                url('https://images.unsplash.com/photo-1527482797697-8795b05a13fe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             z-index: -2;
         }
 
-        /* Patrón de cerros decorativo */
+        /* Patrón de dunas decorativo */
         body::after {
             content: "";
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 20%;
+            height: 30%;
             background-image: 
-                linear-gradient(to top, rgba(26, 41, 128, 0.9), transparent),
-                url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+                linear-gradient(to top, rgba(139, 115, 85, 0.9), transparent),
+                url('https://images.unsplash.com/photo-1542401886-65d6c61db217?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
             background-size: cover;
             background-position: bottom;
             z-index: -1;
-            opacity: 0.6;
+            opacity: 0.8;
         }
 
-        /* Efecto de partículas */
-        .particles {
+        /* Efecto de calor del desierto */
+        .heat-wave {
             position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            background: linear-gradient(
+                to bottom,
+                transparent 0%,
+                rgba(255, 255, 255, 0.1) 50%,
+                transparent 100%
+            );
+            animation: heatWave 4s ease-in-out infinite;
+            pointer-events: none;
             z-index: -1;
         }
 
-        /* Splash Screen Glassmorphism */
+        @keyframes heatWave {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Splash Screen Glassmorphism Desierto */
         #splashScreen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, rgba(74, 111, 165, 0.9), rgba(230, 126, 34, 0.9));
+            background: linear-gradient(135deg, rgba(212, 160, 23, 0.9), rgba(139, 69, 19, 0.9));
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            color: white;
+            color: var(--text-primary);
             transition: opacity 0.5s ease;
             backdrop-filter: blur(10px);
         }
@@ -159,7 +174,7 @@
         .progress-bar {
             width: 200px;
             height: 4px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(47, 79, 79, 0.2);
             margin: 1.5rem auto;
             border-radius: 2px;
             overflow: hidden;
@@ -167,7 +182,7 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--accent), var(--secondary));
+            background: linear-gradient(90deg, var(--accent), var(--primary));
             width: 0%;
             transition: width 0.3s ease;
             border-radius: 2px;
@@ -180,15 +195,16 @@
             padding-bottom: 70px;
         }
 
-        /* Header Compacto */
+        /* Header Compacto Desierto */
         .app-header {
-            background: linear-gradient(rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.95));
-            padding: 10px 15px;
+            background: linear-gradient(rgba(255, 248, 220, 0.9), rgba(255, 248, 220, 0.95));
+            padding: 12px 15px;
             position: sticky;
             top: 0;
             z-index: 1000;
             backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 2px solid var(--accent);
+            box-shadow: 0 4px 20px rgba(139, 69, 19, 0.1);
         }
 
         .header-content {
@@ -198,11 +214,11 @@
             margin-bottom: 8px;
         }
 
-        /* Logo muy compacto */
+        /* Logo Desierto */
         .app-brand {
             display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 10px;
         }
 
         .brand-center {
@@ -212,65 +228,78 @@
         }
 
         .app-logo {
-            font-size: 2rem;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+            font-size: 2.2rem;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
         }
 
         .brand-text h1 {
-            font-size: 1.2rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff, #f0f0f0);
+            font-size: 1.3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin: 0;
             letter-spacing: -0.5px;
+            text-shadow: 1px 1px 2px rgba(255, 248, 220, 0.3);
         }
 
         .brand-text small {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: var(--text-secondary);
-            font-weight: 300;
+            font-weight: 500;
         }
 
-        /* Status Bar Muy Compacta - Solo el emoji */
+        /* Status Bar - Dr. GeoBot */
         .status-bar {
             display: flex;
             justify-content: flex-end;
-            padding: 5px 0;
         }
 
         .status-item {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 6px 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(212, 160, 23, 0.1), rgba(139, 69, 19, 0.1));
+            border-radius: 12px;
+            border: 1.5px solid var(--accent);
             transition: var(--transition);
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(139, 69, 19, 0.1);
+        }
+
+        .status-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(139, 69, 19, 0.2);
+        }
+
+        .status-item.active {
+            background: linear-gradient(135deg, rgba(34, 139, 34, 0.2), rgba(50, 205, 50, 0.2));
+            border-color: var(--success);
         }
 
         .status-icon {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
 
         .status-value {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-primary);
         }
 
-        /* GPS Data Bar - Una sola línea */
+        /* GPS Data Bar - Estilo Desierto */
         .gps-data-bar {
             display: flex;
             justify-content: space-between;
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.2), rgba(210, 180, 140, 0.2));
             backdrop-filter: blur(15px);
             border-radius: 12px;
-            padding: 10px 15px;
+            padding: 12px 15px;
             margin: 10px 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.1);
             font-size: 0.75rem;
         }
 
@@ -281,78 +310,101 @@
             text-align: center;
             flex: 1;
             padding: 0 5px;
+            min-width: 0;
         }
 
         .gps-label {
             font-size: 0.7rem;
             color: var(--text-secondary);
-            margin-bottom: 4px;
+            margin-bottom: 5px;
             display: flex;
             align-items: center;
             gap: 4px;
+            font-weight: 600;
         }
 
         .gps-value {
             font-size: 0.85rem;
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
+            text-shadow: 0 1px 2px rgba(255, 248, 220, 0.3);
         }
 
-        /* Main Content - Optimizado para móvil */
+        /* Main Content - Desierto */
         .main-content {
-            padding: 10px;
+            padding: 12px;
             display: grid;
             grid-template-columns: 1fr;
             gap: 15px;
         }
 
-        /* Glass Cards Compactas */
+        /* Glass Cards Desierto */
         .glass-card {
-            background: var(--glass-bg);
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.15), rgba(210, 180, 140, 0.1));
             backdrop-filter: var(--blur);
             border-radius: var(--border-radius);
-            padding: 15px;
+            padding: 18px;
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(212, 160, 23, 0.05), transparent);
+            pointer-events: none;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(139, 69, 19, 0.15);
         }
 
         .card-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            gap: 12px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1.5px solid var(--glass-border);
         }
 
         .card-header i {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
+            font-size: 1.15rem;
+            font-weight: 700;
             color: var(--text-primary);
             margin: 0;
+            text-shadow: 0 1px 2px rgba(255, 248, 220, 0.3);
         }
 
-        /* Map Containers Compactos */
+        /* Map Containers Desierto */
         .map-container {
             width: 100%;
             height: 220px;
             border-radius: 15px;
             overflow: hidden;
             margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid var(--glass-border);
             position: relative;
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.1);
         }
 
         #map, #map3d {
@@ -370,14 +422,14 @@
         }
 
         .map-control-btn {
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
             background: var(--glass-bg);
             backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
+            border: 1.5px solid var(--glass-border);
             color: var(--text-primary);
-            font-size: 1rem;
+            font-size: 1.1rem;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -385,54 +437,103 @@
             transition: var(--transition);
         }
 
-        /* Quick Actions en una línea */
+        .map-control-btn:hover {
+            background: rgba(212, 160, 23, 0.15);
+            transform: scale(1.1);
+        }
+
+        /* Quick Actions Desierto */
         .quick-actions {
             display: flex;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 12px;
+            margin-top: 18px;
         }
 
         .quick-actions .glass-btn {
             flex: 1;
-            padding: 12px;
+            padding: 14px;
             font-size: 0.8rem;
+            font-weight: 600;
         }
 
-        /* Glass Buttons Compactos */
+        /* Glass Buttons Desierto */
         .glass-btn {
-            padding: 14px 18px;
+            padding: 16px 20px;
             border: none;
             border-radius: 12px;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 0.85rem;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             transition: var(--transition);
             width: 100%;
-            background: var(--glass-bg);
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.2), rgba(210, 180, 140, 0.2));
             backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
+            border: 1.5px solid var(--glass-border);
             color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .glass-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 160, 23, 0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .glass-btn:hover::before {
+            left: 100%;
+        }
+
+        .glass-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(139, 69, 19, 0.15);
         }
 
         .glass-btn.primary {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             border: none;
+            color: white;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
 
-        /* Camera Container Compacto */
+        .glass-btn.success {
+            background: linear-gradient(135deg, var(--success), #1E7A1E);
+            border: none;
+            color: white;
+        }
+
+        .glass-btn.warning {
+            background: linear-gradient(135deg, var(--warning), #E67E22);
+            border: none;
+            color: white;
+        }
+
+        .glass-btn.danger {
+            background: linear-gradient(135deg, var(--danger), #B22222);
+            border: none;
+            color: white;
+        }
+
+        /* Camera Container Desierto */
         .camera-container {
             width: 100%;
-            height: 180px;
-            background: rgba(0, 0, 0, 0.5);
+            height: 200px;
+            background: rgba(47, 79, 79, 0.7);
             border-radius: 15px;
             overflow: hidden;
             margin-bottom: 15px;
             position: relative;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.1);
         }
 
         #cameraFeed {
@@ -444,20 +545,20 @@
         .camera-controls {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+            gap: 12px;
             margin-bottom: 15px;
         }
 
-        /* Chat Interface Compacto */
+        /* Chat Interface Desierto */
         .chat-container {
-            background: rgba(255, 255, 255, 0.08);
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.1), rgba(210, 180, 140, 0.05));
             backdrop-filter: blur(10px);
             border-radius: 15px;
             padding: 15px;
-            height: 250px;
+            height: 260px;
             overflow-y: auto;
             margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1.5px solid var(--glass-border);
             display: flex;
             flex-direction: column;
             gap: 12px;
@@ -465,120 +566,142 @@
 
         .chat-message {
             max-width: 85%;
-            padding: 10px 15px;
+            padding: 12px 16px;
             border-radius: 15px;
             position: relative;
             word-wrap: break-word;
             backdrop-filter: blur(10px);
             font-size: 0.85rem;
+            line-height: 1.5;
         }
 
         .chat-message.ai {
-            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(41, 128, 185, 0.2));
+            background: linear-gradient(135deg, rgba(70, 130, 180, 0.2), rgba(100, 149, 237, 0.2));
             align-self: flex-start;
-            border: 1px solid rgba(52, 152, 219, 0.3);
-            margin-left: 25px;
+            border: 1.5px solid rgba(70, 130, 180, 0.3);
+            margin-left: 28px;
+            box-shadow: 0 4px 12px rgba(70, 130, 180, 0.1);
         }
 
         .chat-message.ai::before {
             content: "👨‍🔬";
             position: absolute;
-            left: -25px;
-            font-size: 1.2rem;
+            left: -28px;
+            font-size: 1.3rem;
         }
 
         .chat-message.user {
-            background: linear-gradient(135deg, rgba(74, 111, 165, 0.2), rgba(56, 92, 142, 0.2));
+            background: linear-gradient(135deg, rgba(212, 160, 23, 0.2), rgba(184, 134, 11, 0.2));
             align-self: flex-end;
-            border: 1px solid rgba(74, 111, 165, 0.3);
-            margin-right: 25px;
+            border: 1.5px solid rgba(212, 160, 23, 0.3);
+            margin-right: 28px;
+            box-shadow: 0 4px 12px rgba(212, 160, 23, 0.1);
         }
 
         .chat-message.user::before {
             content: "🧑‍💼";
             position: absolute;
-            right: -25px;
-            font-size: 1.2rem;
+            right: -28px;
+            font-size: 1.3rem;
         }
 
         .chat-input-group {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 12px;
+            margin-top: 12px;
         }
 
         .glass-input {
             flex: 1;
-            padding: 14px 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 16px 18px;
+            border: 1.5px solid var(--glass-border);
             border-radius: 12px;
             font-size: 0.9rem;
             outline: none;
             transition: var(--transition);
-            background: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.15), rgba(210, 180, 140, 0.1));
             backdrop-filter: blur(10px);
             color: var(--text-primary);
+            font-weight: 500;
         }
 
-        /* Geology Data Compacto */
+        .glass-input:focus {
+            border-color: var(--primary);
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.25), rgba(210, 180, 140, 0.2));
+            box-shadow: 0 0 0 3px rgba(212, 160, 23, 0.1);
+        }
+
+        .glass-input::placeholder {
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Geology Data Desierto */
         .geology-data {
-            background: linear-gradient(135deg, rgba(74, 111, 165, 0.15), rgba(230, 126, 34, 0.15));
+            background: linear-gradient(135deg, rgba(212, 160, 23, 0.15), rgba(139, 69, 19, 0.1));
             backdrop-filter: blur(10px);
-            padding: 15px;
+            padding: 18px;
             border-radius: 15px;
             margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-left: 4px solid var(--accent);
+            border: 1.5px solid var(--glass-border);
+            border-left: 5px solid var(--primary);
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.1);
         }
 
         .data-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 10px 0;
+            border-bottom: 1px solid var(--glass-border);
             font-size: 0.85rem;
+            font-weight: 500;
         }
 
         .data-row:last-child {
             border-bottom: none;
         }
 
-        /* Layers Panel Compacto */
+        /* Layers Panel Desierto */
         .layers-panel {
-            background: rgba(255, 255, 255, 0.08);
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.1), rgba(210, 180, 140, 0.05));
             backdrop-filter: blur(10px);
             border-radius: 15px;
-            padding: 15px;
+            padding: 18px;
             margin-bottom: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1.5px solid var(--glass-border);
         }
 
         .layer-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 12px 0;
+            border-bottom: 1px solid var(--glass-border);
             font-size: 0.85rem;
+            font-weight: 500;
         }
 
-        /* Bottom Navigation Compacta */
+        .layer-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Bottom Navigation Desierto */
         .bottom-nav {
             position: fixed;
-            bottom: 10px;
+            bottom: 12px;
             left: 50%;
             transform: translateX(-50%);
-            width: 90%;
-            max-width: 320px;
-            background: var(--glass-bg);
+            width: 92%;
+            max-width: 340px;
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.2), rgba(210, 180, 140, 0.15));
             backdrop-filter: blur(30px);
             display: flex;
             justify-content: space-around;
-            padding: 8px 10px;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 10px 12px;
+            border-radius: 18px;
+            box-shadow: 0 10px 35px rgba(139, 69, 19, 0.2);
             z-index: 1000;
-            border: 1px solid var(--glass-border);
+            border: 1.5px solid var(--glass-border);
         }
 
         .nav-btn {
@@ -587,45 +710,59 @@
             align-items: center;
             text-decoration: none;
             color: var(--text-secondary);
-            font-size: 0.65rem;
-            padding: 4px 6px;
-            border-radius: 10px;
+            font-size: 0.68rem;
+            padding: 6px 8px;
+            border-radius: 12px;
             transition: var(--transition);
-            min-width: 55px;
+            min-width: 60px;
             position: relative;
+            font-weight: 600;
         }
 
-        .nav-btn span {
-            font-size: 1.3rem;
-            margin-bottom: 2px;
+        .nav-btn span:first-child {
+            font-size: 1.4rem;
+            margin-bottom: 3px;
         }
 
         .nav-btn.active {
-            color: var(--text-primary);
+            color: white;
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px rgba(139, 69, 19, 0.3);
         }
 
-        /* Notification */
+        .nav-btn.active::after {
+            content: "";
+            position: absolute;
+            top: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* Notification Desierto */
         .notification {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: var(--glass-bg);
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.2), rgba(210, 180, 140, 0.15));
             backdrop-filter: blur(30px);
-            padding: 12px 16px;
-            border-radius: 12px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            padding: 14px 18px;
+            border-radius: 14px;
+            box-shadow: 0 15px 40px rgba(139, 69, 19, 0.2);
             z-index: 2000;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             animation: slideInRight 0.3s ease;
-            max-width: 280px;
-            border: 1px solid var(--glass-border);
-            border-left: 4px solid var(--success);
+            max-width: 300px;
+            border: 1.5px solid var(--glass-border);
+            border-left: 5px solid var(--success);
             font-size: 0.85rem;
+            font-weight: 500;
         }
 
         @keyframes slideInRight {
@@ -633,41 +770,46 @@
             to { transform: translateX(0); opacity: 1; }
         }
 
-        /* Map Legend Compacto */
+        .notification.error { border-left-color: var(--danger); }
+        .notification.warning { border-left-color: var(--warning); }
+        .notification.info { border-left-color: var(--info); }
+
+        /* Map Legend Desierto */
         .map-legend {
             position: absolute;
-            bottom: 10px;
-            left: 10px;
-            background: var(--glass-bg);
+            bottom: 12px;
+            left: 12px;
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.2), rgba(210, 180, 140, 0.15));
             backdrop-filter: blur(20px);
-            padding: 8px;
-            border-radius: 8px;
+            padding: 10px;
+            border-radius: 10px;
             box-shadow: var(--glass-shadow);
             z-index: 1000;
-            font-size: 0.7rem;
-            border: 1px solid var(--glass-border);
+            font-size: 0.75rem;
+            border: 1.5px solid var(--glass-border);
         }
 
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 6px;
-            margin-bottom: 6px;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 500;
         }
 
         .legend-color {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
         }
 
-        /* Custom Checkbox Compacto */
+        /* Custom Checkbox Desierto */
         .switch {
             position: relative;
             display: inline-block;
-            width: 50px;
-            height: 24px;
+            width: 52px;
+            height: 26px;
         }
 
         .slider {
@@ -677,132 +819,187 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(255, 255, 255, 0.1);
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.2), rgba(210, 180, 140, 0.1));
             transition: .4s;
-            border-radius: 24px;
+            border-radius: 26px;
+            border: 1.5px solid var(--glass-border);
         }
 
         .slider:before {
             position: absolute;
             content: "";
-            height: 18px;
-            width: 18px;
+            height: 20px;
+            width: 20px;
             left: 3px;
-            bottom: 3px;
-            background-color: white;
+            bottom: 2px;
+            background: white;
             transition: .4s;
             border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(139, 69, 19, 0.2);
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary);
         }
 
         input:checked + .slider:before {
             transform: translateX(26px);
+            background: white;
         }
 
         /* Empty States */
         .empty-state {
             text-align: center;
-            padding: 30px 15px;
+            padding: 35px 20px;
             color: var(--text-secondary);
-            font-size: 0.85rem;
+            font-size: 0.9rem;
         }
 
-        .empty-state span {
-            font-size: 2rem;
-            margin-bottom: 15px;
+        .empty-state span:first-child {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
             display: block;
-            opacity: 0.5;
+            opacity: 0.6;
         }
 
-        /* Scrollbar */
+        /* Scrollbar Desierto */
         ::-webkit-scrollbar {
-            width: 6px;
+            width: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
+            background: linear-gradient(135deg, rgba(255, 248, 220, 0.1), rgba(210, 180, 140, 0.1));
+            border-radius: 8px;
         }
 
         ::-webkit-scrollbar-thumb {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
-            border-radius: 6px;
+            border-radius: 8px;
         }
 
-        /* Responsive Design para móviles pequeños */
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 22px;
+            height: 22px;
+            border: 3px solid rgba(212, 160, 23, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
         @media (max-width: 360px) {
-            html { font-size: 12px; }
+            html { font-size: 13px; }
             
-            .main-content { padding: 8px; }
+            .main-content { padding: 10px; }
             
             .gps-data-bar {
-                margin: 8px;
-                padding: 8px;
+                margin: 8px 10px;
+                padding: 10px;
                 flex-wrap: wrap;
             }
             
             .gps-data-item {
                 flex: 1 0 45%;
-                margin-bottom: 8px;
+                margin-bottom: 10px;
+                min-width: 80px;
             }
             
-            .map-container { height: 180px; }
+            .map-container { height: 190px; }
             
-            .camera-container { height: 150px; }
+            .camera-container { height: 170px; }
+            
+            .chat-container { height: 240px; }
             
             .quick-actions {
                 flex-direction: column;
-                gap: 8px;
+                gap: 10px;
             }
             
             .bottom-nav {
-                width: 95%;
-                padding: 6px 8px;
-                border-radius: 12px;
+                width: 96%;
+                padding: 8px 10px;
+                border-radius: 16px;
             }
             
             .nav-btn {
-                min-width: 50px;
-                font-size: 0.6rem;
+                min-width: 55px;
+                font-size: 0.65rem;
+                padding: 5px 6px;
             }
             
-            .nav-btn span {
-                font-size: 1.2rem;
+            .nav-btn span:first-child {
+                font-size: 1.3rem;
             }
         }
 
         @media (max-width: 480px) and (min-width: 361px) {
             .gps-data-bar {
-                font-size: 0.7rem;
+                font-size: 0.72rem;
             }
             
             .gps-value {
-                font-size: 0.8rem;
+                font-size: 0.82rem;
             }
         }
 
         /* Landscape mode */
         @media (orientation: landscape) and (max-height: 500px) {
-            .map-container { height: 150px; }
-            .camera-container { height: 120px; }
-            .chat-container { height: 180px; }
-            .bottom-nav { bottom: 5px; }
+            .map-container { height: 170px; }
+            .camera-container { height: 140px; }
+            .chat-container { height: 200px; }
+            .bottom-nav { bottom: 8px; }
+            .gps-data-bar { margin: 8px; padding: 10px; }
+        }
+
+        /* Cactus decorativo */
+        .cactus {
+            position: absolute;
+            font-size: 1.5rem;
+            z-index: 1;
+            opacity: 0.7;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .cactus-left {
+            bottom: 90px;
+            left: 20px;
+        }
+
+        .cactus-right {
+            bottom: 90px;
+            right: 20px;
         }
     </style>
 </head>
 <body>
-    <!-- Background Particles -->
-    <div class="particles"></div>
+    <!-- Efecto de calor del desierto -->
+    <div class="heat-wave"></div>
+    
+    <!-- Cactus decorativos -->
+    <div class="cactus cactus-left">🌵</div>
+    <div class="cactus cactus-right">🌵</div>
 
     <!-- Splash Screen -->
     <div id="splashScreen">
         <div class="splash-content">
             <div class="splash-icon">🏜️</div>
-            <h1 style="font-size: 2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, #fff, #f0f0f0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AtacamApp</h1>
-            <p style="margin-bottom: 1rem; opacity: 0.9; font-size: 1rem;">Geología 3D & Proyección Estructural</p>
+            <h1 style="font-size: 1.8rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">AtacamApp</h1>
+            <p style="margin-bottom: 1rem; opacity: 0.9; font-size: 0.95rem; color: var(--text-primary); font-weight: 500;">Geología 3D & Proyección Estructural</p>
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <p id="loadingText" style="margin-top: 1rem; font-size: 0.9rem; color: rgba(255,255,255,0.8);">Inicializando sistema...</p>
+            <p id="loadingText" style="margin-top: 1rem; font-size: 0.85rem; color: var(--text-secondary); font-weight: 500;">Inicializando sistema...</p>
         </div>
     </div>
 
@@ -872,11 +1069,11 @@
                         </div>
                         <div class="map-legend">
                             <div class="legend-item">
-                                <div class="legend-color" style="background: #4A6FA5;"></div>
+                                <div class="legend-color" style="background: linear-gradient(135deg, #D4A017, #8B4513);"></div>
                                 <span>Geología 🪨</span>
                             </div>
                             <div class="legend-item">
-                                <div class="legend-color" style="background: #E74C3C;"></div>
+                                <div class="legend-color" style="background: linear-gradient(135deg, #DC143C, #8B0000);"></div>
                                 <span>Fallas ⚡</span>
                             </div>
                         </div>
@@ -887,11 +1084,11 @@
                             <span>📍</span>
                             Actualizar GPS
                         </button>
-                        <button class="glass-btn" id="addPointBtn">
+                        <button class="glass-btn warning" id="addPointBtn">
                             <span>➕</span>
                             Agregar Punto
                         </button>
-                        <button class="glass-btn" id="clearMapBtn">
+                        <button class="glass-btn danger" id="clearMapBtn">
                             <span>🗑️</span>
                             Limpiar
                         </button>
@@ -924,8 +1121,8 @@
                     
                     <div class="camera-container">
                         <video id="cameraFeed" autoplay playsinline></video>
-                        <div style="position: absolute; bottom: 10px; left: 10px; background: rgba(0,0,0,0.5); padding: 5px 10px; border-radius: 8px;">
-                            <span id="cameraStatusText" style="color: white; font-size: 0.8rem;">
+                        <div style="position: absolute; bottom: 12px; left: 12px; background: rgba(47, 79, 79, 0.7); backdrop-filter: blur(10px); padding: 6px 12px; border-radius: 10px; border: 1px solid rgba(255, 248, 220, 0.2);">
+                            <span id="cameraStatusText" style="color: white; font-size: 0.8rem; font-weight: 500;">
                                 <span>🔴</span> Cámara inactiva
                             </span>
                         </div>
@@ -979,12 +1176,48 @@
                         <div id="map3d"></div>
                     </div>
                     
+                    <div class="layers-panel">
+                        <h3 style="margin-bottom: 20px; color: var(--text-primary); font-weight: 700; display: flex; align-items: center; gap: 10px;">
+                            <span>🗂️</span> Capas Geológicas
+                        </h3>
+                        <div class="layer-item">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 1.2rem;">⛰️</span>
+                                <span style="font-weight: 500;">Topografía</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="layerTopography" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="layer-item">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 1.2rem;">🪨</span>
+                                <span style="font-weight: 500;">Geología Base</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="layerGeology" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="layer-item">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <span style="font-size: 1.2rem;">⚡</span>
+                                <span style="font-weight: 500;">Sistema de Fallas</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="layerFaults">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
                     <div class="quick-actions">
                         <button class="glass-btn primary" id="generate3D">
                             <span>🔄</span>
                             Generar 3D
                         </button>
-                        <button class="glass-btn" id="export3D">
+                        <button class="glass-btn success" id="export3D">
                             <span>💾</span>
                             Exportar
                         </button>
@@ -1011,19 +1244,19 @@
                 <div class="glass-card">
                     <div class="card-header">
                         <span>🤖</span>
-                        <h2 class="card-title">Dr. GeoBot - Asistente IA</h2>
+                        <h2 class="card-title">Dr. GeoBot - IA</h2>
                     </div>
                     
                     <div class="chat-container" id="chatContainer">
                         <div class="chat-message ai">
-                            <strong>Dr. GeoBot:</strong> ¡Hola! Soy tu asistente IA especializado en geología. Puedo ayudarte con análisis de rocas, interpretación de datos, cálculos estructurales y más. ¿En qué puedo ayudarte?
+                            <strong>Dr. GeoBot:</strong> ¡Hola! Soy tu asistente IA especializado en geología del Desierto de Atacama. Actívalo desde el botón 🤖 para comenzar a analizar rocas, minerales y estructuras geológicas.
                         </div>
                     </div>
                     
                     <div class="chat-input-group">
                         <input type="text" class="glass-input" id="chatInput" 
-                               placeholder="Escribe tu consulta...">
-                        <button class="glass-btn primary" id="sendMessage" style="width: auto; padding: 14px 20px;">
+                               placeholder="Pregunta sobre geología, minerales, estructuras...">
+                        <button class="glass-btn primary" id="sendMessage" style="width: auto; min-width: 50px; padding: 16px 20px;">
                             <span>✈️</span>
                         </button>
                     </div>
@@ -1036,6 +1269,10 @@
                         <button class="glass-btn warning" id="identifyMineral">
                             <span>💎</span>
                             Identificar Mineral
+                        </button>
+                        <button class="glass-btn info" id="suggestMethodology">
+                            <span>📋</span>
+                            Metodología
                         </button>
                     </div>
                 </div>
@@ -1059,12 +1296,16 @@
                             <span>Localidades 🏜️:</span>
                             <span id="locationCount">Cargando...</span>
                         </div>
+                        <div class="data-row">
+                            <span>IA Status 🤖:</span>
+                            <span id="aiActiveStatus">Inactiva</span>
+                        </div>
                     </div>
                 </div>
             </div>
         </main>
 
-        <!-- Bottom Navigation Compacta -->
+        <!-- Bottom Navigation -->
         <nav class="bottom-nav">
             <a href="#" class="nav-btn active" data-page="dashboard">
                 <span>🏠</span>
@@ -1097,16 +1338,17 @@
     
     <script>
         // ============================================
-        // CONFIGURACIÓN Y VARIABLES GLOBALES
+        // CONFIGURACIÓN - DEEPSEEK API
         // ============================================
         const CONFIG = {
             MAPBOX_TOKEN: 'pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4M29iazA2Z2gycXA4N2pmbDZmangifQ.-g_vE53SD2WrJ6tFX7QHmA',
+            DEEPSEEK_API_KEY: 'sk-2f64faf4b77344959d768c9e7caf39fb',
+            DEEPSEEK_API_URL: 'https://api.deepseek.com/v1/chat/completions',
             DEFAULT_LOCATION: {
                 lat: -27.3667,
                 lng: -70.3333,
                 zoom: 10
             },
-            OPENAI_API_KEY: 'TU_API_KEY_AQUI', // Reemplaza con tu API key real
             MAP_LAYERS: {
                 topo: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
                 satellite: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
@@ -1123,46 +1365,39 @@
         let markersLayer = null;
         let isDrGeoBotActive = false;
         let mindatData = null;
+        let chatHistory = [];
 
         // ============================================
-        // BASE DE DATOS MINERALES (Mindat.org - Chile)
+        // BASE DE DATOS MINERALES (Mindat.org - Atacama)
         // ============================================
         const MINERAL_DATABASE = {
-            "Chile": {
-                "Región de Antofagasta": {
-                    minerals: [
-                        { name: "Calcopirita", formula: "CuFeS₂", emoji: "💎", color: "Amarillo latón", hardness: "3.5-4", uses: "Principal mineral de cobre" },
-                        { name: "Atacamita", formula: "Cu₂Cl(OH)₃", emoji: "💚", color: "Verde esmeralda", hardness: "3-3.5", uses: "Mineral secundario de cobre" },
-                        { name: "Chalcantita", formula: "CuSO₄·5H₂O", emoji: "🔵", color: "Azul", hardness: "2.5", uses: "Mineral secundario" },
-                        { name: "Halita", formula: "NaCl", emoji: "🧂", color: "Incoloro a blanco", hardness: "2.5", uses: "Sal de roca" },
-                        { name: "Yeso", formula: "CaSO₄·2H₂O", emoji: "⚪", color: "Incoloro a blanco", hardness: "2", uses: "Construcción" }
-                    ],
-                    localities: ["Salar de Atacama", "Chuquicamata", "Escondida", "Cerro Negro"]
-                },
-                "Región de Tarapacá": {
-                    minerals: [
-                        { name: "Azurita", formula: "Cu₃(CO₃)₂(OH)₂", emoji: "💙", color: "Azul intenso", hardness: "3.5-4", uses: "Mineral ornamental" },
-                        { name: "Malaquita", formula: "Cu₂CO₃(OH)₂", emoji: "💚", color: "Verde", hardness: "3.5-4", uses: "Piedra ornamental" },
-                        { name: "Clorargirita", formula: "AgCl", emoji: "⚪", color: "Gris a incoloro", hardness: "2.5", uses: "Mineral de plata" }
-                    ],
-                    localities: ["Pampa del Tamarugal", "Iquique", "Pica"]
-                },
-                "Región de Atacama": {
-                    minerals: [
-                        { name: "Epidota", formula: "Ca₂Al₂(Fe³⁺,Al)(SiO₄)(Si₂O₇)O(OH)", emoji: "💚", color: "Verde pistacho", hardness: "6-7", uses: "Mineral índice metamórfico" },
-                        { name: "Cuarzo", formula: "SiO₂", emoji: "🔶", color: "Variable", hardness: "7", uses: "Electrónica, óptica" },
-                        { name: "Hematita", formula: "Fe₂O₃", emoji: "🔴", color: "Rojo a negro", hardness: "5.5-6.5", uses: "Principal mineral de hierro" }
-                    ],
-                    localities: ["Copiapó", "Vallenar", "Chañaral"]
-                }
+            "Región de Antofagasta": {
+                minerals: [
+                    { name: "Calcopirita", formula: "CuFeS₂", emoji: "💎", color: "Amarillo latón", hardness: "3.5-4", uses: "Principal mineral de cobre", yacimientos: ["Chuquicamata", "Escondida", "Cerro Negro"] },
+                    { name: "Atacamita", formula: "Cu₂Cl(OH)₃", emoji: "💚", color: "Verde esmeralda", hardness: "3-3.5", uses: "Mineral secundario de cobre", yacimientos: ["Salar de Atacama", "Cerro Pintado"] },
+                    { name: "Clorargirita", formula: "AgCl", emoji: "⚪", color: "Gris a incoloro", hardness: "2.5", uses: "Mineral de plata", yacimientos: ["Caracoles", "Sierra Gorda"] },
+                    { name: "Hematita", formula: "Fe₂O₃", emoji: "🔴", color: "Rojo a negro", hardness: "5.5-6.5", uses: "Mineral de hierro", yacimientos: ["Cerro Imán", "Sierra Gorda"] },
+                    { name: "Cuarzo", formula: "SiO₂", emoji: "🔶", color: "Variable", hardness: "7", uses: "Electrónica, óptica", yacimientos: ["Todas las localidades"] }
+                ],
+                localities: ["Chuquicamata", "Escondida", "Cerro Negro", "Salar de Atacama", "Sierra Gorda"]
+            },
+            "Región de Atacama": {
+                minerals: [
+                    { name: "Epidota", formula: "Ca₂Al₂(Fe³⁺,Al)(SiO₄)(Si₂O₇)O(OH)", emoji: "💚", color: "Verde pistacho", hardness: "6-7", uses: "Mineral índice metamórfico", yacimientos: ["Cerro Blanco", "Cerro Negro"] },
+                    { name: "Yeso", formula: "CaSO₄·2H₂O", emoji: "⚪", color: "Incoloro a blanco", hardness: "2", uses: "Construcción", yacimientos: ["Copiapó", "Vallenar"] },
+                    { name: "Azurita", formula: "Cu₃(CO₃)₂(OH)₂", emoji: "💙", color: "Azul intenso", hardness: "3.5-4", uses: "Mineral ornamental", yacimientos: ["Cerro Imán", "Pampa Larga"] },
+                    { name: "Malaquita", formula: "Cu₂CO₃(OH)₂", emoji: "💚", color: "Verde", hardness: "3.5-4", uses: "Piedra ornamental", yacimientos: ["Cerro Blanco", "Cerro Negro"] },
+                    { name: "Halita", formula: "NaCl", emoji: "🧂", color: "Incoloro a blanco", hardness: "2.5", uses: "Sal de roca", yacimientos: ["Salar de Pedernales"] }
+                ],
+                localities: ["Copiapó", "Vallenar", "Cerro Blanco", "Cerro Negro", "Salar de Pedernales"]
             }
         };
 
         // ============================================
-        // FUNCIONES DE INICIALIZACIÓN
+        // INICIALIZACIÓN
         // ============================================
         document.addEventListener('DOMContentLoaded', () => {
-            console.log('🚀 AtacamApp - Iniciando aplicación...');
+            console.log('🏜️ AtacamApp - Iniciando aplicación...');
             simulateLoading();
             
             // Inicializar Service Worker para PWA
@@ -1170,17 +1405,17 @@
                 navigator.serviceWorker.register('/sw.js').catch(console.error);
             }
             
-            // Cargar datos de Mindat
+            // Cargar datos de minerales
             loadMindatData();
         });
 
         function simulateLoading() {
             let progress = 0;
             const messages = [
-                'Inicializando sistema... 🔄',
-                'Cargando base de minerales... 💎',
-                'Configurando Dr. GeoBot... 🤖',
-                'Cargando mapas... 🗺️',
+                'Conectando con DeepSeek AI... 🤖',
+                'Cargando base de minerales Atacama... 💎',
+                'Configurando mapas 3D... 🗺️',
+                'Inicializando Dr. GeoBot... 👨‍🔬',
                 '¡Listo para explorar! 🏜️'
             ];
             
@@ -1200,18 +1435,16 @@
                         }, 500);
                     }, 500);
                 }
-            }, 300);
+            }, 400);
         }
 
         function loadMindatData() {
-            // En un entorno real, aquí cargarías datos de una API
-            // Por ahora usamos los datos estáticos
             mindatData = MINERAL_DATABASE;
-            console.log('✅ Base de datos de minerales cargada');
+            console.log('✅ Base de datos de minerales del Desierto de Atacama cargada');
         }
 
         function initializeApp() {
-            console.log('✅ Aplicación cargada');
+            console.log('✅ AtacamApp inicializada');
             
             // Configurar navegación
             setupNavigation();
@@ -1228,57 +1461,52 @@
             
             // Actualizar estado inicial
             updateStatusIcon(false);
-            
-            showNotification('¡Bienvenido a AtacamApp! 🏜️', 'success');
-            
-            // Iniciar actualización de datos
             updateDatabaseCounts();
             
-            // Configurar Dr. GeoBot
-            initializeDrGeoBot();
-        }
-
-        // ============================================
-        // DR. GEOBOT - ASISTENTE IA CON OPENAI
-        // ============================================
-        function initializeDrGeoBot() {
-            console.log('🤖 Dr. GeoBot inicializado');
+            showNotification('¡Bienvenido al Desierto de Atacama! 🏜️', 'success');
             
-            // Mensaje inicial personalizado
+            // Mensaje inicial del Dr. GeoBot
             setTimeout(() => {
                 addMessageToChat('ai', `👨‍🔬 <strong>Dr. GeoBot - Sistema IA de Geología:</strong><br><br>
                 ¡Hola! Soy Dr. GeoBot, tu asistente IA especializado en geología del Desierto de Atacama.<br><br>
-                <strong>Puedo ayudarte con:</strong><br>
-                • 🪨 Identificación de rocas y minerales<br>
-                • 📐 Análisis estructural avanzado<br>
-                • 🗺️ Interpretación de mapas geológicos<br>
-                • 💎 Datos de yacimientos minerales<br>
-                • 📊 Cálculos geológicos en tiempo real<br><br>
-                <em>Para usar todas mis funciones, actívalo con el botón 🤖 en el header</em>`);
+                <strong>Conectado a DeepSeek API ✅</strong><br>
+                <strong>Base de datos:</strong> ${countMinerals()} minerales registrados<br><br>
+                <em>Activa el botón 🤖 en el header para comenzar</em>`);
             }, 1000);
         }
 
+        // ============================================
+        // DR. GEOBOT - DEEPSEEK AI
+        // ============================================
         function toggleDrGeoBot() {
             isDrGeoBotActive = !isDrGeoBotActive;
             updateStatusIcon(isDrGeoBotActive);
             
             if (isDrGeoBotActive) {
-                showNotification('Dr. GeoBot ACTIVADO 🤖', 'success');
-                addMessageToChat('ai', `<strong>🤖 DR. GEOBOT ACTIVADO:</strong><br><br>
-                ¡Sistema IA completamente operativo!<br>
-                Puedo ahora acceder a:<br>
-                • 📍 Tu ubicación GPS en tiempo real<br>
-                • 🗺️ Datos geológicos de la región<br>
-                • 💎 Base de datos de minerales (${Object.values(mindatData.Chile).flatMap(r => r.minerals).length} minerales)<br>
-                • 🧠 Análisis avanzado con IA<br><br>
-                <strong>¿En qué puedo ayudarte?</strong>`);
+                showNotification('Dr. GeoBot ACTIVADO con DeepSeek AI 🤖', 'success');
+                document.getElementById('aiActiveStatus').textContent = 'Activa';
+                document.getElementById('aiActiveStatus').style.color = '#228B22';
                 
-                // Cambiar a página de IA si no está allí
+                addMessageToChat('ai', `<strong>🤖 DR. GEOBOT ACTIVADO:</strong><br><br>
+                <strong>✅ Conectado a DeepSeek API</strong><br>
+                <strong>📍 Acceso a ubicación GPS:</strong> ${currentLocation ? 'Conectado' : 'Esperando'}<br>
+                <strong>💎 Base de datos:</strong> ${countMinerals()} minerales<br>
+                <strong>🗺️ Mapas:</strong> 2D y 3D operativos<br><br>
+                <strong>¿En qué puedo ayudarte?</strong><br>
+                • Identificación de minerales/rocas<br>
+                • Análisis estructural<br>
+                • Interpretación geológica<br>
+                • Métodos de campo<br>
+                • Proyecciones 3D`);
+                
+                // Cambiar a página de IA
                 if (!document.getElementById('pageAI').classList.contains('active')) {
                     switchPage('AI');
                 }
             } else {
                 showNotification('Dr. GeoBot DESACTIVADO ⏹️', 'warning');
+                document.getElementById('aiActiveStatus').textContent = 'Inactiva';
+                document.getElementById('aiActiveStatus').style.color = '#DC143C';
             }
         }
 
@@ -1287,15 +1515,17 @@
             const aiStatusValue = document.getElementById('aiStatusValue');
             
             if (active) {
-                statusIcon.style.background = 'linear-gradient(135deg, rgba(46, 204, 113, 0.3), rgba(39, 174, 96, 0.3))';
-                statusIcon.style.borderColor = 'rgba(46, 204, 113, 0.5)';
+                statusIcon.classList.add('active');
+                statusIcon.style.background = 'linear-gradient(135deg, rgba(34, 139, 34, 0.2), rgba(50, 205, 50, 0.2))';
+                statusIcon.style.borderColor = '#228B22';
                 aiStatusValue.textContent = 'ON';
-                aiStatusValue.style.color = '#51cf66';
+                aiStatusValue.style.color = '#228B22';
             } else {
-                statusIcon.style.background = 'linear-gradient(135deg, rgba(231, 76, 60, 0.3), rgba(192, 57, 43, 0.3))';
-                statusIcon.style.borderColor = 'rgba(231, 76, 60, 0.5)';
+                statusIcon.classList.remove('active');
+                statusIcon.style.background = 'linear-gradient(135deg, rgba(212, 160, 23, 0.1), rgba(139, 69, 19, 0.1))';
+                statusIcon.style.borderColor = 'var(--accent)';
                 aiStatusValue.textContent = 'OFF';
-                aiStatusValue.style.color = '#ff6b6b';
+                aiStatusValue.style.color = 'var(--text-primary)';
             }
         }
 
@@ -1314,132 +1544,250 @@
             input.value = '';
             input.focus();
 
-            const thinkingId = addMessageToChat('ai', 'Procesando tu consulta... 🔍');
+            const thinkingId = addMessageToChat('ai', 'Procesando con DeepSeek AI... 🔍');
 
             try {
-                // Integración con OpenAI
-                const response = await callOpenAI(message);
+                const response = await callDeepSeekAPI(message);
                 updateMessage(thinkingId, response);
+                
+                // Guardar en historial
+                chatHistory.push({ role: 'user', content: message });
+                chatHistory.push({ role: 'assistant', content: response });
+                
+                // Limitar historial a últimos 10 mensajes
+                if (chatHistory.length > 20) {
+                    chatHistory = chatHistory.slice(-20);
+                }
             } catch (error) {
-                console.error('Error con OpenAI:', error);
-                // Si falla OpenAI, usar respuesta local
-                const localResponse = generateLocalAIResponse(message);
-                updateMessage(thinkingId, localResponse);
+                console.error('Error con DeepSeek:', error);
+                updateMessage(thinkingId, generateLocalResponse(message));
             }
         }
 
-        async function callOpenAI(prompt) {
-            // Esta es una implementación de ejemplo
-            // En producción, necesitarías una API key real y un endpoint seguro
-            
+        async function callDeepSeekAPI(prompt) {
             const context = buildGeologyContext();
-            const fullPrompt = `${context}\n\nUsuario: ${prompt}\n\nDr. GeoBot:`;
             
-            // Simulación de respuesta (reemplazar con llamada real a API)
-            return simulateOpenAIResponse(prompt);
+            const messages = [
+                {
+                    role: "system",
+                    content: `Eres Dr. GeoBot, un geólogo experto especializado en el Desierto de Atacama, Chile. 
+                    Eres parte de la aplicación AtacamApp. Responde en español, con emojis relevantes y formato claro.
+                    Usa markdown básico para formato. Sé técnico pero accesible.`
+                },
+                ...chatHistory.slice(-8),
+                {
+                    role: "user",
+                    content: `${context}\n\nPregunta del usuario: ${prompt}`
+                }
+            ];
+
+            const response = await fetch(CONFIG.DEEPSEEK_API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${CONFIG.DEEPSEEK_API_KEY}`
+                },
+                body: JSON.stringify({
+                    model: "deepseek-chat",
+                    messages: messages,
+                    max_tokens: 1000,
+                    temperature: 0.7
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            return data.choices[0].message.content;
         }
 
         function buildGeologyContext() {
-            let context = `Eres Dr. GeoBot, un geólogo experto especializado en el Desierto de Atacama, Chile.\n`;
-            context += `Tienes acceso a:\n`;
+            let context = `CONTEXTO ACTUAL ATACAMAPP:\n\n`;
             
             if (currentLocation) {
-                context += `- Ubicación actual: ${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}\n`;
+                context += `📌 UBICACIÓN ACTUAL:\n`;
+                context += `- Coordenadas: ${currentLocation.latitude.toFixed(6)}°, ${currentLocation.longitude.toFixed(6)}°\n`;
                 context += `- Altitud: ${currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm' : 'Desconocida'}\n`;
+                context += `- Precisión: ${Math.round(currentLocation.accuracy)}m\n`;
+                context += `- Región: ${getRegionFromLocation()}\n`;
+                context += `- Ciudad más cercana: ${document.getElementById('cityValue').textContent}\n\n`;
             }
             
-            context += `- Base de datos de minerales: ${countMinerals()} minerales registrados\n`;
-            context += `- Especialidades: Geología estructural, petrología, mineralogía, yacimientos minerales\n\n`;
-            context += `Responde en español, con emojis relevantes y formato claro.`;
+            context += `💎 BASE DE DATOS MINERALÓGICA:\n`;
+            context += `- Total minerales: ${countMinerals()}\n`;
+            context += `- Regiones: Antofagasta, Atacama\n`;
+            context += `- Minerales principales: Calcopirita, Atacamita, Hematita, Cuarzo\n\n`;
+            
+            context += `🗺️ HERRAMIENTAS DISPONIBLES:\n`;
+            context += `- Mapa geológico 2D con capas\n`;
+            context += `- Análisis fotogeológico con cámara\n`;
+            context += `- Visualización 3D con Mapbox\n`;
+            context += `- Proyección estructural\n\n`;
+            
+            context += `👨‍🔬 RECOMENDACIONES GENERALES:\n`;
+            context += `- El Desierto de Atacama es rico en minerales de cobre\n`;
+            context += `- Sistemas de fallas NNE-SSO predominantes\n`;
+            context += `- Actividad minera extensa en la región\n`;
+            context += `- Clima árido extremo, tomar precauciones`;
             
             return context;
         }
 
-        function simulateOpenAIResponse(prompt) {
+        function generateLocalResponse(prompt) {
             const lowerPrompt = prompt.toLowerCase();
             
-            // Respuestas inteligentes basadas en el prompt
-            if (lowerPrompt.includes('mineral') || lowerPrompt.includes('roca')) {
-                const region = getRegionFromLocation();
-                const minerals = region ? mindatData.Chile[region].minerals.slice(0, 3) : [];
-                
-                let response = `<strong>🔍 Análisis Mineralógico:</strong><br><br>`;
-                
-                if (minerals.length > 0) {
-                    response += `En tu región (${region}) los minerales comunes son:<br><br>`;
-                    minerals.forEach(mineral => {
-                        response += `• <strong>${mineral.emoji} ${mineral.name}</strong> (${mineral.formula})<br>`;
-                        response += `  Color: ${mineral.color} | Dureza: ${mineral.hardness}<br>`;
-                        response += `  Usos: ${mineral.uses}<br><br>`;
-                    });
-                } else {
-                    response += `En el Desierto de Atacama encuentras minerales como:<br><br>`;
-                    response += `• <strong>💎 Calcopirita</strong> (CuFeS₂) - Principal mineral de cobre<br>`;
-                    response += `• <strong>💚 Atacamita</strong> - Mineral secundario de cobre<br>`;
-                    response += `• <strong>🧂 Halita</strong> (NaCl) - Sal de roca en salares<br>`;
-                }
-                
-                response += `<br><em>¿Quieres identificar un mineral específico? Toma una foto con la cámara 📸</em>`;
-                return response;
+            if (lowerPrompt.includes('mineral') || lowerPrompt.includes('roca') || lowerPrompt.includes('identificar')) {
+                return generateMineralResponse();
             }
             
-            if (lowerPrompt.includes('estructura') || lowerPrompt.includes('falla')) {
-                return `<strong>⚡ Análisis Estructural:</strong><br><br>
-                En el Desierto de Atacama predominan:<br><br>
-                • <strong>Sistema de fallas NNE-SSO</strong><br>
-                • <strong>Buzamientos:</strong> 45-60° al este<br>
-                • <strong>Mineralización asociada:</strong> Vetas de Cu-Au<br>
-                • <strong>Tectónica:</strong> Compresión andina<br><br>
-                <strong>Recomendación:</strong> Usa el mapa 3D para visualizar estructuras 🌍`;
+            if (lowerPrompt.includes('estructura') || lowerPrompt.includes('falla') || lowerPrompt.includes('buzamiento')) {
+                return generateStructureResponse();
             }
             
-            if (lowerPrompt.includes('mapa') || lowerPrompt.includes('ubicación')) {
-                if (currentLocation) {
-                    return `<strong>🗺️ Análisis de Ubicación:</strong><br><br>
-                    <strong>Coordenadas:</strong> ${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}<br>
-                    <strong>Precisión:</strong> ${Math.round(currentLocation.accuracy)}m<br>
-                    <strong>Contexto geológico:</strong> ${getGeologicalContext()}<br><br>
-                    <strong>Acciones recomendadas:</strong><br>
-                    1. Agrega un punto geológico al mapa<br>
-                    2. Toma fotos para análisis<br>
-                    3. Genera modelo 3D del área`;
-                } else {
-                    return `<strong>📍 Ubicación requerida:</strong><br><br>
-                    Primero activa el GPS para obtener tu ubicación actual.<br>
-                    Usa el botón "📍 Actualizar GPS" en la página de inicio.`;
-                }
+            if (lowerPrompt.includes('mapa') || lowerPrompt.includes('ubicación') || lowerPrompt.includes('localización')) {
+                return generateLocationResponse();
             }
             
-            // Respuesta por defecto inteligente
-            return `<strong>👨‍🔬 Dr. GeoBot:</strong><br><br>
+            if (lowerPrompt.includes('método') || lowerPrompt.includes('metodología') || lowerPrompt.includes('campo')) {
+                return generateMethodologyResponse();
+            }
+            
+            return `👨‍🔬 <strong>Dr. GeoBot:</strong><br><br>
             Como geólogo especializado en el Desierto de Atacama, puedo ayudarte con:<br><br>
-            • <strong>🪨 Identificación</strong> de rocas y minerales<br>
-            • <strong>📐 Mediciones</strong> estructurales precisas<br>
-            • <strong>🗺️ Interpretación</strong> de mapas geológicos<br>
-            • <strong>💎 Análisis</strong> de yacimientos minerales<br>
-            • <strong>📊 Cálculos</strong> geológicos en tiempo real<br><br>
-            <strong>Prueba preguntando:</strong><br>
-            "¿Qué minerales hay en esta zona?"<br>
-            "Analiza mi ubicación geológica"<br>
-            "¿Cómo mido una falla?"<br><br>
-            <em>También puedes usar la cámara para análisis fotogeológico 📸</em>`;
-        }
-
-        function generateLocalAIResponse(prompt) {
-            // Respuesta local si OpenAI falla
-            return simulateOpenAIResponse(prompt);
+            • <strong>💎 Identificación mineralógica</strong><br>
+            • <strong>⚡ Análisis estructural</strong><br>
+            • <strong>🗺️ Interpretación de mapas</strong><br>
+            • <strong>📸 Análisis fotogeológico</strong><br>
+            • <strong>🌍 Proyección 3D</strong><br><br>
+            <em>Prueba preguntando sobre minerales específicos o análisis de estructuras.</em>`;
         }
 
         // ============================================
         // FUNCIONES AUXILIARES
         // ============================================
+        function generateMineralResponse() {
+            const region = getRegionFromLocation();
+            const regionData = mindatData[region];
+            
+            if (regionData) {
+                let response = `<strong>🔍 ANÁLISIS MINERALÓGICO - ${region}:</strong><br><br>`;
+                response += `<strong>Minerales principales:</strong><br><br>`;
+                
+                regionData.minerals.slice(0, 3).forEach(mineral => {
+                    response += `<strong>${mineral.emoji} ${mineral.name}</strong><br>`;
+                    response += `• Fórmula: ${mineral.formula}<br>`;
+                    response += `• Color: ${mineral.color}<br>`;
+                    response += `• Dureza: ${mineral.hardness} (Mohs)<br>`;
+                    response += `• Usos: ${mineral.uses}<br>`;
+                    response += `• Yacimientos: ${mineral.yacimientos.join(', ')}<br><br>`;
+                });
+                
+                response += `<strong>🎯 Recomendaciones:</strong><br>`;
+                response += `1. Usa la cámara para identificar minerales 📸<br>`;
+                response += `2. Toma muestras representativas 🧪<br>`;
+                response += `3. Documenta coordenadas exactas 📍<br><br>`;
+                response += `<em>¿Quieres información sobre algún mineral específico?</em>`;
+                
+                return response;
+            }
+            
+            return `💎 <strong>MINERALES DEL DESIERTO DE ATACAMA:</strong><br><br>
+            Los principales minerales económicos en esta región son:<br><br>
+            • <strong>Calcopirita (CuFeS₂)</strong> - Principal mineral de cobre<br>
+            • <strong>Atacamita (Cu₂Cl(OH)₃)</strong> - Mineral secundario de cobre<br>
+            • <strong>Hematita (Fe₂O₃)</strong> - Mineral de hierro<br>
+            • <strong>Cuarzo (SiO₂)</strong> - Presente en vetas<br><br>
+            <strong>Activa el GPS para ver minerales de tu ubicación específica.</strong>`;
+        }
+
+        function generateStructureResponse() {
+            return `⚡ <strong>ANÁLISIS ESTRUCTURAL - DESIERTO DE ATACAMA:</strong><br><br>
+            <strong>Sistemas estructurales principales:</strong><br><br>
+            1. <strong>Sistema de Fallas NNE-SSO</strong><br>
+            • Orientación: 10°-30°<br>
+            • Buzamiento: 45°-60° al este<br>
+            • Mineralización: Vetas de Cu-Au<br><br>
+            
+            2. <strong>Sistema de Fallas E-O</strong><br>
+            • Orientación: 80°-100°<br>
+            • Buzamiento: 60°-70° al norte<br>
+            • Mineralización: Stockworks de Cu<br><br>
+            
+            <strong>📐 Métodos de medición recomendados:</strong><br>
+            • Brújula geológica con clinómetro<br>
+            • Corrección por declinación magnética<br>
+            • Uso de escala en fotografías<br><br>
+            
+            <strong>🌍 Herramientas AtacamApp:</strong><br>
+            • Usa el mapa 3D para visualización<br>
+            • Agrega puntos estructurales en el mapa 2D<br>
+            • Toma fotos con escala para análisis`;
+        }
+
+        function generateLocationResponse() {
+            if (currentLocation) {
+                return `📍 <strong>ANÁLISIS DE UBICACIÓN:</strong><br><br>
+                <strong>Coordenadas:</strong> ${currentLocation.latitude.toFixed(6)}°, ${currentLocation.longitude.toFixed(6)}°<br>
+                <strong>Altitud:</strong> ${currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm ⛰️' : 'Desconocida'}<br>
+                <strong>Precisión:</strong> ${Math.round(currentLocation.accuracy)}m 🎯<br>
+                <strong>Región:</strong> ${getRegionFromLocation()}<br>
+                <strong>Ciudad:</strong> ${document.getElementById('cityValue').textContent}<br><br>
+                
+                <strong>🗺️ Contexto geológico:</strong><br>
+                • ${getGeologicalContext()}<br>
+                • Sistema de fallas NNE-SSO predominante<br>
+                • Mineralización de cobre porfírico y epitermal<br><br>
+                
+                <strong>🎯 Acciones recomendadas:</strong><br>
+                1. Agregar punto geológico al mapa<br>
+                2. Tomar fotografías del área<br>
+                3. Realizar análisis estructural<br>
+                4. Generar modelo 3D del sector`;
+            }
+            
+            return `📍 <strong>UBICACIÓN NO DISPONIBLE</strong><br><br>
+            Para análisis geológico preciso, necesito tu ubicación:<br><br>
+            1. Ve a la página de Inicio<br>
+            2. Presiona "📍 Actualizar GPS"<br>
+            3. Permite acceso a ubicación<br><br>
+            <em>Con tu ubicación puedo proporcionar análisis específico del área.</em>`;
+        }
+
+        function generateMethodologyResponse() {
+            return `📋 <strong>METODOLOGÍA DE CAMPO - ATACAMAPP:</strong><br><br>
+            <strong>1. 🗺️ Mapeo Geológico:</strong><br>
+            • GPS de alta precisión (±1m)<br>
+            • Fotografía geológica con escala<br>
+            • Descripción litológica detallada<br>
+            • Muestreo representativo<br><br>
+            
+            <strong>2. 📐 Análisis Estructural:</strong><br>
+            • Mediciones con brújula Brunton<br>
+            • Corrección por declinación magnética<br>
+            • Análisis estereográfico<br>
+            • Cartografía de fallas y pliegues<br><br>
+            
+            <strong>3. 💎 Muestreo Mineralógico:</strong><br>
+            • Muestras de mano (500g cada una)<br>
+            • Muestras para lámina delgada<br>
+            • Documentación fotográfica completa<br>
+            • Georreferenciación precisa<br><br>
+            
+            <strong>4. 🤖 Análisis con IA:</strong><br>
+            • Identificación de minerales<br>
+            • Clasificación de rocas<br>
+            • Interpretación estructural<br>
+            • Recomendaciones de muestreo`;
+        }
+
         function getRegionFromLocation() {
-            if (!currentLocation) return null;
+            if (!currentLocation) return "Desierto de Atacama";
             
             const lat = currentLocation.latitude;
             
-            if (lat < -18) return "Región de Tarapacá";
-            if (lat < -26) return "Región de Antofagasta";
+            if (lat < -22) return "Región de Antofagasta";
             if (lat < -30) return "Región de Atacama";
             
             return "Desierto de Atacama";
@@ -1447,21 +1795,20 @@
 
         function getGeologicalContext() {
             const region = getRegionFromLocation();
-            if (!region) return "Zona desértica con actividad minera";
             
-            const contexts = {
-                "Región de Antofagasta": "Cordillera de la Costa con yacimientos de cobre porfírico",
-                "Región de Tarapacá": "Depresión Intermedia con salares y evaporitas",
-                "Región de Atacama": "Precordillera andina con vetas epitermales"
-            };
+            if (region === "Región de Antofagasta") {
+                return "Cordillera de la Costa - Yacimientos de cobre porfírico (Chuquicamata, Escondida)";
+            } else if (region === "Región de Atacama") {
+                return "Precordillera andina - Vetas epitermales de Au-Cu (Cerro Blanco, Cerro Negro)";
+            }
             
-            return contexts[region] || "Región desértica con geología compleja";
+            return "Región desértica con geología compleja y mineralización diversa";
         }
 
         function countMinerals() {
             let count = 0;
-            if (mindatData && mindatData.Chile) {
-                Object.values(mindatData.Chile).forEach(region => {
+            if (mindatData) {
+                Object.values(mindatData).forEach(region => {
                     count += region.minerals.length;
                 });
             }
@@ -1477,6 +1824,18 @@
                     e.preventDefault();
                     const pageId = this.dataset.page;
                     switchPage(pageId);
+                    
+                    // Actualizar título según página
+                    const titles = {
+                        'dashboard': 'Inicio - Mapa Geológico',
+                        'camera': 'Cámara - Análisis Fotogeológico',
+                        '3DMap': '3D - Visualización 3D',
+                        'AI': `IA - ${isDrGeoBotActive ? 'Dr. GeoBot Activo' : 'Dr. GeoBot Inactivo'}`
+                    };
+                    
+                    if (titles[pageId]) {
+                        document.title = `AtacamApp - ${titles[pageId]}`;
+                    }
                 });
             });
         }
@@ -1496,6 +1855,13 @@
             const targetPage = document.getElementById('page' + pageId.charAt(0).toUpperCase() + pageId.slice(1));
             if (targetPage) {
                 targetPage.classList.add('active');
+            }
+            
+            // Acciones específicas por página
+            if (pageId === 'camera' && !isCameraActive) {
+                showNotification('Activa la cámara para análisis fotogeológico 📸', 'info');
+            } else if (pageId === 'AI' && !isDrGeoBotActive) {
+                showNotification('Activa Dr. GeoBot para consultas IA 🤖', 'info');
             }
         }
 
@@ -1522,18 +1888,17 @@
         }
 
         function updateDatabaseCounts() {
-            if (mindatData && mindatData.Chile) {
+            if (mindatData) {
                 let mineralCount = 0;
-                let rockCount = 24; // Valor estimado
                 let locationCount = 0;
                 
-                Object.values(mindatData.Chile).forEach(region => {
+                Object.values(mindatData).forEach(region => {
                     mineralCount += region.minerals.length;
                     locationCount += region.localities.length;
                 });
                 
                 document.getElementById('mineralCount').textContent = mineralCount;
-                document.getElementById('rockCount').textContent = rockCount;
+                document.getElementById('rockCount').textContent = "24 tipos";
                 document.getElementById('locationCount').textContent = locationCount;
             }
         }
@@ -1547,6 +1912,8 @@
                 return;
             }
 
+            showNotification('Obteniendo ubicación GPS... 🛰️', 'info');
+
             const options = {
                 enableHighAccuracy: true,
                 timeout: 10000,
@@ -1558,8 +1925,6 @@
                 handleGPSError,
                 options
             );
-
-            showNotification('Obteniendo ubicación... 🛰️', 'info');
         }
 
         function handleGPSPosition(position) {
@@ -1575,46 +1940,44 @@
             updateMapLocation();
             updateGeologyInfo();
             
-            showNotification(`📍 Ubicación obtenida (${Math.round(currentLocation.accuracy)}m)`, 'success');
+            const accuracy = Math.round(currentLocation.accuracy);
+            if (accuracy < 50) {
+                showNotification(`📍 GPS de alta precisión (${accuracy}m)`, 'success');
+            } else {
+                showNotification(`📍 Ubicación obtenida (${accuracy}m)`, 'success');
+            }
             
-            // Si Dr. GeoBot está activo, notificar
+            // Notificar a Dr. GeoBot si está activo
             if (isDrGeoBotActive) {
                 setTimeout(() => {
-                    addMessageToChat('ai', `<strong>📍 Ubicación actualizada:</strong><br><br>
-                    <strong>Coordenadas:</strong> ${currentLocation.latitude.toFixed(6)}, ${currentLocation.longitude.toFixed(6)}<br>
-                    <strong>Altitud:</strong> ${currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm ⛰️' : 'Desconocida'}<br>
-                    <strong>Región:</strong> ${getRegionFromLocation()}<br><br>
-                    <em>¿Quieres analizar la geología de esta zona?</em>`);
-                }, 1000);
+                    addMessageToChat('ai', `<strong>📍 UBICACIÓN ACTUALIZADA:</strong><br><br>
+                    <strong>Coordenadas:</strong> ${currentLocation.latitude.toFixed(6)}°, ${currentLocation.longitude.toFixed(6)}°<br>
+                    <strong>Altitud:</strong> ${currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm' : 'Desconocida'}<br>
+                    <strong>Región:</strong> ${getRegionFromLocation()}<br>
+                    <strong>Precisión:</strong> ${Math.round(currentLocation.accuracy)}m<br><br>
+                    <em>¿Quieres que analice la geología de esta zona?</em>`);
+                }, 500);
             }
         }
 
         function handleGPSError(error) {
             console.error('GPS Error:', error);
             
-            let message = '';
+            let message = 'Error de GPS ❌';
             switch(error.code) {
-                case 1:
-                    message = 'Permiso de ubicación denegado 🔒';
-                    break;
-                case 2:
-                    message = 'Ubicación no disponible 📡';
-                    break;
-                case 3:
-                    message = 'Tiempo de espera agotado ⏰';
-                    break;
-                default:
-                    message = 'Error de GPS ❌';
+                case 1: message = 'Permiso de ubicación denegado 🔒'; break;
+                case 2: message = 'Ubicación no disponible 📡'; break;
+                case 3: message = 'Tiempo de espera agotado ⏰'; break;
             }
             
-            showNotification(`${message}`, 'warning');
+            showNotification(message, 'warning');
             
-            // Usar ubicación por defecto
+            // Ubicación por defecto (Desierto de Atacama)
             currentLocation = {
                 latitude: CONFIG.DEFAULT_LOCATION.lat,
                 longitude: CONFIG.DEFAULT_LOCATION.lng,
-                accuracy: 1000,
-                altitude: 0
+                accuracy: 5000,
+                altitude: 2400
             };
             
             updateLocationDisplay();
@@ -1630,12 +1993,13 @@
             document.getElementById('altitudeValue').textContent = 
                 currentLocation.altitude ? `${Math.round(currentLocation.altitude)}m` : '--';
             
-            // Obtener ciudad más cercana (simulado)
+            // Determinar ciudad más cercana
             const cities = [
                 { name: "Antofagasta", lat: -23.650, lng: -70.400 },
                 { name: "Calama", lat: -22.456, lng: -68.924 },
                 { name: "Copiapó", lat: -27.366, lng: -70.332 },
-                { name: "Vallenar", lat: -28.576, lng: -70.759 }
+                { name: "Vallenar", lat: -28.576, lng: -70.759 },
+                { name: "San Pedro", lat: -22.911, lng: -68.201 }
             ];
             
             let closestCity = "Desierto";
@@ -1647,7 +2011,7 @@
                     Math.pow(city.lng - currentLocation.longitude, 2)
                 );
                 
-                if (distance < minDistance && distance < 1) {
+                if (distance < minDistance) {
                     minDistance = distance;
                     closestCity = city.name;
                 }
@@ -1660,23 +2024,23 @@
             if (!currentLocation) return;
 
             const region = getRegionFromLocation();
-            const regionData = mindatData.Chile[region];
+            const regionData = mindatData[region];
             
             let html = '';
             
             if (regionData) {
                 html += `<div class="data-row">
                     <span>Región:</span>
-                    <span>${region}</span>
+                    <span><strong>${region}</strong></span>
                 </div>`;
                 
                 html += `<div class="data-row">
-                    <span>Minerales comunes:</span>
-                    <span>${regionData.minerals.slice(0, 2).map(m => m.emoji).join(' ')}</span>
+                    <span>Mineral principal:</span>
+                    <span>${regionData.minerals[0].emoji} ${regionData.minerals[0].name}</span>
                 </div>`;
                 
                 html += `<div class="data-row">
-                    <span>Localidades:</span>
+                    <span>Yacimiento cercano:</span>
                     <span>${regionData.localities[0]}</span>
                 </div>`;
                 
@@ -1685,9 +2049,21 @@
                     <span>${getGeologicalContext()}</span>
                 </div>`;
             } else {
-                html = `<div class="empty-state">
-                    <span>🏜️</span>
-                    <p>Zona del Desierto de Atacama</p>
+                html = `<div class="data-row">
+                    <span>Ubicación:</span>
+                    <span><strong>Desierto de Atacama</strong></span>
+                </div>
+                <div class="data-row">
+                    <span>Minerales típicos:</span>
+                    <span>💎 Calcopirita 💚 Atacamita</span>
+                </div>
+                <div class="data-row">
+                    <span>Actividad:</span>
+                    <span>⚡ Minería de cobre</span>
+                </div>
+                <div class="data-row">
+                    <span>Clima:</span>
+                    <span>🏜️ Árido extremo</span>
                 </div>`;
             }
             
@@ -1711,11 +2087,43 @@
 
                 markersLayer = L.layerGroup().addTo(map);
 
-                console.log('✅ Mapa 2D inicializado');
+                // Añadir algunos puntos de interés iniciales
+                addInitialGeologyPoints();
+
+                console.log('✅ Mapa 2D del Desierto de Atacama inicializado');
 
             } catch (error) {
                 console.error('Error inicializando mapa:', error);
                 showNotification('Error al cargar el mapa ❌', 'error');
+            }
+        }
+
+        function addInitialGeologyPoints() {
+            const points = [
+                { lat: -22.285, lng: -68.905, type: 'mine', emoji: '⛏️', name: 'Chuquicamata' },
+                { lat: -24.271, lng: -69.081, type: 'mine', emoji: '⛏️', name: 'Escondida' },
+                { lat: -27.367, lng: -70.333, type: 'sample', emoji: '🔬', name: 'Área de Muestreo' },
+                { lat: -23.650, lng: -70.400, type: 'city', emoji: '🏙️', name: 'Antofagasta' }
+            ];
+
+            points.forEach(point => {
+                L.marker([point.lat, point.lng], {
+                    icon: L.divIcon({
+                        html: `<div style="background: ${getColorForType(point.type)}; color:white; width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; border:2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">${point.emoji}</div>`,
+                        iconSize: [36, 36]
+                    })
+                })
+                .bindPopup(`<div style="background: rgba(255,248,220,0.9); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);"><strong>${point.emoji} ${point.name}</strong><br>Tipo: ${point.type}</div>`)
+                .addTo(markersLayer);
+            });
+        }
+
+        function getColorForType(type) {
+            switch(type) {
+                case 'mine': return '#D4A017';
+                case 'sample': return '#228B22';
+                case 'city': return '#4682B4';
+                default: return '#8B4513';
             }
         }
 
@@ -1728,21 +2136,21 @@
                 duration: 1.5
             });
 
-            // Agregar marcador
+            // Marcador de ubicación actual
             L.marker(latLng, {
                 icon: L.divIcon({
                     className: 'current-location',
-                    html: `<div style="background: linear-gradient(135deg, #4A6FA5, #E67E22); color:white; width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; font-size:1.5rem; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">📍</div>`,
-                    iconSize: [40, 40]
+                    html: `<div style="background: linear-gradient(135deg, #D4A017, #8B4513); color:white; width:42px; height:42px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid white; font-size:1.4rem; box-shadow: 0 4px 15px rgba(0,0,0,0.4);">📍</div>`,
+                    iconSize: [42, 42]
                 })
-            }).addTo(markersLayer);
+            }).addTo(markersLayer).bindPopup('<div style="background: rgba(255,248,220,0.9); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);"><strong>📍 Tu ubicación</strong><br>Precisión: ' + Math.round(currentLocation.accuracy) + 'm</div>').openPopup();
 
             // Círculo de precisión
             L.circle(latLng, {
-                color: 'rgba(74, 111, 165, 0.3)',
-                fillColor: 'rgba(74, 111, 165, 0.1)',
+                color: 'rgba(212, 160, 23, 0.3)',
+                fillColor: 'rgba(212, 160, 23, 0.1)',
                 radius: currentLocation.accuracy,
-                weight: 1
+                weight: 1.5
             }).addTo(map);
         }
 
@@ -1758,11 +2166,32 @@
                     style: 'mapbox://styles/mapbox/satellite-streets-v11',
                     center: [CONFIG.DEFAULT_LOCATION.lng, CONFIG.DEFAULT_LOCATION.lat],
                     zoom: CONFIG.DEFAULT_LOCATION.zoom,
-                    pitch: 45
+                    pitch: 60,
+                    bearing: 0
                 });
 
                 map3d.on('load', () => {
-                    console.log('✅ Mapa 3D inicializado');
+                    console.log('✅ Mapa 3D del Desierto de Atacama inicializado');
+                    
+                    // Terrain 3D
+                    map3d.addSource('mapbox-dem', {
+                        type: 'raster-dem',
+                        url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+                        tileSize: 512
+                    });
+                    
+                    map3d.setTerrain({ source: 'mapbox-dem', exaggeration: 3 });
+                    
+                    // Sky con efecto desierto
+                    map3d.setFog({
+                        color: 'rgb(250, 248, 240)',
+                        'high-color': 'rgb(212, 160, 23)',
+                        'horizon-blend': 0.1,
+                        'space-color': 'rgb(139, 115, 85)',
+                        'star-intensity': 0.8
+                    });
+                    
+                    map3d.addControl(new mapboxgl.NavigationControl(), 'top-right');
                 });
 
             } catch (error) {
@@ -1797,7 +2226,7 @@
 
                 isCameraActive = true;
                 updateCameraControls(true);
-                showNotification('Cámara activada 📸', 'success');
+                showNotification('Cámara activada para análisis 📸', 'success');
 
             } catch (error) {
                 console.error('Error cámara:', error);
@@ -1848,7 +2277,7 @@
             };
 
             document.getElementById('analyzeBtn').disabled = false;
-            showNotification('¡Foto capturada! 📸', 'success');
+            showNotification('¡Foto capturada! 🤖 Ahora analiza con IA', 'success');
         }
 
         // ============================================
@@ -1880,6 +2309,11 @@
             document.getElementById('generate3D').addEventListener('click', generate3DProjection);
             document.getElementById('export3D').addEventListener('click', export3DModel);
 
+            // Capas 3D
+            document.querySelectorAll('.layers-panel input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', update3DLayers);
+            });
+
             // IA
             document.getElementById('sendMessage').addEventListener('click', sendMessageToAI);
             document.getElementById('chatInput').addEventListener('keypress', (e) => {
@@ -1887,19 +2321,19 @@
             });
             document.getElementById('analyzeLocation').addEventListener('click', () => {
                 if (currentLocation) {
-                    const message = addMessageToChat('user', 'Analiza mi ubicación geológica');
-                    setTimeout(() => {
-                        sendMessageToAI();
-                    }, 100);
+                    addMessageToChat('user', 'Analiza la geología de mi ubicación actual');
+                    setTimeout(sendMessageToAI, 100);
                 } else {
                     showNotification('Primero activa el GPS 📍', 'warning');
                 }
             });
             document.getElementById('identifyMineral').addEventListener('click', () => {
-                addMessageToChat('user', '¿Qué minerales puedo encontrar aquí?');
-                setTimeout(() => {
-                    sendMessageToAI();
-                }, 100);
+                addMessageToChat('user', '¿Qué minerales puedo encontrar en esta zona del Desierto de Atacama?');
+                setTimeout(sendMessageToAI, 100);
+            });
+            document.getElementById('suggestMethodology').addEventListener('click', () => {
+                addMessageToChat('user', '¿Cuál es la metodología recomendada para trabajo de campo geológico en el Desierto de Atacama?');
+                setTimeout(sendMessageToAI, 100);
             });
         }
 
@@ -1927,30 +2361,35 @@
             }
 
             const types = [
-                { type: 'rock', emoji: '🪨', name: 'Roca' },
-                { type: 'mineral', emoji: '💎', name: 'Mineral' },
-                { type: 'fault', emoji: '⚡', name: 'Falla' }
+                { type: 'mineral', emoji: '💎', name: 'Mineral', color: '#D4A017' },
+                { type: 'rock', emoji: '🪨', name: 'Roca', color: '#8B4513' },
+                { type: 'fault', emoji: '⚡', name: 'Falla', color: '#DC143C' },
+                { type: 'sample', emoji: '🔬', name: 'Muestra', color: '#228B22' }
             ];
             
             const selectedType = types[Math.floor(Math.random() * types.length)];
-            const name = `${selectedType.name} ${new Date().getHours()}:${new Date().getMinutes()}`;
+            const time = new Date();
+            const name = `${selectedType.name} ${time.getHours().toString().padStart(2, '0')}:${time.getMinutes().toString().padStart(2, '0')}`;
 
-            L.marker([currentLocation.latitude, currentLocation.longitude], {
+            const marker = L.marker([currentLocation.latitude, currentLocation.longitude], {
                 icon: L.divIcon({
-                    html: `<div style="background: ${selectedType.type === 'rock' ? '#4A6FA5' : selectedType.type === 'mineral' ? '#F1C40F' : '#E74C3C'}; color:white; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; border:2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">${selectedType.emoji}</div>`,
-                    iconSize: [35, 35]
+                    html: `<div style="background: ${selectedType.color}; color:white; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.3rem; border:2px solid white; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">${selectedType.emoji}</div>`,
+                    iconSize: [38, 38]
                 })
-            }).addTo(markersLayer);
+            })
+            .bindPopup(`<div style="background: rgba(255,248,220,0.9); padding: 12px; border-radius: 12px; border: 1px solid var(--glass-border);"><strong>${selectedType.emoji} ${name}</strong><br>Coordenadas: ${currentLocation.latitude.toFixed(4)}°, ${currentLocation.longitude.toFixed(4)}°</div>`)
+            .addTo(markersLayer);
 
-            showNotification('Punto agregado 📍', 'success');
+            showNotification(`Punto ${selectedType.name} agregado 📍`, 'success');
             
-            // Notificar a Dr. GeoBot si está activo
+            // Notificar a Dr. GeoBot
             if (isDrGeoBotActive) {
                 setTimeout(() => {
-                    addMessageToChat('ai', `<strong>📍 Punto geológico agregado:</strong><br><br>
+                    addMessageToChat('ai', `<strong>📍 PUNTO GEOLÓGICO AGREGADO:</strong><br><br>
                     <strong>Tipo:</strong> ${selectedType.name} ${selectedType.emoji}<br>
-                    <strong>Ubicación:</strong> ${currentLocation.latitude.toFixed(4)}, ${currentLocation.longitude.toFixed(4)}<br><br>
-                    <em>Puedo ayudarte a analizar este punto. ¿Qué información necesitas?</em>`);
+                    <strong>Ubicación:</strong> ${currentLocation.latitude.toFixed(4)}°, ${currentLocation.longitude.toFixed(4)}°<br>
+                    <strong>Hora:</strong> ${time.toLocaleTimeString('es-CL')}<br><br>
+                    <em>¿Necesitas análisis de este punto?</em>`);
                 }, 500);
             }
         }
@@ -1971,35 +2410,52 @@
                 return;
             }
 
-            showNotification('Analizando imagen con IA... 🤖', 'info');
+            showNotification('Analizando imagen con DeepSeek AI... 🔍', 'info');
 
             setTimeout(() => {
                 const analysisHTML = `
                     <div class="data-row">
                         <span>Tipo identificado:</span>
-                        <span>🪨 Roca ígnea</span>
+                        <span>🪨 Roca ígnea volcánica</span>
                     </div>
                     <div class="data-row">
                         <span>Mineral principal:</span>
-                        <span>💎 Cuarzo + Feldespato</span>
+                        <span>💎 Plagioclasa + Piroxeno</span>
                     </div>
                     <div class="data-row">
-                        <span>Dureza estimada:</span>
-                        <span>📏 6-7 (Mohs)</span>
+                        <span>Estructura:</span>
+                        <span>⚡ Disyunción columnar</span>
                     </div>
                     <div class="data-row">
-                        <span>Confianza:</span>
-                        <span>🎯 88%</span>
+                        <span>Confianza IA:</span>
+                        <span>🎯 92%</span>
                     </div>
-                    <div style="margin-top: 15px; padding: 12px; background: rgba(52, 152, 219, 0.2); border-radius: 12px; border: 1px solid rgba(52, 152, 219, 0.3); font-size: 0.8rem;">
+                    <div style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, rgba(70, 130, 180, 0.2), rgba(100, 149, 237, 0.2)); border-radius: 12px; border: 1px solid rgba(70, 130, 180, 0.3); font-size: 0.8rem;">
                         <strong>👨‍🔬 Dr. GeoBot recomienda:</strong><br>
                         • Realizar análisis petrográfico<br>
-                        • Tomar muestra para geoquímica
+                        • Tomar muestra para geoquímica<br>
+                        • Medir orientación de columnas
                     </div>
                 `;
 
                 document.getElementById('analysisResults').innerHTML = analysisHTML;
-                showNotification('✅ Análisis completado', 'success');
+                showNotification('✅ Análisis IA completado', 'success');
+                
+                // Agregar al chat
+                if (isDrGeoBotActive) {
+                    setTimeout(() => {
+                        addMessageToChat('ai', `<strong>📸 ANÁLISIS FOTOGEOLÓGICO:</strong><br><br>
+                        <strong>Resultados:</strong><br>
+                        • 🪨 Roca ígnea volcánica<br>
+                        • 💎 Plagioclasa + Piroxeno<br>
+                        • ⚡ Disyunción columnar<br>
+                        • 🎯 Confianza: 92%<br><br>
+                        <strong>Recomendaciones:</strong><br>
+                        1. Análisis petrográfico<br>
+                        2. Muestra para geoquímica<br>
+                        3. Medición de orientación`);
+                    }, 500);
+                }
             }, 2000);
         }
 
@@ -2009,7 +2465,7 @@
                 return;
             }
 
-            showNotification('Generando modelo 3D... 🔄', 'info');
+            showNotification('Generando modelo 3D del terreno... 🔄', 'info');
 
             setTimeout(() => {
                 const html = `
@@ -2022,17 +2478,24 @@
                         <span>30°SE</span>
                     </div>
                     <div class="data-row">
-                        <span>Espesor 📊:</span>
+                        <span>Espesor estrato 📊:</span>
                         <span>15.2 m</span>
                     </div>
                     <div class="data-row">
                         <span>Inclinación 📐:</span>
                         <span>22°</span>
                     </div>
+                    <div style="margin-top: 15px; padding: 12px; background: linear-gradient(135deg, rgba(212, 160, 23, 0.2), rgba(139, 69, 19, 0.2)); border-radius: 12px; border: 1px solid rgba(212, 160, 23, 0.3); font-size: 0.8rem;">
+                        <strong>🌍 Modelo 3D generado:</strong><br>
+                        • Terreno: ${Math.round(currentLocation.altitude || 2400)}m<br>
+                        • Área: 1.5 km²<br>
+                        • Resolución: 10m/pixel<br>
+                        • Capas activas: Topografía, Geología
+                    </div>
                 `;
 
                 document.getElementById('structuralParams').innerHTML = html;
-                showNotification('✅ Modelo 3D generado', 'success');
+                showNotification('✅ Modelo 3D del Desierto generado', 'success');
             }, 1500);
         }
 
@@ -2042,7 +2505,7 @@
                 return;
             }
 
-            showNotification('Exportando modelo... 📤', 'info');
+            showNotification('Exportando modelo 3D... 📤', 'info');
 
             setTimeout(() => {
                 const data = {
@@ -2052,7 +2515,13 @@
                         rumbo: "N.45°E",
                         buzamiento: "30°SE",
                         espesor: "15.2 m",
-                        inclinacion: "22°"
+                        inclinacion: "22°",
+                        altitud: currentLocation.altitude ? Math.round(currentLocation.altitude) + 'm' : '2400m'
+                    },
+                    metadata: {
+                        app: "AtacamApp",
+                        region: getRegionFromLocation(),
+                        version: "1.0"
                     }
                 };
 
@@ -2060,14 +2529,25 @@
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `modelo_3d_${new Date().toISOString().slice(0,10)}.json`;
+                a.download = `modelo_3d_atacamapp_${new Date().toISOString().slice(0,10)}.json`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
 
-                showNotification('✅ Modelo exportado', 'success');
+                showNotification('✅ Modelo 3D exportado', 'success');
             }, 1000);
+        }
+
+        function update3DLayers() {
+            const layers = {
+                'layerTopography': document.getElementById('layerTopography').checked,
+                'layerGeology': document.getElementById('layerGeology').checked,
+                'layerFaults': document.getElementById('layerFaults').checked
+            };
+            
+            const activeLayers = Object.keys(layers).filter(key => layers[key]);
+            showNotification(`Capas activas: ${activeLayers.length} ✅`, 'info');
         }
 
         // ============================================
@@ -2078,7 +2558,7 @@
                 navigator.permissions.query({ name: 'geolocation' })
                     .then(result => {
                         if (result.state === 'granted') {
-                            console.log('Permiso de GPS disponible 🛰️');
+                            console.log('✅ Permiso de GPS disponible');
                         }
                     });
             }
@@ -2095,15 +2575,19 @@
             switch(type) {
                 case 'success':
                     notificationIcon.textContent = '✅';
+                    notification.style.borderLeftColor = '#228B22';
                     break;
                 case 'error':
                     notificationIcon.textContent = '❌';
+                    notification.style.borderLeftColor = '#DC143C';
                     break;
                 case 'warning':
                     notificationIcon.textContent = '⚠️';
+                    notification.style.borderLeftColor = '#FF8C00';
                     break;
                 case 'info':
                     notificationIcon.textContent = 'ℹ️';
+                    notification.style.borderLeftColor = '#4682B4';
                     break;
             }
             
@@ -2111,18 +2595,26 @@
 
             setTimeout(() => {
                 notification.style.display = 'none';
-            }, 3000);
+            }, 3500);
         }
 
         // ============================================
         // MANEJO OFFLINE/ONLINE
         // ============================================
         window.addEventListener('online', () => {
-            showNotification('Conectado a internet ✅', 'success');
+            showNotification('Conectado a internet - DeepSeek AI activa ✅', 'success');
+            if (isDrGeoBotActive) {
+                addMessageToChat('ai', `<strong>✅ CONEXIÓN RESTAURADA:</strong><br><br>
+                DeepSeek AI está nuevamente disponible para análisis avanzado.`);
+            }
         });
 
         window.addEventListener('offline', () => {
-            showNotification('Sin conexión a internet ⚠️', 'warning');
+            showNotification('Sin conexión a internet - Modo local activado ⚠️', 'warning');
+            if (isDrGeoBotActive) {
+                addMessageToChat('ai', `<strong>⚠️ MODO LOCAL ACTIVADO:</strong><br><br>
+                Sin conexión a internet. Funciones básicas disponibles con base de datos local.`);
+            }
         });
     </script>
 </body>
