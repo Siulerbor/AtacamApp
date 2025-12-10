@@ -2,12 +2,128 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AtacamApp ⚒️ - Geología Inteligente</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        /* === VARIABLES Y ESTILOS GLOBALES === */
+        /* === SPLASH SCREEN === */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .splash-content {
+            text-align: center;
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .splash-logo {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #d35400;
+            text-shadow: 0 0 20px rgba(211, 84, 0, 0.7);
+        }
+
+        .splash-title {
+            font-size: 2.5rem;
+            color: white;
+            margin-bottom: 10px;
+            font-weight: bold;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .splash-subtitle {
+            font-size: 1.2rem;
+            color: #ecf0f1;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .loading-bar {
+            width: 200px;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin-top: 30px;
+            backdrop-filter: blur(5px);
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #d35400, #f39c12);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 10px rgba(211, 84, 0, 0.5);
+        }
+
+        .particles-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #d35400;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #f39c12;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .infinity-symbol {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 100px;
+            z-index: 2;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .infinity-path {
+            fill: none;
+            stroke: #d35400;
+            stroke-width: 3;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 10px rgba(211, 84, 0, 0.7));
+        }
+
+        .splash-message {
+            color: #f39c12;
+            margin-top: 20px;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* === VARIABLES GLASSMORPHISM === */
         :root {
             --primary: #d35400;
             --primary-dark: #a84300;
@@ -22,6 +138,16 @@
             --desert-sand: #e6b17e;
             --mountain-brown: #8b7355;
             --sky-blue: #87ceeb;
+            
+            /* Glassmorphism Variables */
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-bg-dark: rgba(30, 30, 30, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --glass-border-light: rgba(255, 255, 255, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            --glass-blur: blur(15px);
+            --glass-radius: 20px;
+            --glass-inset-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
         }
 
         * {
@@ -33,12 +159,14 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #1a1a1a 0%, #2c3e50 100%);
-            color: #333;
+            color: #fff;
             min-height: 100vh;
             padding: 10px;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        /* Fondo del desierto con cerros y sol */
+        /* Fondo del desierto con efecto glass */
         body::before {
             content: '';
             position: fixed;
@@ -47,17 +175,33 @@
             width: 100%;
             height: 100%;
             background-image: 
-                radial-gradient(circle at 85% 15%, #f1c40f 0%, rgba(241, 196, 15, 0.3) 15%, transparent 25%),
-                linear-gradient(to bottom, rgba(135, 206, 235, 0.8) 0%, rgba(135, 206, 235, 0.4) 20%, transparent 40%),
-                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="mountains" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:%238b7355;stop-opacity:1"/><stop offset="100%" style="stop-color:%23a1886d;stop-opacity:1"/></linearGradient><linearGradient id="desert" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:%23e6b17e;stop-opacity:0.7"/><stop offset="100%" style="stop-color:%23d4ac6d;stop-opacity:0.7"/></linearGradient></defs><rect width="1200" height="800" fill="url(%23desert)"/><path d="M0,500 L200,400 L400,450 L600,350 L800,400 L1000,380 L1200,500 L1200,800 L0,800 Z" fill="url(%23mountains)"/><path d="M0,550 L150,500 L300,520 L450,480 L600,500 L750,490 L900,510 L1050,480 L1200,550 L1200,800 L0,800 Z" fill="%236b5b45" opacity="0.8"/></svg>');
+                radial-gradient(circle at 85% 15%, rgba(241, 196, 15, 0.2) 0%, rgba(241, 196, 15, 0.05) 15%, transparent 25%),
+                linear-gradient(to bottom, rgba(135, 206, 235, 0.3) 0%, rgba(135, 206, 235, 0.15) 20%, transparent 40%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800"><defs><linearGradient id="mountains" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:%238b7355;stop-opacity:0.2"/><stop offset="100%" style="stop-color:%23a1886d;stop-opacity:0.2"/></linearGradient><linearGradient id="desert" x1="0%" y1="0%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:%23e6b17e;stop-opacity:0.15"/><stop offset="100%" style="stop-color:%23d4ac6d;stop-opacity:0.15"/></linearGradient></defs><rect width="1200" height="800" fill="url(%23desert)"/><path d="M0,500 L200,400 L400,450 L600,350 L800,400 L1000,380 L1200,500 L1200,800 L0,800 Z" fill="url(%23mountains)"/><path d="M0,550 L150,500 L300,520 L450,480 L600,500 L750,490 L900,510 L1050,480 L1200,550 L1200,800 L0,800 Z" fill="%236b5b45" opacity="0.2"/></svg>');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            opacity: 0.15;
-            z-index: -1;
+            opacity: 0.3;
+            z-index: -2;
             pointer-events: none;
+            backdrop-filter: var(--glass-blur);
         }
 
+        /* Efecto de vidrio base */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 26, 26, 0.7);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            z-index: -1;
+        }
+
+        /* === CONTENEDOR PRINCIPAL === */
         .container {
             max-width: 1400px;
             margin: 0 auto;
@@ -65,107 +209,121 @@
             z-index: 1;
         }
 
-        /* Header con efecto desértico */
+        /* === HEADER CON GLASSMORPHISM === */
         .app-header {
-            background: linear-gradient(135deg, 
-                rgba(44, 62, 80, 0.9) 0%, 
-                rgba(52, 73, 94, 0.9) 100%);
+            background: var(--glass-bg-dark);
             color: white;
-            padding: 15px 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
+            padding: 20px 25px;
+            border-radius: var(--glass-radius);
+            margin-bottom: 20px;
             text-align: center;
-            border: 2px solid var(--primary);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
             position: relative;
             overflow: hidden;
+            animation: headerFloat 6s ease-in-out infinite;
+        }
+
+        @keyframes headerFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         .app-header::before {
             content: '';
             position: absolute;
-            bottom: 0;
+            top: 0;
             left: 0;
-            width: 100%;
-            height: 30%;
-            background: linear-gradient(to top, rgba(230, 177, 126, 0.2), transparent);
-            border-radius: 0 0 15px 15px;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(211, 84, 0, 0.5), 
+                transparent);
         }
 
         .app-header h1 {
             font-size: 1.8rem;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 12px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         .header-subtitle {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             opacity: 0.9;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
             color: var(--light);
+            font-weight: 300;
         }
 
         .status-bar {
             display: flex;
             justify-content: center;
-            gap: 8px;
+            gap: 10px;
             flex-wrap: wrap;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         .status-item {
             display: flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 12px;
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(5px);
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(10px);
             border-radius: 15px;
-            font-size: 0.8rem;
-            border: 1px solid rgba(255,255,255,0.2);
+            font-size: 0.85rem;
+            border: 1px solid rgba(255, 255, 255, 0.15);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .status-item:hover {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.15);
             transform: translateY(-2px);
+            border-color: rgba(211, 84, 0, 0.3);
+            box-shadow: 0 5px 15px rgba(211, 84, 0, 0.2);
         }
 
         .status-item.active {
-            background: rgba(211, 84, 0, 0.3);
+            background: rgba(211, 84, 0, 0.25);
             border-color: var(--primary);
             animation: pulse 2s infinite;
+            box-shadow: 0 0 15px rgba(211, 84, 0, 0.3);
         }
 
         @keyframes pulse {
             0% { box-shadow: 0 0 0 0 rgba(211, 84, 0, 0.7); }
-            70% { box-shadow: 0 0 0 8px rgba(211, 84, 0, 0); }
+            70% { box-shadow: 0 0 0 10px rgba(211, 84, 0, 0); }
             100% { box-shadow: 0 0 0 0 rgba(211, 84, 0, 0); }
         }
 
         .badge {
             font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 10px;
+            padding: 3px 8px;
+            border-radius: 12px;
             margin-left: 5px;
             font-weight: bold;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .badge-gps { background: var(--success); color: white; }
-        .badge-camera { background: var(--warning); color: black; }
-        .badge-geo { background: var(--info); color: white; }
-        .badge-danger { background: var(--danger); color: white; }
+        .badge-gps { background: rgba(39, 174, 96, 0.8); color: white; }
+        .badge-camera { background: rgba(241, 196, 15, 0.8); color: black; }
+        .badge-geo { background: rgba(52, 152, 219, 0.8); color: white; }
+        .badge-danger { background: rgba(231, 76, 60, 0.8); color: white; }
 
-        /* Layout Grid Responsivo */
+        /* === LAYOUT GRID RESPONSIVO === */
         .app-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 12px;
+            gap: 20px;
         }
 
         @media (min-width: 768px) {
@@ -180,68 +338,96 @@
             }
         }
 
-        /* Cards mejoradas */
+        /* === TARJETAS CON GLASSMORPHISM === */
         .card {
-            background: rgba(255, 255, 255, 0.97);
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            margin-bottom: 12px;
-            border-top: 3px solid var(--primary);
+            background: var(--glass-bg-dark);
+            border-radius: var(--glass-radius);
+            padding: 25px;
+            box-shadow: var(--glass-shadow);
+            margin-bottom: 20px;
+            border: 1px solid var(--glass-border);
             position: relative;
-            transition: transform 0.3s;
-            backdrop-filter: blur(5px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(211, 84, 0, 0.3), 
+                transparent);
         }
 
         .card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: rgba(211, 84, 0, 0.4);
         }
 
         .card h2 {
-            color: var(--secondary);
-            margin-bottom: 12px;
-            padding-bottom: 8px;
-            border-bottom: 2px solid var(--light);
+            color: white;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 1.2rem;
+            gap: 12px;
+            font-size: 1.3rem;
+            font-weight: 600;
         }
 
+        .card h2 i {
+            color: var(--accent);
+            font-size: 1.2em;
+        }
+
+        /* Botón de cerrar con glass */
         .close-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: #95a5a6;
+            top: 15px;
+            right: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.7);
             cursor: pointer;
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 50%;
             transition: all 0.3s;
             z-index: 10;
+            backdrop-filter: blur(5px);
         }
 
         .close-btn:hover {
-            background: var(--light);
-            color: var(--danger);
+            background: rgba(231, 76, 60, 0.3);
+            color: white;
+            transform: rotate(90deg);
+            border-color: rgba(231, 76, 60, 0.5);
         }
 
-        /* Cámara */
+        /* === CÁMARA CON GLASS === */
         .camera-container {
             position: relative;
             width: 100%;
-            height: 220px;
-            background: linear-gradient(135deg, var(--secondary), var(--dark));
-            border-radius: 10px;
+            height: 240px;
+            background: rgba(44, 62, 80, 0.6);
+            border-radius: 15px;
             overflow: hidden;
-            margin-bottom: 12px;
-            border: 2px solid var(--primary);
+            margin-bottom: 15px;
+            border: 2px solid rgba(211, 84, 0, 0.4);
+            box-shadow: var(--glass-inset-shadow);
         }
 
         .camera-feed {
@@ -253,76 +439,123 @@
 
         .camera-placeholder {
             text-align: center;
-            padding: 20px;
+            padding: 30px;
             color: white;
             height: 100%;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
         }
 
         .camera-controls {
             display: flex;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 10px;
+            margin-top: 15px;
             flex-wrap: wrap;
         }
 
-        /* Botones mejorados */
+        /* === BOTONES CON GLASSMORPHISM === */
         .btn {
-            padding: 8px 16px;
+            padding: 12px 20px;
             border: none;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: bold;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 8px;
             flex: 1;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.1), 
+                transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            color: white;
+            background: linear-gradient(135deg, 
+                rgba(211, 84, 0, 0.8), 
+                rgba(168, 67, 0, 0.8));
+            box-shadow: 0 4px 15px rgba(211, 84, 0, 0.3);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(211, 84, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(211, 84, 0, 0.4);
         }
 
         .btn-secondary {
-            background: var(--info);
-            color: white;
+            background: rgba(52, 152, 219, 0.8);
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
         }
 
         .btn-success {
-            background: var(--success);
-            color: white;
+            background: rgba(39, 174, 96, 0.8);
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
         }
 
         .btn-warning {
-            background: var(--warning);
-            color: black;
+            background: rgba(241, 196, 15, 0.8);
+            color: #333;
+            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3);
         }
 
         .btn-danger {
-            background: var(--danger);
+            background: rgba(231, 76, 60, 0.8);
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid rgba(255, 255, 255, 0.3);
             color: white;
         }
 
-        /* Colección Mineralógica - Coverflow */
+        .btn-outline:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* === COLECCIÓN MINERALÓGICA - COVERFLOW === */
         .coverflow-container {
             width: 100%;
-            height: 160px;
+            height: 180px;
             perspective: 1000px;
             position: relative;
-            margin: 15px 0;
+            margin: 20px 0;
             overflow: hidden;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .coverflow {
@@ -335,11 +568,11 @@
 
         .mineral-card {
             position: absolute;
-            width: 90px;
-            height: 110px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            width: 100px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -347,55 +580,61 @@
             transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             cursor: pointer;
             border: 2px solid transparent;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .mineral-card.active {
             border-color: var(--primary);
-            transform: scale(1.1);
+            transform: scale(1.15);
             z-index: 10;
-            box-shadow: 0 8px 25px rgba(211, 84, 0, 0.3);
+            box-shadow: 0 15px 35px rgba(211, 84, 0, 0.4);
         }
 
         .mineral-card .emoji {
-            font-size: 2rem;
-            margin-bottom: 8px;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
         }
 
         .coverflow-nav {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 20px;
-            margin-top: 10px;
+            gap: 25px;
+            margin-top: 15px;
         }
 
         .nav-btn {
-            background: var(--light);
-            border: none;
-            width: 30px;
-            height: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            color: white;
         }
 
         .nav-btn:hover {
             background: var(--primary);
-            color: white;
+            transform: rotate(15deg);
+            box-shadow: 0 5px 15px rgba(211, 84, 0, 0.3);
         }
 
-        /* Mapa */
+        /* === MAPA CON GLASS === */
         .map-container {
             width: 100%;
-            height: 220px;
-            border-radius: 10px;
+            height: 240px;
+            border-radius: 15px;
             overflow: hidden;
-            margin-bottom: 12px;
-            border: 2px solid var(--primary);
+            margin-bottom: 15px;
+            border: 2px solid rgba(211, 84, 0, 0.4);
             position: relative;
+            box-shadow: var(--glass-inset-shadow);
         }
 
         #map {
@@ -405,18 +644,18 @@
 
         .map-controls {
             position: absolute;
-            top: 10px;
-            right: 10px;
+            top: 15px;
+            right: 15px;
             z-index: 1000;
             display: flex;
-            gap: 5px;
+            gap: 8px;
             flex-direction: column;
         }
 
-        /* Kit de Campo - Brújula Geológica */
+        /* === KIT DE CAMPO - BRÚJULA GEOLÓGICA === */
         .geological-compass {
-            width: 180px;
-            height: 180px;
+            width: 200px;
+            height: 200px;
             margin: 0 auto;
             position: relative;
         }
@@ -424,13 +663,14 @@
         .compass-outer {
             width: 100%;
             height: 100%;
-            border: 15px solid #8b7355;
+            border: 15px solid rgba(139, 115, 85, 0.7);
             border-radius: 50%;
             position: relative;
-            background: linear-gradient(135deg, #f5deb3, #d2b48c);
+            background: linear-gradient(135deg, rgba(245, 222, 179, 0.9), rgba(210, 180, 140, 0.9));
             box-shadow: 
-                inset 0 0 20px rgba(0,0,0,0.2),
-                0 5px 15px rgba(0,0,0,0.3);
+                inset 0 0 30px rgba(0,0,0,0.3),
+                0 8px 25px rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
         }
 
         .compass-inner {
@@ -440,10 +680,12 @@
             top: 10%;
             left: 10%;
             border-radius: 50%;
-            background: white;
+            background: rgba(255, 255, 255, 0.95);
             display: flex;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
         }
 
         .compass-rose {
@@ -455,8 +697,9 @@
         .compass-point {
             position: absolute;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 1.1rem;
             color: var(--secondary);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
         }
 
         .north { top: 5%; left: 50%; transform: translateX(-50%); color: #e74c3c; }
@@ -494,68 +737,73 @@
             left: 50%;
             transform: translateX(-50%);
             font-size: 0.8rem;
-            color: #666;
-            background: white;
-            padding: 2px 8px;
-            border-radius: 10px;
-            border: 1px solid #ddd;
+            color: white;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 5px 12px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
         }
 
-        /* Kit de Campo - Grid */
+        /* === KIT DE CAMPO - GRID === */
         .kit-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: 15px;
+            gap: 12px;
+            margin-top: 20px;
         }
 
         .kit-item {
-            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
-            border: 1px solid #dee2e6;
-            border-radius: 10px;
-            padding: 12px 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            padding: 15px 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.3s;
+            backdrop-filter: blur(10px);
+            color: white;
         }
 
         .kit-item:hover {
-            background: linear-gradient(135deg, #e9ecef, #dee2e6);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(211, 84, 0, 0.4);
         }
 
         .kit-item i {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-            color: var(--primary);
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+            color: var(--accent);
         }
 
-        /* Escala de Mohs Interactiva */
+        /* === ESCALA DE MOHS INTERACTIVA === */
         .mohs-scale {
-            margin-top: 15px;
+            margin-top: 20px;
         }
 
         .mohs-item {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 8px;
+            margin-bottom: 12px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
             border-left: 4px solid var(--primary);
             transition: all 0.3s;
             cursor: pointer;
+            backdrop-filter: blur(5px);
         }
 
         .mohs-item:hover {
-            background: #e9ecef;
+            background: rgba(255, 255, 255, 0.15);
             transform: translateX(5px);
         }
 
         .mohs-level {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
             color: white;
             border-radius: 50%;
@@ -563,9 +811,10 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             margin-right: 15px;
             flex-shrink: 0;
+            box-shadow: 0 4px 15px rgba(211, 84, 0, 0.3);
         }
 
         .mohs-info {
@@ -573,84 +822,91 @@
         }
 
         .mohs-info h4 {
-            color: var(--secondary);
-            margin-bottom: 3px;
+            color: white;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
         }
 
         .mohs-info p {
-            font-size: 0.85rem;
-            color: #666;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
         }
 
-        /* Colores de Raya */
+        /* === COLORES DE RAYA === */
         .streak-colors {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
         }
 
         .streak-item {
             text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.08);
             border: 2px solid transparent;
             transition: all 0.3s;
             cursor: pointer;
+            backdrop-filter: blur(5px);
         }
 
         .streak-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            border-color: rgba(211, 84, 0, 0.4);
         }
 
         .streak-color {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
-            margin: 0 auto 8px;
-            border: 3px solid white;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            margin: 0 auto 10px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
 
-        /* Fracturas */
+        /* === FRACTURAS === */
         .fractures-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 10px;
-            margin-top: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
         }
 
         .fracture-item {
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
             text-align: center;
             border: 2px solid transparent;
             transition: all 0.3s;
             cursor: pointer;
+            backdrop-filter: blur(5px);
         }
 
         .fracture-item:hover {
-            border-color: var(--primary);
-            transform: translateY(-3px);
+            border-color: rgba(211, 84, 0, 0.4);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
         }
 
         .fracture-emoji {
-            font-size: 2rem;
-            margin-bottom: 10px;
+            font-size: 2.5rem;
+            margin-bottom: 12px;
         }
 
-        /* Proyección 3D */
+        /* === PROYECCIÓN 3D === */
         .projection-3d {
             width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 10px;
-            margin-bottom: 12px;
+            height: 220px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            border-radius: 15px;
+            margin-bottom: 15px;
             position: relative;
             overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: var(--glass-inset-shadow);
         }
 
         .terrain-model {
@@ -665,202 +921,449 @@
             left: 0;
             right: 0;
             background: linear-gradient(to top, var(--desert-sand), var(--mountain-brown));
-            border-radius: 5px 5px 0 0;
+            border-radius: 8px 8px 0 0;
             transition: height 0.5s;
+            opacity: 0.9;
         }
 
         .mineral-deposit {
             position: absolute;
-            width: 15px;
-            height: 15px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 10px rgba(255,255,255,0.5);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.7);
             animation: pulse-glow 2s infinite;
+            border: 2px solid rgba(255, 255, 255, 0.8);
         }
 
         @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 5px rgba(255,255,255,0.5); }
-            50% { box-shadow: 0 0 20px rgba(255,255,255,0.8); }
+            0%, 100% { 
+                box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% { 
+                box-shadow: 0 0 25px rgba(255, 255, 255, 0.9);
+                transform: translate(-50%, -50%) scale(1.1);
+            }
         }
 
-        /* Chat IA */
+        /* === CHAT IA CON GLASS === */
         .chat-container {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 350px;
-            height: 450px;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            bottom: 25px;
+            right: 25px;
+            width: 380px;
+            height: 500px;
+            background: var(--glass-bg-dark);
+            border-radius: var(--glass-radius);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
             z-index: 10000;
             display: none;
             flex-direction: column;
-            border: 2px solid var(--primary);
+            border: 1px solid var(--glass-border);
             overflow: hidden;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            animation: chatAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes chatAppear {
+            from { 
+                transform: translateY(20px) scale(0.95);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
         }
 
         .chat-header {
-            background: linear-gradient(135deg, var(--secondary), var(--dark));
+            background: linear-gradient(135deg, 
+                rgba(44, 62, 80, 0.9), 
+                rgba(52, 73, 94, 0.9));
             color: white;
-            padding: 15px;
+            padding: 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .chat-messages {
             flex: 1;
-            padding: 15px;
+            padding: 20px;
             overflow-y: auto;
-            background: #f8f9fa;
+            background: rgba(0, 0, 0, 0.2);
         }
 
         .chat-input {
-            padding: 15px;
-            border-top: 1px solid #dee2e6;
+            padding: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
-            gap: 10px;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
         }
 
         .message {
-            margin-bottom: 12px;
-            padding: 10px 15px;
-            border-radius: 12px;
+            margin-bottom: 15px;
+            padding: 12px 18px;
+            border-radius: 18px;
             max-width: 85%;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             line-height: 1.4;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation: messageAppear 0.3s ease-out;
+        }
+
+        @keyframes messageAppear {
+            from { 
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .message.user {
-            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            background: linear-gradient(135deg, 
+                rgba(211, 84, 0, 0.8), 
+                rgba(168, 67, 0, 0.8));
             color: white;
             margin-left: auto;
-            border-radius: 12px 12px 0 12px;
+            border-radius: 18px 18px 0 18px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(211, 84, 0, 0.3);
         }
 
         .message.ai {
-            background: white;
-            border: 1px solid #dee2e6;
-            border-radius: 12px 12px 12px 0;
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border-radius: 18px 18px 18px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
-        /* Modal */
+        /* === MODAL CON GLASSMORPHISM === */
         .modal {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.85);
+            background: rgba(0, 0, 0, 0.85);
             display: none;
             align-items: center;
             justify-content: center;
             z-index: 9999;
             padding: 20px;
-            backdrop-filter: blur(5px);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            animation: modalBgAppear 0.3s ease-out;
+        }
+
+        @keyframes modalBgAppear {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-content {
-            background: white;
-            border-radius: 15px;
+            background: var(--glass-bg-dark);
+            border-radius: var(--glass-radius);
             padding: 0;
-            max-width: 600px;
+            max-width: 700px;
             width: 90%;
-            max-height: 80vh;
-            overflow: auto;
-            border: 3px solid var(--primary);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-            animation: modalIn 0.3s ease-out;
+            max-height: 85vh;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+            animation: modalContentAppear 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
         }
 
-        @keyframes modalIn {
-            from { transform: scale(0.9); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
+        @keyframes modalContentAppear {
+            from { 
+                transform: scale(0.9) translateY(20px);
+                opacity: 0;
+            }
+            to { 
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
         }
 
-        /* Clima */
+        /* === CLIMA CON GLASS === */
         .weather-card {
-            background: linear-gradient(135deg, #3498db, #2980b9);
+            background: linear-gradient(135deg, 
+                rgba(52, 152, 219, 0.8), 
+                rgba(41, 128, 185, 0.8));
             color: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-top: 10px;
+            padding: 20px;
+            border-radius: 15px;
+            margin-top: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
         }
 
-        /* Notificaciones */
+        /* === NOTIFICACIONES CON GLASS === */
         .notification {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--success);
+            top: 25px;
+            right: 25px;
+            background: var(--glass-bg-dark);
             color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            padding: 18px 24px;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
             z-index: 1000;
             animation: slideIn 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 12px;
-            max-width: 300px;
+            gap: 15px;
+            max-width: 350px;
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+            from { 
+                transform: translateX(100%) translateY(-20px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateX(0) translateY(0);
+                opacity: 1;
+            }
         }
 
-        /* Formularios */
+        /* === FORMULARIOS CON GLASS === */
         .form-control {
             width: 100%;
-            padding: 10px 12px;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            margin-bottom: 10px;
+            padding: 14px 18px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
             transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-family: inherit;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.6);
         }
 
         .form-control:focus {
             border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1);
+            box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.2);
+            background: rgba(255, 255, 255, 0.15);
         }
 
-        /* Reportes */
+        /* === REPORTES CON GLASS === */
         .report-preview {
-            max-height: 200px;
+            max-height: 220px;
             overflow-y: auto;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border: 2px dashed #ddd;
-            margin-top: 10px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 15px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            margin-top: 15px;
+            backdrop-filter: blur(5px);
         }
 
-        /* Mineral Info */
+        /* === INFORMACIÓN DE MINERALES === */
         .mineral-info {
             text-align: center;
-            padding: 10px;
+            padding: 15px;
             font-size: 0.9rem;
-            color: #666;
+            color: rgba(255, 255, 255, 0.8);
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            margin-top: 10px;
+            backdrop-filter: blur(5px);
         }
 
-        /* Responsive */
+        /* === BARRA DE DESPLAZAMIENTO PERSONALIZADA === */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(211, 84, 0, 0.5);
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(211, 84, 0, 0.7);
+        }
+
+        /* === RESPONSIVE PARA MÓVILES === */
         @media (max-width: 768px) {
-            .app-header h1 { font-size: 1.5rem; }
-            .status-item { padding: 5px 10px; font-size: 0.75rem; }
-            .card { padding: 12px; }
-            .kit-grid { grid-template-columns: repeat(2, 1fr); }
-            .chat-container { width: 90%; right: 5%; bottom: 10px; }
-            .geological-compass { width: 150px; height: 150px; }
+            #splashScreen .splash-title {
+                font-size: 1.8rem;
+            }
+            
+            #splashScreen .splash-logo {
+                font-size: 2.2rem;
+            }
+            
+            .app-header h1 { 
+                font-size: 1.5rem; 
+            }
+            
+            .status-item { 
+                padding: 6px 12px; 
+                font-size: 0.8rem; 
+            }
+            
+            .card { 
+                padding: 18px; 
+            }
+            
+            .kit-grid { 
+                grid-template-columns: repeat(2, 1fr); 
+            }
+            
+            .chat-container { 
+                width: calc(100% - 30px); 
+                right: 15px; 
+                bottom: 15px; 
+                height: 450px;
+            }
+            
+            .geological-compass { 
+                width: 160px; 
+                height: 160px; 
+            }
+            
+            .modal-content {
+                width: 95%;
+                max-height: 80vh;
+            }
+            
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-grid {
+                gap: 15px;
+            }
+            
+            .card {
+                margin-bottom: 15px;
+            }
+            
+            .camera-controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+            
+            .kit-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .streak-colors,
+            .fractures-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .splash-content {
+                padding: 25px 20px;
+                margin: 0 15px;
+            }
+        }
+
+        /* === EFECTO DE PARTÍCULAS FLOTANTES === */
+        .floating-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .floating-particle {
+            position: absolute;
+            background: rgba(211, 84, 0, 0.15);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Partículas flotantes de fondo -->
+    <div class="floating-particles" id="floatingParticles"></div>
+
+    <!-- Splash Screen -->
+    <div id="splashScreen">
+        <div class="particles-container" id="particlesContainer"></div>
+        
+        <div class="infinity-symbol" id="infinitySymbol">
+            <svg viewBox="0 0 200 100">
+                <path class="infinity-path" d="M50,50 C50,30 70,30 70,50 C70,70 90,70 90,50 C90,30 110,30 110,50 C110,70 130,70 130,50 C130,30 150,30 150,50"/>
+            </svg>
+        </div>
+        
+        <div class="splash-content">
+            <div class="splash-logo">🏜️⚒️</div>
+            <h1 class="splash-title">AtacamApp</h1>
+            <div class="splash-subtitle">Geología Inteligente del Desierto</div>
+            
+            <div class="loading-bar">
+                <div class="loading-progress" id="loadingProgress"></div>
+            </div>
+            
+            <div class="splash-message" id="splashMessage">Inicializando sistema...</div>
+        </div>
+    </div>
+
+    <!-- Aplicación Principal -->
+    <div class="container" id="mainApp" style="display: none; opacity: 0;">
         <!-- Header -->
         <header class="app-header">
             <h1>🏜️ AtacamApp ⚒️</h1>
@@ -899,8 +1402,8 @@
                         <canvas id="cameraCanvas" style="display:none"></canvas>
                         
                         <div class="camera-placeholder" id="cameraPlaceholder">
-                            <div style="font-size: 3rem;">📷</div>
-                            <p style="margin-top: 10px;">Click en "CÁMARA" para activar</p>
+                            <div style="font-size: 3.5rem;">📷</div>
+                            <p style="margin-top: 15px;">Click en "CÁMARA" para activar</p>
                             <small>Calidad HD 1920x1080</small>
                         </div>
                     </div>
@@ -917,7 +1420,7 @@
                         </button>
                     </div>
                     
-                    <div id="analysisResult" style="display:none; margin-top:10px; padding:10px; background:#f8f9fa; border-radius:8px;">
+                    <div id="analysisResult" style="display:none; margin-top:15px; padding:15px; background:rgba(255,255,255,0.1); border-radius:12px; backdrop-filter:blur(10px);">
                         <div id="mineralResult"></div>
                     </div>
                 </section>
@@ -942,9 +1445,9 @@
                     </div>
                     
                     <div class="report-preview" id="reportPreview">
-                        <div style="text-align:center; padding:20px; color:#666;">
-                            <div style="font-size:2rem;">📋</div>
-                            <p>El informe aparecerá aquí</p>
+                        <div style="text-align:center; padding:30px; color:rgba(255,255,255,0.7);">
+                            <div style="font-size:2.5rem;">📋</div>
+                            <p style="margin-top:10px;">El informe aparecerá aquí</p>
                             <small>Incluye título y observaciones</small>
                         </div>
                     </div>
@@ -961,10 +1464,10 @@
                     <div class="map-container">
                         <div id="map"></div>
                         <div class="map-controls">
-                            <button class="btn btn-primary" onclick="centerMap()" style="padding:6px 10px; font-size:0.8rem;">
+                            <button class="btn btn-primary" onclick="centerMap()" style="padding:8px 12px; font-size:0.9rem; background:rgba(211,84,0,0.8);">
                                 <i class="fas fa-location-arrow"></i>
                             </button>
-                            <button class="btn btn-secondary" onclick="addMarker()" style="padding:6px 10px; font-size:0.8rem;">
+                            <button class="btn btn-secondary" onclick="addMarker()" style="padding:8px 12px; font-size:0.9rem; background:rgba(52,152,219,0.8);">
                                 <i class="fas fa-map-pin"></i>
                             </button>
                         </div>
@@ -995,7 +1498,7 @@
                         <button class="nav-btn" onclick="prevMineral()">
                             <i class="fas fa-chevron-left"></i>
                         </button>
-                        <span id="mineralCounter" style="font-size:0.9rem; font-weight:bold;">0/0</span>
+                        <span id="mineralCounter" style="font-size:1rem; font-weight:bold; color:white;">0/0</span>
                         <button class="nav-btn" onclick="nextMineral()">
                             <i class="fas fa-chevron-right"></i>
                         </button>
@@ -1042,7 +1545,7 @@
                     </div>
                     
                     <!-- Brújula integrada -->
-                    <div id="compassContainer" style="margin-top:15px; display:none;">
+                    <div id="compassContainer" style="margin-top:20px; display:none;">
                         <div class="geological-compass">
                             <div class="compass-outer">
                                 <div class="compass-inner">
@@ -1057,10 +1560,10 @@
                             </div>
                             <div class="declination" id="declination">Declinación: 0°</div>
                         </div>
-                        <div style="text-align:center; margin-top:10px;">
-                            <div id="compassDirection" style="font-weight:bold; font-size:1.1rem;">NORTE MAGNÉTICO</div>
-                            <div id="compassDegrees" style="color:#666;">0°</div>
-                            <button class="btn btn-primary" onclick="calibrateCompass()" style="margin-top:10px; padding:6px 12px;">
+                        <div style="text-align:center; margin-top:15px;">
+                            <div id="compassDirection" style="font-weight:bold; font-size:1.2rem; color:#f39c12;">NORTE MAGNÉTICO</div>
+                            <div id="compassDegrees" style="color:rgba(255,255,255,0.8); margin-top:5px;">0°</div>
+                            <button class="btn btn-outline" onclick="calibrateCompass()" style="margin-top:15px; padding:10px 20px; width:100%; max-width:250px;">
                                 <i class="fas fa-sync-alt"></i> Calibrar con GPS
                             </button>
                         </div>
@@ -1087,7 +1590,7 @@
                         </button>
                     </div>
                     
-                    <div id="projectionInfo" style="font-size:0.8rem; color:#666; margin-top:8px;">
+                    <div id="projectionInfo" style="font-size:0.85rem; color:rgba(255,255,255,0.7); margin-top:10px; padding:10px; background:rgba(0,0,0,0.2); border-radius:10px;">
                         Basado en datos SIGEX/GeoCatMin y Mindat.org
                     </div>
                 </section>
@@ -1097,18 +1600,18 @@
                     <button class="close-btn" onclick="closeCard(this)">×</button>
                     <h2><i class="fas fa-robot"></i> Geobot IA</h2>
                     
-                    <div style="background:#e8f4fc; padding:12px; border-radius:8px; margin-bottom:10px;">
-                        <p style="font-size:0.9rem; margin-bottom:10px;">Asistente especializado en geología de Atacama</p>
-                        <button class="btn btn-primary" onclick="toggleChat()" style="width:100%;">
+                    <div style="background:rgba(232,244,252,0.15); padding:20px; border-radius:15px; margin-bottom:15px; backdrop-filter:blur(10px); border:1px solid rgba(255,255,255,0.1);">
+                        <p style="font-size:0.95rem; margin-bottom:15px; color:rgba(255,255,255,0.9);">Asistente especializado en geología de Atacama</p>
+                        <button class="btn btn-primary" onclick="toggleChat()" style="width:100%; padding:14px;">
                             <i class="fas fa-comments"></i> Abrir Chat
                         </button>
                     </div>
                     
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
-                        <button class="btn btn-secondary" onclick="quickAnalysis()" style="font-size:0.8rem;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+                        <button class="btn btn-outline" onclick="quickAnalysis()" style="padding:12px; font-size:0.9rem;">
                             <i class="fas fa-chart-line"></i> Análisis
                         </button>
-                        <button class="btn btn-secondary" onclick="exportData()" style="font-size:0.8rem;">
+                        <button class="btn btn-outline" onclick="exportData()" style="padding:12px; font-size:0.9rem;">
                             <i class="fas fa-file-export"></i> Exportar
                         </button>
                     </div>
@@ -1120,8 +1623,8 @@
     <!-- Chat IA -->
     <div class="chat-container" id="chatContainer">
         <div class="chat-header">
-            <div style="display:flex; align-items:center; gap:8px;">
-                <i class="fas fa-robot"></i>
+            <div style="display:flex; align-items:center; gap:10px;">
+                <i class="fas fa-robot" style="color:#f39c12;"></i>
                 <span>Geobot IA - Especialista Geológico</span>
             </div>
             <button class="close-btn" onclick="toggleChat()" style="color:white;">×</button>
@@ -1138,7 +1641,7 @@
         
         <div class="chat-input">
             <input type="text" id="chatInput" placeholder="Escribe tu pregunta geológica..." class="form-control" style="flex:1;">
-            <button class="btn btn-primary" onclick="sendMessage()" style="padding:8px 15px;">
+            <button class="btn btn-primary" onclick="sendMessage()" style="padding:12px 20px;">
                 <i class="fas fa-paper-plane"></i>
             </button>
         </div>
@@ -1147,17 +1650,238 @@
     <!-- Modal para herramientas -->
     <div class="modal" id="toolModal">
         <div class="modal-content">
-            <div class="chat-header" style="border-radius:15px 15px 0 0;">
+            <div class="chat-header" style="border-radius:20px 20px 0 0;">
                 <span id="modalTitle">Herramienta</span>
                 <button class="close-btn" onclick="closeModal()" style="color:white;">×</button>
             </div>
-            <div id="modalContent" style="padding:20px;"></div>
+            <div id="modalContent" style="padding:25px; max-height:calc(85vh - 80px); overflow-y:auto;"></div>
         </div>
     </div>
 
     <!-- Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
+        // ============================================
+        // SISTEMA DE SPLASH SCREEN CON PARTÍCULAS
+        // ============================================
+        
+        let particles = [];
+        let splashActive = true;
+        
+        function initSplashScreen() {
+            console.log('🎬 Iniciando splash screen con partículas...');
+            
+            // Crear partículas flotantes de fondo
+            createFloatingParticles();
+            
+            // Crear 100 partículas para el infinito
+            createParticles();
+            
+            // Iniciar animación del símbolo infinito
+            setTimeout(() => {
+                animateInfinitySymbol();
+            }, 500);
+            
+            // Iniciar secuencia de carga
+            startLoadingSequence();
+        }
+        
+        function createFloatingParticles() {
+            const container = document.getElementById('floatingParticles');
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'floating-particle';
+                
+                const size = 3 + Math.random() * 10;
+                const left = Math.random() * 100;
+                const delay = Math.random() * 20;
+                const duration = 15 + Math.random() * 20;
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${left}%`;
+                particle.style.animationDelay = `${delay}s`;
+                particle.style.animationDuration = `${duration}s`;
+                
+                // Color aleatorio en tonos naranja/desierto
+                const hue = 20 + Math.random() * 40;
+                const opacity = 0.05 + Math.random() * 0.15;
+                particle.style.background = `hsla(${hue}, 100%, 60%, ${opacity})`;
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        function createParticles() {
+            const container = document.getElementById('particlesContainer');
+            const particleCount = 100;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Posición aleatoria
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const size = 4 + Math.random() * 8;
+                const hue = 20 + Math.random() * 40; // Naranjas
+                
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.left = `${x}%`;
+                particle.style.top = `${y}%`;
+                particle.style.background = `hsl(${hue}, 100%, 50%)`;
+                particle.style.boxShadow = `0 0 ${size*2}px hsl(${hue}, 100%, 50%)`;
+                
+                container.appendChild(particle);
+                particles.push({
+                    element: particle,
+                    x, y,
+                    targetX: 50,
+                    targetY: 50,
+                    speed: 0.5 + Math.random() * 1,
+                    delay: Math.random() * 1000,
+                    size: size
+                });
+            }
+        }
+        
+        function animateInfinitySymbol() {
+            const symbol = document.getElementById('infinitySymbol');
+            symbol.style.opacity = '1';
+            symbol.style.transition = 'opacity 1s ease-out';
+            
+            // Animar trazo del símbolo
+            const path = symbol.querySelector('.infinity-path');
+            const length = path.getTotalLength();
+            
+            path.style.strokeDasharray = length;
+            path.style.strokeDashoffset = length;
+            
+            setTimeout(() => {
+                path.style.transition = 'stroke-dashoffset 2s ease-in-out';
+                path.style.strokeDashoffset = '0';
+            }, 500);
+        }
+        
+        function startLoadingSequence() {
+            const messages = [
+                "Inicializando sistema...",
+                "Cargando base de datos mineralógica...",
+                "Conectando con Mindat.org...",
+                "Configurando GPS satelital...",
+                "Activando cámara HD...",
+                "Preparando herramientas geológicas...",
+                "Cargando mapa de Atacama...",
+                "Conectando Geobot IA...",
+                "Configurando proyección 3D...",
+                "¡Listo para explorar!"
+            ];
+            
+            let progress = 0;
+            const progressBar = document.getElementById('loadingProgress');
+            const messageEl = document.getElementById('splashMessage');
+            
+            const interval = setInterval(() => {
+                progress += 1;
+                progressBar.style.width = `${progress}%`;
+                
+                // Cambiar mensaje cada 10%
+                if (progress % 10 === 0) {
+                    const messageIndex = Math.min(Math.floor(progress / 10), messages.length - 1);
+                    messageEl.textContent = messages[messageIndex];
+                    
+                    // Animar partículas hacia el centro cuando llegamos a 50%
+                    if (progress === 50) {
+                        animateParticlesToCenter();
+                    }
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        finishSplashScreen();
+                    }, 1000);
+                }
+            }, 40);
+        }
+        
+        function animateParticlesToCenter() {
+            console.log('🌀 Animando partículas hacia el símbolo infinito...');
+            
+            particles.forEach((particle, index) => {
+                // Calcular posición en el símbolo infinito
+                const angle = (index / particles.length) * Math.PI * 2;
+                const loop = index % 2 === 0 ? 1 : -1;
+                
+                // Ecuación paramétrica del símbolo infinito
+                const t = (index / particles.length) * Math.PI * 4;
+                const scale = 0.8;
+                
+                const infinityX = 50 + Math.sin(t) * 25 * scale;
+                const infinityY = 50 + Math.sin(2 * t) * 12.5 * scale * loop;
+                
+                particle.targetX = infinityX;
+                particle.targetY = infinityY;
+                
+                setTimeout(() => {
+                    particle.element.style.transition = `all 1.5s cubic-bezier(0.4, 0, 0.2, 1) ${index * 10}ms`;
+                    particle.element.style.left = `${infinityX}%`;
+                    particle.element.style.top = `${infinityY}%`;
+                    particle.element.style.opacity = '1';
+                    particle.element.style.transform = `scale(1.5)`;
+                }, particle.delay);
+            });
+        }
+        
+        function finishSplashScreen() {
+            console.log('✅ Splash screen completado');
+            
+            // Efecto de desvanecimiento
+            const splash = document.getElementById('splashScreen');
+            splash.style.opacity = '0';
+            splash.style.transition = 'opacity 1s ease-out';
+            
+            // Mostrar aplicación principal
+            setTimeout(() => {
+                splash.style.display = 'none';
+                const mainApp = document.getElementById('mainApp');
+                mainApp.style.display = 'block';
+                
+                setTimeout(() => {
+                    mainApp.style.opacity = '1';
+                    mainApp.style.transition = 'opacity 0.5s ease-in';
+                    
+                    // Inicializar aplicación
+                    initApplication();
+                }, 100);
+            }, 1000);
+        }
+        
+        // ============================================
+        // INICIALIZAR APLICACIÓN
+        // ============================================
+        
+        function initApplication() {
+            console.log('🚀 Iniciando AtacamApp con Glassmorphism...');
+            
+            // Inicializar componentes
+            initMap();
+            loadSavedData();
+            setupAutoActivation();
+            
+            // Cargar datos iniciales
+            setTimeout(() => {
+                loadLocalMinerals();
+                loadWeatherData();
+                calculateMagneticDeclination();
+            }, 1000);
+            
+            showNotification('🚀 Sistema listo • GPS y Cámara activados automáticamente', 'info');
+        }
+
         // ============================================
         // ATACAMAPP - SISTEMA 100% FUNCIONAL
         // ============================================
@@ -1175,9 +1899,8 @@
         let weatherData = null;
         let magneticDeclination = 0;
 
-        // Base de datos de 20 minerales importantes de Atacama (compatible con Mindat.org)
+        // Base de datos de 20 minerales importantes de Atacama
         const atacamaMineralsDB = [
-            // Minerales Cupríferos (Principales)
             {
                 id: 1, name: "Calcopirita", formula: "CuFeS₂", hardness: 3.5, 
                 color: "Amarillo latón", streak: "Verde negruzco", 
@@ -1223,7 +1946,6 @@
                 occurrence: "Zonas de alteración",
                 coordinates: { lat: -27.2, lng: -69.9 }
             },
-            // Minerales de Hierro
             {
                 id: 6, name: "Hematita", formula: "Fe₂O₃", hardness: 6.5,
                 color: "Negro a rojo", streak: "Rojo cereza",
@@ -1242,7 +1964,6 @@
                 occurrence: "Skarns y rocas ígneas",
                 coordinates: { lat: -26.98, lng: -70.15 }
             },
-            // Minerales de Plata
             {
                 id: 8, name: "Argentita", formula: "Ag₂S", hardness: 2.5,
                 color: "Gris plomo", streak: "Negro brillante",
@@ -1252,7 +1973,6 @@
                 occurrence: "Vetas epitermales",
                 coordinates: { lat: -27.8, lng: -70.6 }
             },
-            // Minerales Varios
             {
                 id: 9, name: "Cuarzo", formula: "SiO₂", hardness: 7,
                 color: "Variable", streak: "Blanco",
@@ -1270,96 +1990,6 @@
                 description: "Sulfato de calcio hidratado.",
                 occurrence: "Evaporíticos",
                 coordinates: { lat: -23.5, lng: -68.0 }
-            },
-            {
-                id: 11, name: "Baritina", formula: "BaSO₄", hardness: 3.5,
-                color: "Incoloro", streak: "Blanco",
-                emoji: "⚪", type: "Sulfato",
-                mindat_id: "560", locality: "Vetas hidrotermales",
-                description: "Sulfato de bario.",
-                occurrence: "Vetas con sulfuros",
-                coordinates: { lat: -27.1, lng: -70.2 }
-            },
-            {
-                id: 12, name: "Fluorita", formula: "CaF₂", hardness: 4,
-                color: "Variable", streak: "Blanco",
-                emoji: "🔷", type: "Halogenuro",
-                mindat_id: "1576", locality: "Yacimientos epitermales",
-                description: "Fluoruro de calcio.",
-                occurrence: "Vetas hidrotermales",
-                coordinates: { lat: -26.5, lng: -70.0 }
-            },
-            {
-                id: 13, name: "Pirita", formula: "FeS₂", hardness: 6.5,
-                color: "Amarillo latón", streak: "Negro verdoso",
-                emoji: "⭐", type: "Sulfuro",
-                mindat_id: "3061", locality: "Vetas diversas",
-                description: "Sulfuro de hierro.",
-                occurrence: "Común en vetas",
-                coordinates: { lat: -27.0, lng: -70.5 }
-            },
-            {
-                id: 14, name: "Galena", formula: "PbS", hardness: 2.5,
-                color: "Gris plomo", streak: "Gris plomo",
-                emoji: "⚫", type: "Sulfuro",
-                mindat_id: "1641", locality: "Vetas de plomo",
-                description: "Principal mena de plomo.",
-                occurrence: "Vetas hidrotermales",
-                coordinates: { lat: -27.4, lng: -70.1 }
-            },
-            {
-                id: 15, name: "Esfalerita", formula: "ZnS", hardness: 4,
-                color: "Pardo", streak: "Blanco",
-                emoji: "🟤", type: "Sulfuro",
-                mindat_id: "3901", locality: "Yacimientos Zn-Pb",
-                description: "Principal mena de zinc.",
-                occurrence: "Vetas hidrotermales",
-                coordinates: { lat: -27.2, lng: -70.3 }
-            },
-            {
-                id: 16, name: "Rodocrosita", formula: "MnCO₃", hardness: 4,
-                color: "Rosa", streak: "Blanco",
-                emoji: "🌸", type: "Carbonato",
-                mindat_id: "3481", locality: "Capillitas",
-                description: "Carbonato de manganeso.",
-                occurrence: "Vetas hidrotermales",
-                coordinates: { lat: -27.34, lng: -70.43 }
-            },
-            {
-                id: 17, name: "Turquesa", formula: "CuAl₆(PO₄)₄(OH)₈·4H₂O", hardness: 6,
-                color: "Azul verde", streak: "Blanco azulado",
-                emoji: "💠", type: "Fosfato",
-                mindat_id: "4060", locality: "Zonas de alteración",
-                description: "Fosfato de cobre y aluminio.",
-                occurrence: "Zonas supergénicas",
-                coordinates: { lat: -27.5, lng: -70.2 }
-            },
-            {
-                id: 18, name: "Olivino", formula: "(Mg,Fe)₂SiO₄", hardness: 7,
-                color: "Verde oliva", streak: "Blanco",
-                emoji: "🟢", type: "Silicato",
-                mindat_id: "2928", locality: "Rocas ultramáficas",
-                description: "Silicato de magnesio y hierro.",
-                occurrence: "Rocas ígneas",
-                coordinates: { lat: -27.0, lng: -69.8 }
-            },
-            {
-                id: 19, name: "Granate", formula: "X₃Y₂(SiO₄)₃", hardness: 7.5,
-                color: "Rojo a pardo", streak: "Blanco",
-                emoji: "🔴", type: "Silicato",
-                mindat_id: "1667", locality: "Rocas metamórficas",
-                description: "Grupo de silicatos.",
-                occurrence: "Skarns y metamórficas",
-                coordinates: { lat: -27.3, lng: -70.0 }
-            },
-            {
-                id: 20, name: "Talco", formula: "Mg₃Si₄O₁₀(OH)₂", hardness: 1,
-                color: "Blanco a verde", streak: "Blanco",
-                emoji: "🤍", type: "Silicato",
-                mindat_id: "3885", locality: "Rocas metamórficas",
-                description: "Silicato de magnesio hidratado.",
-                occurrence: "Rocas ultramáficas alteradas",
-                coordinates: { lat: -26.8, lng: -70.1 }
             }
         ];
 
@@ -1397,27 +2027,6 @@
         };
 
         // ============================================
-        // INICIALIZACIÓN
-        // ============================================
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏜️ AtacamApp - Sistema Geológico Inteligente');
-            
-            // Inicializar componentes
-            initMap();
-            loadSavedData();
-            setupAutoActivation();
-            
-            // Cargar datos iniciales
-            setTimeout(() => {
-                loadLocalMinerals();
-                loadWeatherData();
-                calculateMagneticDeclination();
-            }, 1000);
-            
-            showNotification('🚀 Sistema listo • GPS y Cámara activados automáticamente', 'info');
-        });
-
-        // ============================================
         // FUNCIONES GENERALES
         // ============================================
         function closeCard(button) {
@@ -1442,43 +2051,57 @@
         }
 
         function showNotification(message, type = 'info') {
-            // Crear notificación
+            // Crear notificación con glass effect
             const notification = document.createElement('div');
             notification.className = 'notification';
             
             let icon = 'ℹ️';
-            let bgColor = '#3498db';
+            let color = '#3498db';
             
             switch(type) {
                 case 'success':
                     icon = '✅';
-                    bgColor = '#27ae60';
+                    color = '#27ae60';
                     break;
                 case 'error':
                     icon = '❌';
-                    bgColor = '#e74c3c';
+                    color = '#e74c3c';
                     break;
                 case 'warning':
                     icon = '⚠️';
-                    bgColor = '#f39c12';
+                    color = '#f39c12';
                     break;
             }
             
             notification.innerHTML = `
-                <div style="font-size:1.2rem;">${icon}</div>
-                <div style="flex:1;">${message}</div>
-                <button onclick="this.parentElement.remove()" style="background:none; border:none; color:white; cursor:pointer;">×</button>
+                <div style="font-size:1.4rem;">${icon}</div>
+                <div style="flex:1; font-size:0.95rem;">${message}</div>
+                <button onclick="this.parentElement.remove()" style="background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2); color:white; width:30px; height:30px; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(5px);">×</button>
             `;
-            notification.style.background = bgColor;
+            notification.style.background = `linear-gradient(135deg, rgba(${hexToRgb(color)}, 0.9), rgba(${hexToRgb(color)}, 0.7))`;
             
             document.body.appendChild(notification);
             
             // Auto-remover
             setTimeout(() => {
                 if (notification.parentElement) {
-                    notification.remove();
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(100%) translateY(-20px)';
+                    notification.style.transition = 'all 0.3s ease';
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 300);
                 }
             }, 4000);
+        }
+
+        function hexToRgb(hex) {
+            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+            return result ? 
+                `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` 
+                : '52, 152, 219';
         }
 
         // ============================================
@@ -1639,14 +2262,14 @@
             
             let content = `
                 <div style="padding:20px;">
-                    <h3 style="margin-bottom:15px;">🎥 Configuración de Cámara</h3>
-                    <div style="display:grid; gap:10px;">
+                    <h3 style="margin-bottom:20px; color:white; font-size:1.3rem;">🎥 Configuración de Cámara</h3>
+                    <div style="display:grid; gap:12px;">
             `;
             
             qualities.forEach(quality => {
                 content += `
-                    <button class="btn btn-secondary" onclick="setCameraQuality(${quality.width}, ${quality.height}, '${quality.name}')" 
-                            style="text-align:left; padding:12px;">
+                    <button class="btn btn-outline" onclick="setCameraQuality(${quality.width}, ${quality.height}, '${quality.name}')" 
+                            style="text-align:left; padding:15px; background:rgba(255,255,255,0.05);">
                         <i class="fas fa-video"></i> ${quality.name} (${quality.width}x${quality.height})
                     </button>
                 `;
@@ -1654,8 +2277,8 @@
             
             content += `
                     </div>
-                    <div style="margin-top:15px; padding:10px; background:#f8f9fa; border-radius:8px;">
-                        <small><i class="fas fa-info-circle"></i> Calidad actual: HD 1080p</small>
+                    <div style="margin-top:20px; padding:15px; background:rgba(255,255,255,0.05); border-radius:12px;">
+                        <small style="color:rgba(255,255,255,0.7);"><i class="fas fa-info-circle"></i> Calidad actual: HD 1080p</small>
                     </div>
                 </div>
             `;
@@ -1695,11 +2318,13 @@
         }
 
         function toggleFlash() {
-            // Simulación de flash
+            // Simulación de flash con efecto glass
             const cameraContainer = document.getElementById('cameraContainer');
-            cameraContainer.style.background = '#ffffff';
+            cameraContainer.style.background = 'rgba(255, 255, 255, 0.9)';
+            cameraContainer.style.transition = 'background 0.3s';
+            
             setTimeout(() => {
-                cameraContainer.style.background = 'linear-gradient(135deg, var(--secondary), var(--dark))';
+                cameraContainer.style.background = 'rgba(44, 62, 80, 0.6)';
             }, 300);
             
             showNotification('⚡ Flash simulado activado', 'info');
@@ -1720,11 +2345,12 @@
             canvas.height = video.videoHeight;
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            // Efecto visual
+            // Efecto visual con glass
             const cameraContainer = document.getElementById('cameraContainer');
-            cameraContainer.style.background = '#ffffff';
+            cameraContainer.style.background = 'rgba(255, 255, 255, 0.9)';
+            cameraContainer.style.transition = 'background 0.3s';
             setTimeout(() => {
-                cameraContainer.style.background = 'linear-gradient(135deg, var(--secondary), var(--dark))';
+                cameraContainer.style.background = 'rgba(44, 62, 80, 0.6)';
             }, 300);
             
             showNotification('🔍 Analizando muestra con IA...', 'info');
@@ -1773,21 +2399,34 @@
             const mineralResult = document.getElementById('mineralResult');
             
             mineralResult.innerHTML = `
-                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                    <div style="font-size:2rem;">${mineral.emoji}</div>
+                <div style="display:flex; align-items:center; gap:15px; margin-bottom:15px;">
+                    <div style="font-size:2.5rem; filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));">${mineral.emoji}</div>
                     <div>
-                        <div style="font-weight:bold; color:var(--primary);">${mineral.name}</div>
-                        <div style="color:#666; font-size:0.9rem;">${mineral.formula}</div>
+                        <div style="font-weight:bold; color:#f39c12; font-size:1.2rem;">${mineral.name}</div>
+                        <div style="color:rgba(255,255,255,0.8); font-size:1rem;">${mineral.formula}</div>
                     </div>
                 </div>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; font-size:0.9rem;">
-                    <div><strong>Dureza:</strong> ${mineral.hardness} Mohs</div>
-                    <div><strong>Color:</strong> ${mineral.color}</div>
-                    <div><strong>Raya:</strong> ${mineral.streak}</div>
-                    <div><strong>Tipo:</strong> ${mineral.type}</div>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; font-size:0.95rem; margin-bottom:15px;">
+                    <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;">
+                        <strong style="color:#f39c12;">Dureza:</strong><br>
+                        <span style="color:white;">${mineral.hardness} Mohs</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;">
+                        <strong style="color:#f39c12;">Color:</strong><br>
+                        <span style="color:white;">${mineral.color}</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;">
+                        <strong style="color:#f39c12;">Raya:</strong><br>
+                        <span style="color:white;">${mineral.streak}</span>
+                    </div>
+                    <div style="background:rgba(255,255,255,0.05); padding:10px; border-radius:10px;">
+                        <strong style="color:#f39c12;">Tipo:</strong><br>
+                        <span style="color:white;">${mineral.type}</span>
+                    </div>
                 </div>
-                <div style="margin-top:10px; padding:8px; background:#e8f4fc; border-radius:6px; font-size:0.8rem;">
-                    <strong>Ubicación:</strong> ${mineral.location.latitude.toFixed(6)}, ${mineral.location.longitude.toFixed(6)}
+                <div style="margin-top:10px; padding:12px; background:rgba(52,152,219,0.15); border-radius:10px; font-size:0.9rem; border:1px solid rgba(255,255,255,0.1);">
+                    <strong style="color:#f39c12;">Ubicación:</strong><br>
+                    <span style="color:white;">${mineral.location.latitude.toFixed(6)}, ${mineral.location.longitude.toFixed(6)}</span>
                 </div>
             `;
             
@@ -1844,55 +2483,55 @@
             let mineralsList = '';
             report.minerals.slice(0, 5).forEach((mineral, index) => {
                 mineralsList += `
-                    <div style="padding:8px; margin:5px 0; background:white; border-radius:6px; border-left:3px solid var(--primary);">
-                        <strong>${mineral.emoji} ${mineral.name}</strong> (${mineral.formula})<br>
-                        <small>${mineral.type} • ${mineral.hardness} Mohs</small>
+                    <div style="padding:12px; margin:8px 0; background:rgba(255,255,255,0.1); border-radius:10px; border-left:3px solid #d35400; backdrop-filter:blur(5px);">
+                        <strong style="color:#f39c12;">${mineral.emoji} ${mineral.name}</strong> (${mineral.formula})<br>
+                        <small style="color:rgba(255,255,255,0.7);">${mineral.type} • ${mineral.hardness} Mohs</small>
                     </div>
                 `;
             });
             
             preview.innerHTML = `
-                <div style="padding:15px;">
-                    <h4 style="color:var(--primary); margin-bottom:10px;">${report.title}</h4>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px; font-size:0.9rem;">
-                        <div>
-                            <strong>Fecha:</strong><br>
-                            ${new Date(report.date).toLocaleDateString()}
+                <div style="padding:20px;">
+                    <h4 style="color:#f39c12; margin-bottom:15px; font-size:1.2rem;">${report.title}</h4>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:15px; font-size:0.95rem;">
+                        <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:10px;">
+                            <strong style="color:#f39c12;">Fecha:</strong><br>
+                            <span style="color:white;">${new Date(report.date).toLocaleDateString()}</span>
                         </div>
-                        <div>
-                            <strong>Muestras:</strong><br>
-                            ${report.minerals.length} identificadas
+                        <div style="background:rgba(255,255,255,0.05); padding:12px; border-radius:10px;">
+                            <strong style="color:#f39c12;">Muestras:</strong><br>
+                            <span style="color:white;">${report.minerals.length} identificadas</span>
                         </div>
                     </div>
                     
-                    <div style="margin-bottom:10px;">
-                        <strong>Observaciones del geólogo:</strong>
-                        <div style="background:#f0f7ff; padding:10px; border-radius:6px; margin-top:5px; font-size:0.9rem;">
+                    <div style="margin-bottom:15px;">
+                        <strong style="color:#f39c12; display:block; margin-bottom:8px;">Observaciones del geólogo:</strong>
+                        <div style="background:rgba(240,247,255,0.1); padding:15px; border-radius:10px; margin-top:5px; font-size:0.95rem; color:white; line-height:1.5;">
                             ${report.notes || 'Sin observaciones adicionales'}
                         </div>
                     </div>
                     
-                    <div style="margin-bottom:10px;">
-                        <strong>Muestras recientes:</strong>
-                        <div style="max-height:100px; overflow-y:auto; margin-top:5px;">
+                    <div style="margin-bottom:15px;">
+                        <strong style="color:#f39c12; display:block; margin-bottom:8px;">Muestras recientes:</strong>
+                        <div style="max-height:120px; overflow-y:auto; margin-top:5px;">
                             ${mineralsList}
                             ${report.minerals.length > 5 ? 
-                                `<div style="text-align:center; padding:5px; color:#666; font-size:0.8rem;">
+                                `<div style="text-align:center; padding:8px; color:rgba(255,255,255,0.5); font-size:0.9rem; background:rgba(0,0,0,0.2); border-radius:8px; margin-top:5px;">
                                     ... y ${report.minerals.length - 5} muestras más
                                 </div>` : ''}
                         </div>
                     </div>
                     
-                    <div style="background:#e8f4fc; padding:10px; border-radius:6px; margin-bottom:10px; font-size:0.9rem;">
-                        <strong>Análisis IA:</strong><br>
-                        <div id="iaAnalysis">Generando análisis...</div>
+                    <div style="background:rgba(232,244,252,0.15); padding:15px; border-radius:10px; margin-bottom:15px; font-size:0.95rem; border:1px solid rgba(255,255,255,0.1);">
+                        <strong style="color:#f39c12;">Análisis IA:</strong><br>
+                        <div id="iaAnalysis" style="color:white; margin-top:8px; line-height:1.5;">Generando análisis...</div>
                     </div>
                     
-                    <div style="display:flex; gap:8px;">
-                        <button class="btn btn-success" onclick="exportReport(${report.id})" style="flex:1; padding:8px;">
+                    <div style="display:flex; gap:12px;">
+                        <button class="btn btn-success" onclick="exportReport(${report.id})" style="flex:1; padding:12px;">
                             <i class="fas fa-download"></i> Exportar PDF
                         </button>
-                        <button class="btn btn-primary" onclick="shareReport(${report.id})" style="flex:1; padding:8px;">
+                        <button class="btn btn-primary" onclick="shareReport(${report.id})" style="flex:1; padding:12px;">
                             <i class="fas fa-share"></i> Compartir
                         </button>
                     </div>
@@ -1918,16 +2557,16 @@
                 const avgHardness = (hardnesses.reduce((a, b) => a + b, 0) / hardnesses.length).toFixed(2);
                 
                 const analysisText = `
-                    <strong>Resumen del informe "${report.title}":</strong><br>
+                    <strong style="color:#f39c12;">Resumen del informe "${report.title}":</strong><br>
                     • Muestras analizadas: ${report.minerals.length}<br>
                     • Tipo predominante: ${dominantType} (${types[dominantType]} muestras)<br>
                     • Dureza promedio: ${avgHardness} Mohs<br>
                     • Variedad mineralógica: ${Object.keys(types).length} tipos<br>
                     <br>
-                    <strong>Interpretación:</strong><br>
+                    <strong style="color:#f39c12;">Interpretación:</strong><br>
                     ${getInterpretation(dominantType, report.minerals.length)}<br>
                     <br>
-                    <strong>Recomendaciones:</strong><br>
+                    <strong style="color:#f39c12;">Recomendaciones:</strong><br>
                     ${getRecommendations(dominantType)}
                 `;
                 
@@ -1973,21 +2612,23 @@
             }
             
             let content = `
-                <div style="padding:15px;">
-                    <h3 style="margin-bottom:15px;">📋 Historial de Informes</h3>
-                    <div style="max-height:300px; overflow-y:auto;">
+                <div style="padding:20px;">
+                    <h3 style="margin-bottom:20px; color:white; font-size:1.3rem;">📋 Historial de Informes</h3>
+                    <div style="max-height:300px; overflow-y:auto; padding-right:10px;">
             `;
             
             reports.forEach((report, index) => {
                 const date = new Date(report.date);
                 content += `
-                    <div style="padding:10px; margin-bottom:8px; background:#f8f9fa; border-radius:8px; cursor:pointer;" 
-                         onclick="viewReportDetail(${report.id})">
-                        <div style="font-weight:bold;">${report.title}</div>
-                        <div style="font-size:0.8rem; color:#666;">
+                    <div style="padding:15px; margin-bottom:12px; background:rgba(255,255,255,0.08); border-radius:12px; cursor:pointer; border:1px solid rgba(255,255,255,0.1); transition:all 0.3s;" 
+                         onclick="viewReportDetail(${report.id})"
+                         onmouseover="this.style.background='rgba(255,255,255,0.12)'; this.style.transform='translateY(-2px)';"
+                         onmouseout="this.style.background='rgba(255,255,255,0.08)'; this.style.transform='translateY(0)';">
+                        <div style="font-weight:bold; color:#f39c12; margin-bottom:5px;">${report.title}</div>
+                        <div style="font-size:0.9rem; color:rgba(255,255,255,0.7);">
                             ${date.toLocaleDateString()} • ${report.minerals.length} muestras
                         </div>
-                        <div style="font-size:0.8rem; color:#888; margin-top:5px;">
+                        <div style="font-size:0.85rem; color:rgba(255,255,255,0.6); margin-top:8px;">
                             ${report.notes ? report.notes.substring(0, 60) + '...' : 'Sin observaciones'}
                         </div>
                     </div>
@@ -1996,7 +2637,7 @@
             
             content += `
                     </div>
-                    <button class="btn btn-primary" onclick="exportAllReports()" style="margin-top:15px; width:100%;">
+                    <button class="btn btn-primary" onclick="exportAllReports()" style="margin-top:20px; width:100%; padding:14px;">
                         <i class="fas fa-file-export"></i> Exportar Todos
                     </button>
                 </div>
@@ -2066,39 +2707,45 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
         function initMap() {
             map = L.map('map').setView([-27.3667, -70.3333], 12);
             
-            // Capa base OpenStreetMap
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            // Capa base OpenStreetMap con overlay glass
+            const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors',
                 maxZoom: 18
             }).addTo(map);
             
-            // Capa satelital
-            const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-                attribution: '© Esri',
-                maxZoom: 18
-            });
-            
-            // Control de capas
+            // Control de capas con estilo glass
             const baseLayers = {
-                "Mapa": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'),
-                "Satélite": satelliteLayer
+                "Mapa": osmLayer,
+                "Satélite": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    attribution: '© Esri',
+                    maxZoom: 18
+                })
             };
             
-            L.control.layers(baseLayers).addTo(map);
+            L.control.layers(baseLayers, {}, {
+                position: 'topright',
+                collapsed: false
+            }).addTo(map);
             
-            // Marcador de posición actual
+            // Marcador de posición actual con estilo glass
             const userIcon = L.divIcon({
                 className: 'user-marker',
-                html: '<i class="fas fa-user" style="color:#e74c3c; font-size:20px;"></i>',
-                iconSize: [30, 30]
+                html: '<div style="background:rgba(231,76,60,0.8); color:white; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px; border:3px solid rgba(255,255,255,0.5); backdrop-filter:blur(5px);"><i class="fas fa-user"></i></div>',
+                iconSize: [35, 35],
+                iconAnchor: [17, 35]
             });
             
             L.marker([-27.3667, -70.3333], { icon: userIcon })
                 .addTo(map)
-                .bindPopup('<b>Región de Atacama</b><br>Centro geológico')
+                .bindPopup(`
+                    <div style="background:rgba(0,0,0,0.7); color:white; padding:15px; border-radius:10px; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px);">
+                        <b>Región de Atacama</b><br>
+                        Centro geológico
+                    </div>
+                `)
                 .openPopup();
                 
-            console.log('🗺️ Mapa inicializado');
+            console.log('🗺️ Mapa inicializado con glass effect');
         }
 
         function centerMap() {
@@ -2118,9 +2765,11 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
             
             const marker = L.marker(coords).addTo(map);
             marker.bindPopup(`
-                <b>Punto de Muestra</b><br>
-                ${new Date().toLocaleString()}<br>
-                ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}
+                <div style="background:rgba(0,0,0,0.7); color:white; padding:15px; border-radius:10px; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px);">
+                    <b>Punto de Muestra</b><br>
+                    ${new Date().toLocaleString()}<br>
+                    ${coords[0].toFixed(6)}, ${coords[1].toFixed(6)}
+                </div>
             `).openPopup();
             
             showNotification('📍 Marcador agregado', 'success');
@@ -2131,25 +2780,30 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
             
             const icon = L.divIcon({
                 className: 'mineral-marker',
-                html: mineral.emoji,
-                iconSize: [30, 30],
-                iconAnchor: [15, 30]
+                html: `
+                    <div style="background:rgba(211,84,0,0.8); color:white; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; border:3px solid rgba(255,255,255,0.5); backdrop-filter:blur(5px); box-shadow:0 4px 15px rgba(0,0,0,0.3);">
+                        ${mineral.emoji}
+                    </div>
+                `,
+                iconSize: [35, 35],
+                iconAnchor: [17, 35]
             });
             
             L.marker([mineral.location.latitude, mineral.location.longitude], { icon: icon })
                 .addTo(map)
                 .bindPopup(`
-                    <b>${mineral.emoji} ${mineral.name}</b><br>
-                    ${mineral.formula}<br>
-                    Dureza: ${mineral.hardness}<br>
-                    ${new Date(mineral.timestamp).toLocaleTimeString()}
+                    <div style="background:rgba(0,0,0,0.7); color:white; padding:15px; border-radius:10px; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px); max-width:250px;">
+                        <b style="color:#f39c12; font-size:1.1em;">${mineral.emoji} ${mineral.name}</b><br>
+                        ${mineral.formula}<br>
+                        Dureza: ${mineral.hardness}<br>
+                        ${new Date(mineral.timestamp).toLocaleTimeString()}
+                    </div>
                 `);
         }
 
         function loadGeologicalLayers() {
             showNotification('🔄 Cargando capas geológicas...', 'info');
             
-            // Simular carga de capas SIGEX/GeoCatMin
             setTimeout(() => {
                 // Capa de fallas
                 const faultLayer = L.geoJSON({
@@ -2169,29 +2823,46 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
                 }, { 
                     color: '#e74c3c', 
                     weight: 3,
-                    opacity: 0.7 
+                    opacity: 0.7,
+                    dashArray: '10, 5'
                 });
                 
                 // Capa de mineralización
                 const mineralLayer = L.layerGroup();
                 
                 localMineralsCache.forEach(mineral => {
-                    const marker = L.marker([mineral.coordinates.lat, mineral.coordinates.lng])
+                    const icon = L.divIcon({
+                        className: 'mineral-layer-marker',
+                        html: `
+                            <div style="background:rgba(52,152,219,0.8); color:white; width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; border:2px solid rgba(255,255,255,0.5); backdrop-filter:blur(5px);">
+                                ${mineral.emoji}
+                            </div>
+                        `,
+                        iconSize: [25, 25],
+                        iconAnchor: [12, 25]
+                    });
+                    
+                    const marker = L.marker([mineral.coordinates.lat, mineral.coordinates.lng], { icon: icon })
                         .bindPopup(`
-                            <b>${mineral.emoji} ${mineral.name}</b><br>
-                            ${mineral.formula}<br>
-                            ${mineral.locality}
+                            <div style="background:rgba(0,0,0,0.7); color:white; padding:12px; border-radius:8px; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(10px);">
+                                <b>${mineral.emoji} ${mineral.name}</b><br>
+                                ${mineral.formula}<br>
+                                ${mineral.locality}
+                            </div>
                         `);
                     mineralLayer.addLayer(marker);
                 });
                 
-                // Control de capas
+                // Control de capas con estilo glass
                 const overlayLayers = {
                     "Fallas": faultLayer,
                     "Mineralización": mineralLayer
                 };
                 
-                L.control.layers(null, overlayLayers).addTo(map);
+                L.control.layers(null, overlayLayers, {
+                    position: 'topright',
+                    collapsed: false
+                }).addTo(map);
                 
                 showNotification('✅ Capas geológicas cargadas', 'success');
             }, 1000);
@@ -2218,6 +2889,7 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
                     terrainLayer.style.right = `${index * 5}%`;
                     terrainLayer.style.background = getLayerColor(layer);
                     terrainLayer.title = layer;
+                    terrainLayer.style.backdropFilter = 'blur(5px)';
                     terrainModel.appendChild(terrainLayer);
                 });
                 
@@ -2239,31 +2911,37 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
                     Proyección 3D generada • ${layers.length} capas SIGEX • ${identifiedMinerals.length} depósitos
                 `;
                 
-                // Mostrar análisis IA
+                // Mostrar análisis IA en modal con glass
                 const modalContent = `
-                    <div style="padding:20px;">
-                        <h3 style="margin-bottom:15px;">🏔️ Proyección 3D - Análisis IA</h3>
-                        <div style="background:#e8f4fc; padding:15px; border-radius:8px; margin-bottom:15px;">
-                            <strong>Interpretación SIGEX/GeoCatMin:</strong><br>
-                            Modelo basado en fotografía del terreno y datos de Mindat.org.<br>
-                            Se identifican ${identifiedMinerals.length} puntos de mineralización<br>
-                            en un contexto geológico de ${layers.length} capas estructurales.
-                        </div>
-                        
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
-                            <div style="padding:10px; background:#f8f9fa; border-radius:6px;">
-                                <strong>Datos Topográficos</strong><br>
-                                Resolución: ${sigexData.topography.resolution}<br>
-                                Fuente: ${sigexData.topography.source}
-                            </div>
-                            <div style="padding:10px; background:#f8f9fa; border-radius:6px;">
-                                <strong>Mineralización</strong><br>
-                                Depósitos: ${identifiedMinerals.length}<br>
-                                Tipos: ${new Set(identifiedMinerals.map(m => m.type)).size}
+                    <div style="padding:25px;">
+                        <h3 style="margin-bottom:20px; color:#f39c12; font-size:1.4rem;">🏔️ Proyección 3D - Análisis IA</h3>
+                        <div style="background:rgba(232,244,252,0.15); padding:20px; border-radius:15px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.1);">
+                            <strong style="color:#f39c12; font-size:1.1rem;">Interpretación SIGEX/GeoCatMin:</strong><br>
+                            <div style="color:white; margin-top:10px; line-height:1.6;">
+                                Modelo basado en fotografía del terreno y datos de Mindat.org.<br>
+                                Se identifican ${identifiedMinerals.length} puntos de mineralización<br>
+                                en un contexto geológico de ${layers.length} capas estructurales.
                             </div>
                         </div>
                         
-                        <button class="btn btn-primary" onclick="export3DModel()" style="width:100%;">
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px;">
+                            <div style="padding:15px; background:rgba(255,255,255,0.08); border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                                <strong style="color:#f39c12; display:block; margin-bottom:8px;">Datos Topográficos</strong>
+                                <div style="color:white; font-size:0.95rem;">
+                                    Resolución: ${sigexData.topography.resolution}<br>
+                                    Fuente: ${sigexData.topography.source}
+                                </div>
+                            </div>
+                            <div style="padding:15px; background:rgba(255,255,255,0.08); border-radius:12px; border:1px solid rgba(255,255,255,0.1);">
+                                <strong style="color:#f39c12; display:block; margin-bottom:8px;">Mineralización</strong>
+                                <div style="color:white; font-size:0.95rem;">
+                                    Depósitos: ${identifiedMinerals.length}<br>
+                                    Tipos: ${new Set(identifiedMinerals.map(m => m.type)).size}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="btn btn-primary" onclick="export3DModel()" style="width:100%; padding:15px; font-size:1rem;">
                             <i class="fas fa-download"></i> Exportar Modelo 3D
                         </button>
                     </div>
@@ -2281,25 +2959,27 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
             
             setTimeout(() => {
                 const modalContent = `
-                    <div style="padding:20px;">
-                        <h3 style="margin-bottom:15px;">🗄️ Datos SIGEX/GeoCatMin</h3>
-                        <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:15px;">
-                            <strong>Conexión establecida:</strong><br>
-                            Fuente: Servidor GeoCatMin - Ministerio de Minería<br>
-                            Datos: Cartografía geológica 1:100.000<br>
-                            Minerales registrados: ${sigexData.minerals.length}
+                    <div style="padding:25px;">
+                        <h3 style="margin-bottom:20px; color:#f39c12; font-size:1.4rem;">🗄️ Datos SIGEX/GeoCatMin</h3>
+                        <div style="background:rgba(248,249,250,0.1); padding:20px; border-radius:15px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.1);">
+                            <strong style="color:#f39c12; font-size:1.1rem;">Conexión establecida:</strong><br>
+                            <div style="color:white; margin-top:10px; line-height:1.6;">
+                                Fuente: Servidor GeoCatMin - Ministerio de Minería<br>
+                                Datos: Cartografía geológica 1:100.000<br>
+                                Minerales registrados: ${sigexData.minerals.length}
+                            </div>
                         </div>
                         
-                        <div style="margin-bottom:15px;">
-                            <strong>Capas disponibles:</strong>
+                        <div style="margin-bottom:20px;">
+                            <strong style="color:#f39c12; display:block; margin-bottom:15px; font-size:1.1rem;">Capas disponibles:</strong>
                             <div style="margin-top:10px;">
                 `;
                 
                 sigexData.layers.forEach(layer => {
                     modalContent += `
-                        <div style="padding:8px; margin:5px 0; background:#e9ecef; border-radius:6px; display:flex; justify-content:space-between;">
-                            <span>${layer.name}</span>
-                            <span style="color:#666; font-size:0.9rem;">${layer.data}</span>
+                        <div style="padding:12px; margin:10px 0; background:rgba(233,236,239,0.1); border-radius:10px; display:flex; justify-content:space-between; align-items:center; border:1px solid rgba(255,255,255,0.1);">
+                            <span style="color:white; font-weight:500;">${layer.name}</span>
+                            <span style="color:rgba(255,255,255,0.7); font-size:0.9rem;">${layer.data}</span>
                         </div>
                     `;
                 });
@@ -2308,11 +2988,13 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
                             </div>
                         </div>
                         
-                        <div style="background:#e8f4fc; padding:15px; border-radius:8px;">
-                            <strong>Topografía Digital:</strong><br>
-                            ${sigexData.topography.resolution}<br>
-                            ${sigexData.topography.source}<br>
-                            ${sigexData.topography.coverage}
+                        <div style="background:rgba(232,244,252,0.15); padding:20px; border-radius:15px; border:1px solid rgba(255,255,255,0.1);">
+                            <strong style="color:#f39c12; display:block; margin-bottom:10px;">Topografía Digital:</strong>
+                            <div style="color:white; line-height:1.6;">
+                                ${sigexData.topography.resolution}<br>
+                                ${sigexData.topography.source}<br>
+                                ${sigexData.topography.coverage}
+                            </div>
                         </div>
                     </div>
                 `;
@@ -2325,24 +3007,24 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
 
         function getLayerColor(layerName) {
             const colors = {
-                'Topografía': '#8b7355',
-                'Geología': '#d35400',
-                'Fallas': '#e74c3c',
-                'Mineralización': '#f39c12',
-                'Alteración': '#27ae60'
+                'Topografía': 'rgba(139, 115, 85, 0.8)',
+                'Geología': 'rgba(211, 84, 0, 0.8)',
+                'Fallas': 'rgba(231, 76, 60, 0.8)',
+                'Mineralización': 'rgba(243, 156, 18, 0.8)',
+                'Alteración': 'rgba(39, 174, 96, 0.8)'
             };
-            return colors[layerName] || '#95a5a6';
+            return colors[layerName] || 'rgba(149, 165, 166, 0.8)';
         }
 
         function getMineralColor(type) {
             const colors = {
-                'Sulfuro': '#d35400',
-                'Óxido': '#e74c3c',
-                'Carbonato': '#3498db',
-                'Silicato': '#27ae60',
-                'Halogenuro': '#9b59b6'
+                'Sulfuro': 'rgba(211, 84, 0, 0.9)',
+                'Óxido': 'rgba(231, 76, 60, 0.9)',
+                'Carbonato': 'rgba(52, 152, 219, 0.9)',
+                'Silicato': 'rgba(39, 174, 96, 0.9)',
+                'Halogenuro': 'rgba(155, 89, 182, 0.9)'
             };
-            return colors[type] || '#95a5a6';
+            return colors[type] || 'rgba(149, 165, 166, 0.9)';
         }
 
         function export3DModel() {
@@ -2474,31 +3156,33 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
                 });
                 
                 const modalContent = `
-                    <div style="padding:20px;">
-                        <h3 style="margin-bottom:15px;">📊 Análisis Rápido IA</h3>
+                    <div style="padding:25px;">
+                        <h3 style="margin-bottom:20px; color:#f39c12; font-size:1.4rem;">📊 Análisis Rápido IA</h3>
                         
-                        <div style="background:#f8f9fa; padding:15px; border-radius:8px; margin-bottom:15px;">
-                            <strong>Resumen de muestras:</strong><br>
-                            • Total: ${identifiedMinerals.length} muestras<br>
-                            • Tipos mineralógicos: ${Object.keys(types).length}<br>
-                            • Última muestra: ${new Date(identifiedMinerals[0].timestamp).toLocaleDateString()}
+                        <div style="background:rgba(248,249,250,0.1); padding:20px; border-radius:15px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.1);">
+                            <strong style="color:#f39c12; font-size:1.1rem;">Resumen de muestras:</strong><br>
+                            <div style="color:white; margin-top:10px; line-height:1.6;">
+                                • Total: ${identifiedMinerals.length} muestras<br>
+                                • Tipos mineralógicos: ${Object.keys(types).length}<br>
+                                • Última muestra: ${new Date(identifiedMinerals[0].timestamp).toLocaleDateString()}
+                            </div>
                         </div>
                         
-                        <div style="margin-bottom:15px;">
-                            <strong>Distribución por tipo:</strong>
+                        <div style="margin-bottom:20px;">
+                            <strong style="color:#f39c12; display:block; margin-bottom:15px; font-size:1.1rem;">Distribución por tipo:</strong>
                             <div style="margin-top:10px;">
                 `;
                 
                 Object.keys(types).forEach(type => {
                     const percentage = ((types[type] / identifiedMinerals.length) * 100).toFixed(1);
                     modalContent += `
-                        <div style="margin-bottom:10px;">
-                            <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
-                                <span>${type}</span>
-                                <span>${types[type]} (${percentage}%)</span>
+                        <div style="margin-bottom:15px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                                <span style="color:white; font-weight:500;">${type}</span>
+                                <span style="color:#f39c12; font-weight:bold;">${types[type]} (${percentage}%)</span>
                             </div>
-                            <div style="height:10px; background:#ddd; border-radius:5px;">
-                                <div style="height:100%; width:${percentage}%; background:var(--primary); border-radius:5px;"></div>
+                            <div style="height:10px; background:rgba(255,255,255,0.1); border-radius:5px; overflow:hidden;">
+                                <div style="height:100%; width:${percentage}%; background:linear-gradient(90deg, #d35400, #f39c12); border-radius:5px;"></div>
                             </div>
                         </div>
                     `;
@@ -2508,7 +3192,7 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
                             </div>
                         </div>
                         
-                        <button class="btn btn-primary" onclick="exportData()" style="width:100%;">
+                        <button class="btn btn-primary" onclick="exportData()" style="width:100%; padding:15px; font-size:1rem;">
                             <i class="fas fa-file-export"></i> Exportar Análisis
                         </button>
                     </div>
@@ -2606,7 +3290,7 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
             const mineralsToShow = identifiedMinerals.length > 0 ? identifiedMinerals : localMineralsCache;
             
             if (mineralsToShow.length === 0) {
-                coverflow.innerHTML = '<div style="text-align:center; padding:40px; color:#666;">No hay minerales cargados</div>';
+                coverflow.innerHTML = '<div style="text-align:center; padding:40px; color:rgba(255,255,255,0.5); font-size:1.1rem;">No hay minerales cargados</div>';
                 counter.textContent = '0/0';
                 return;
             }
@@ -2638,8 +3322,8 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
                 
                 card.innerHTML = `
                     <div class="emoji">${mineral.emoji}</div>
-                    <div style="font-weight:bold; font-size:0.9rem;">${mineral.name}</div>
-                    <div style="font-size:0.7rem; color:#666;">${mineral.formula}</div>
+                    <div style="font-weight:bold; font-size:1rem; color:#2c3e50; margin-top:5px;">${mineral.name}</div>
+                    <div style="font-size:0.8rem; color:#666; margin-top:2px;">${mineral.formula}</div>
                 `;
                 
                 card.addEventListener('click', () => {
@@ -2670,53 +3354,57 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
 
         function showMineralDetail(mineral) {
             const modalContent = `
-                <div style="padding:20px;">
-                    <div style="text-align:center; margin-bottom:20px;">
-                        <div style="font-size:4rem;">${mineral.emoji}</div>
-                        <h3 style="color:var(--primary);">${mineral.name}</h3>
-                        <div style="color:#666; font-size:1.1rem;">${mineral.formula}</div>
-                        <div style="margin-top:5px; font-size:0.9rem; color:#888;">
+                <div style="padding:25px;">
+                    <div style="text-align:center; margin-bottom:25px;">
+                        <div style="font-size:4.5rem; filter:drop-shadow(0 6px 12px rgba(0,0,0,0.3)); margin-bottom:15px;">${mineral.emoji}</div>
+                        <h3 style="color:#f39c12; font-size:1.6rem; margin-bottom:5px;">${mineral.name}</h3>
+                        <div style="color:rgba(255,255,255,0.9); font-size:1.2rem; margin-bottom:10px;">${mineral.formula}</div>
+                        <div style="color:rgba(255,255,255,0.7); font-size:1rem;">
                             ${mineral.locality || 'Región de Atacama'}
                         </div>
                     </div>
                     
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px;">
-                        <div style="padding:15px; background:#f8f9fa; border-radius:8px; text-align:center;">
-                            <strong>Dureza</strong><br>
-                            <span style="font-size:1.8rem; color:var(--primary);">${mineral.hardness}</span><br>
-                            <small>Mohs</small>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:25px;">
+                        <div style="padding:20px; background:rgba(255,255,255,0.1); border-radius:12px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
+                            <strong style="color:#f39c12; display:block; margin-bottom:8px; font-size:0.95rem;">Dureza</strong>
+                            <span style="font-size:2rem; color:white; font-weight:bold;">${mineral.hardness}</span><br>
+                            <small style="color:rgba(255,255,255,0.7);">Mohs</small>
                         </div>
-                        <div style="padding:15px; background:#f8f9fa; border-radius:8px; text-align:center;">
-                            <strong>Color</strong><br>
-                            <span style="font-size:1.2rem;">${mineral.color}</span>
+                        <div style="padding:20px; background:rgba(255,255,255,0.1); border-radius:12px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
+                            <strong style="color:#f39c12; display:block; margin-bottom:8px; font-size:0.95rem;">Color</strong>
+                            <span style="font-size:1.2rem; color:white;">${mineral.color}</span>
                         </div>
-                        <div style="padding:15px; background:#f8f9fa; border-radius:8px; text-align:center;">
-                            <strong>Raya</strong><br>
-                            <span style="font-size:1.2rem;">${mineral.streak}</span>
+                        <div style="padding:20px; background:rgba(255,255,255,0.1); border-radius:12px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
+                            <strong style="color:#f39c12; display:block; margin-bottom:8px; font-size:0.95rem;">Raya</strong>
+                            <span style="font-size:1.2rem; color:white;">${mineral.streak}</span>
                         </div>
-                        <div style="padding:15px; background:#f8f9fa; border-radius:8px; text-align:center;">
-                            <strong>Tipo</strong><br>
-                            <span style="font-size:1.2rem;">${mineral.type}</span>
+                        <div style="padding:20px; background:rgba(255,255,255,0.1); border-radius:12px; text-align:center; border:1px solid rgba(255,255,255,0.1);">
+                            <strong style="color:#f39c12; display:block; margin-bottom:8px; font-size:0.95rem;">Tipo</strong>
+                            <span style="font-size:1.2rem; color:white;">${mineral.type}</span>
                         </div>
                     </div>
                     
-                    <div style="background:#e8f4fc; padding:15px; border-radius:8px; margin-bottom:20px;">
-                        <strong>Descripción:</strong><br>
-                        ${mineral.description || 'Mineral característico de la región de Atacama.'}<br><br>
-                        <strong>Ocurrencia:</strong><br>
-                        ${mineral.occurrence || 'Vetas hidrotermales y zonas de alteración.'}
+                    <div style="background:rgba(232,244,252,0.15); padding:20px; border-radius:15px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.1);">
+                        <strong style="color:#f39c12; display:block; margin-bottom:10px; font-size:1.1rem;">Descripción:</strong>
+                        <div style="color:white; line-height:1.6;">
+                            ${mineral.description || 'Mineral característico de la región de Atacama.'}<br><br>
+                            <strong style="color:#f39c12;">Ocurrencia:</strong><br>
+                            ${mineral.occurrence || 'Vetas hidrotermales y zonas de alteración.'}
+                        </div>
                     </div>
                     
-                    <div style="background:#fff5eb; padding:15px; border-radius:8px; margin-bottom:20px;">
-                        <strong>Fuente:</strong> Mindat.org ${mineral.mindat_id ? `(ID: ${mineral.mindat_id})` : ''}<br>
-                        <strong>Ubicación:</strong> ${mineral.coordinates.lat.toFixed(4)}, ${mineral.coordinates.lng.toFixed(4)}
+                    <div style="background:rgba(255,245,235,0.15); padding:20px; border-radius:15px; margin-bottom:25px; border:1px solid rgba(255,255,255,0.1);">
+                        <div style="color:white; line-height:1.6;">
+                            <strong style="color:#f39c12;">Fuente:</strong> Mindat.org ${mineral.mindat_id ? `(ID: ${mineral.mindat_id})` : ''}<br>
+                            <strong style="color:#f39c12;">Ubicación:</strong> ${mineral.coordinates.lat.toFixed(4)}, ${mineral.coordinates.lng.toFixed(4)}
+                        </div>
                     </div>
                     
                     <div class="camera-controls">
-                        <button class="btn btn-primary" onclick="addToCollection(${mineral.id})" style="flex:1;">
+                        <button class="btn btn-primary" onclick="addToCollection(${mineral.id})" style="flex:1; padding:14px;">
                             <i class="fas fa-plus"></i> Agregar
                         </button>
-                        <button class="btn btn-secondary" onclick="viewOnMap(${mineral.id})" style="flex:1;">
+                        <button class="btn btn-outline" onclick="viewOnMap(${mineral.id})" style="flex:1; padding:14px; background:rgba(255,255,255,0.05);">
                             <i class="fas fa-map"></i> Mapa
                         </button>
                     </div>
@@ -2727,7 +3415,7 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
         }
 
         // ============================================
-        // KIT DE CAMPO - HERRAMIENTAS 100% FUNCIONALES
+        // KIT DE CAMPO - HERRAMIENTAS CON GLASS
         // ============================================
         function openTool(tool) {
             let content = '';
@@ -2774,9 +3462,9 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
             }
             
             return `
-                <div style="padding:20px;">
-                    <h3 style="margin-bottom:15px;">🧭 Brújula Geológica</h3>
-                    <p style="margin-bottom:20px; color:#666;">Brújula profesional con declinación magnética</p>
+                <div style="padding:25px;">
+                    <h3 style="margin-bottom:20px; color:#f39c12; font-size:1.4rem;">🧭 Brújula Geológica</h3>
+                    <p style="margin-bottom:25px; color:rgba(255,255,255,0.8); font-size:1.05rem;">Brújula profesional con declinación magnética</p>
                     
                     <div class="geological-compass">
                         <div class="compass-outer">
@@ -2793,19 +3481,21 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
                         <div class="declination" id="modalDeclination">Declinación: ${magneticDeclination.toFixed(1)}°</div>
                     </div>
                     
-                    <div style="text-align:center; margin-top:20px;">
-                        <div id="modalCompassDirection" style="font-size:1.5rem; font-weight:bold; color:var(--primary);">NORTE MAGNÉTICO</div>
-                        <div id="modalCompassDegrees" style="color:#666; margin-top:5px;">${compassHeading.toFixed(1)}°</div>
+                    <div style="text-align:center; margin-top:25px;">
+                        <div id="modalCompassDirection" style="font-size:1.6rem; font-weight:bold; color:#f39c12; margin-bottom:8px;">NORTE MAGNÉTICO</div>
+                        <div id="modalCompassDegrees" style="color:rgba(255,255,255,0.8); margin-top:5px; font-size:1.1rem;">${compassHeading.toFixed(1)}°</div>
                         
-                        <div style="margin-top:20px; padding:15px; background:#f8f9fa; border-radius:8px;">
-                            <strong>Instrucciones:</strong><br>
-                            1. Sostén el dispositivo horizontal<br>
-                            2. Apunta la aguja roja al norte<br>
-                            3. Lee el rumbo en grados<br>
-                            4. Calibra con GPS para mayor precisión
+                        <div style="margin-top:25px; padding:20px; background:rgba(255,255,255,0.08); border-radius:15px; border:1px solid rgba(255,255,255,0.1);">
+                            <strong style="color:#f39c12; display:block; margin-bottom:10px;">Instrucciones:</strong>
+                            <div style="color:white; line-height:1.6;">
+                                1. Sostén el dispositivo horizontal<br>
+                                2. Apunta la aguja roja al norte<br>
+                                3. Lee el rumbo en grados<br>
+                                4. Calibra con GPS para mayor precisión
+                            </div>
                         </div>
                         
-                        <button class="btn btn-primary" onclick="calibrateCompass()" style="margin-top:20px; width:100%; padding:12px;">
+                        <button class="btn btn-primary" onclick="calibrateCompass()" style="margin-top:25px; width:100%; padding:16px; font-size:1.05rem;">
                             <i class="fas fa-sync-alt"></i> Calibrar con GPS
                         </button>
                     </div>
@@ -2902,40 +3592,42 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
             ];
             
             let content = `
-                <div style="padding:20px;">
-                    <h3 style="margin-bottom:15px;">💎 Escala de Mohs</h3>
-                    <p style="margin-bottom:20px; color:#666;">Escala de dureza mineralógica - Método de identificación rápida</p>
+                <div style="padding:25px;">
+                    <h3 style="margin-bottom:20px; color:#f39c12; font-size:1.4rem;">💎 Escala de Mohs</h3>
+                    <p style="margin-bottom:25px; color:rgba(255,255,255,0.8); font-size:1.05rem;">Escala de dureza mineralógica - Método de identificación rápida</p>
                     
-                    <div style="margin-bottom:20px; padding:15px; background:#f8f9fa; border-radius:8px;">
-                        <strong>Instrucciones:</strong><br>
-                        1. Intenta rayar el mineral desconocido<br>
-                        2. Compara con los minerales de referencia<br>
-                        3. Determina el rango de dureza<br>
-                        4. Usa herramientas comunes para la prueba
+                    <div style="margin-bottom:25px; padding:20px; background:rgba(255,255,255,0.08); border-radius:15px; border:1px solid rgba(255,255,255,0.1);">
+                        <strong style="color:#f39c12; display:block; margin-bottom:10px;">Instrucciones:</strong>
+                        <div style="color:white; line-height:1.6;">
+                            1. Intenta rayar el mineral desconocido<br>
+                            2. Compara con los minerales de referencia<br>
+                            3. Determina el rango de dureza<br>
+                            4. Usa herramientas comunes para la prueba
+                        </div>
                     </div>
             `;
             
             mohsScale.forEach(item => {
-                const color = item.level <= 3 ? '#f8d7da' : 
-                             item.level <= 5 ? '#fff3cd' : 
-                             item.level <= 7 ? '#d1ecf1' : 
-                             item.level <= 9 ? '#d4edda' : '#cce5ff';
+                const color = item.level <= 3 ? 'rgba(248,215,218,0.3)' : 
+                             item.level <= 5 ? 'rgba(255,243,205,0.3)' : 
+                             item.level <= 7 ? 'rgba(209,236,241,0.3)' : 
+                             item.level <= 9 ? 'rgba(212,237,218,0.3)' : 'rgba(204,229,255,0.3)';
                 
                 content += `
-                    <div style="margin-bottom:15px; padding:15px; background:${color}; border-radius:10px; display:flex; align-items:center; gap:15px; border-left:5px solid var(--primary);">
-                        <div style="background:linear-gradient(135deg, var(--primary), var(--primary-dark)); color:white; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.5rem; flex-shrink:0;">
+                    <div style="margin-bottom:18px; padding:18px; background:${color}; border-radius:15px; display:flex; align-items:center; gap:18px; border-left:5px solid #d35400; backdrop-filter:blur(5px);">
+                        <div style="background:linear-gradient(135deg, #d35400, #a84300); color:white; width:55px; height:55px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; font-size:1.6rem; flex-shrink:0; box-shadow:0 6px 20px rgba(211,84,0,0.4);">
                             ${item.level}
                         </div>
                         <div style="flex:1;">
-                            <div style="display:flex; align-items:center; gap:10px; margin-bottom:5px;">
-                                <div style="font-size:1.5rem;">${item.emoji}</div>
-                                <div style="font-weight:bold; font-size:1.2rem; color:var(--secondary);">${item.mineral}</div>
+                            <div style="display:flex; align-items:center; gap:12px; margin-bottom:8px;">
+                                <div style="font-size:1.8rem;">${item.emoji}</div>
+                                <div style="font-weight:bold; font-size:1.3rem; color:white;">${item.mineral}</div>
                             </div>
-                            <div style="color:#666; font-size:0.9rem; margin-bottom:5px;">
-                                <strong>Prueba:</strong> ${item.test}
+                            <div style="color:white; font-size:1rem; margin-bottom:8px;">
+                                <strong style="color:#f39c12;">Prueba:</strong> ${item.test}
                             </div>
-                            <div style="font-size:0.8rem; color:#888;">
-                                <i class="fas fa-gem"></i> Ejemplo: ${item.example}
+                            <div style="font-size:0.9rem; color:rgba(255,255,255,0.8);">
+                                <i class="fas fa-gem" style="color:#f39c12;"></i> Ejemplo: ${item.example}
                             </div>
                         </div>
                     </div>
@@ -2943,218 +3635,15 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
             });
             
             content += `
-                    <div style="margin-top:20px; padding:15px; background:#e8f4fc; border-radius:8px;">
-                        <strong>Herramientas comunes para prueba:</strong><br>
-                        • Uña (2.5 Mohs)<br>
-                        • Moneda de cobre (3 Mohs)<br>
-                        • Cuchillo de acero (5.5 Mohs)<br>
-                        • Vidrio de ventana (5.5 Mohs)<br>
-                        • Lima de acero (6.5 Mohs)<br>
-                        • Cuarzo (7 Mohs)
-                    </div>
-                </div>
-            `;
-            
-            return content;
-        }
-
-        function generateStreakTool() {
-            const streakColors = [
-                { mineral: "Hematita", color: "Rojo cereza", emoji: "🔴", hex: "#C41E3A", examples: ["Óxido de hierro"] },
-                { mineral: "Limonita", color: "Amarillo ocre", emoji: "🟡", hex: "#DFAF2C", examples: ["Gossans"] },
-                { mineral: "Magnetita", color: "Negro", emoji: "⚫", hex: "#000000", examples: ["Mineral magnético"] },
-                { mineral: "Galena", color: "Gris plomo", emoji: "🔘", hex: "#7D7D7D", examples: ["Mena de plomo"] },
-                { mineral: "Pirita", color: "Negro verdoso", emoji: "🟢", hex: "#2E4600", examples: ["Oro de los tontos"] },
-                { mineral: "Calcita", color: "Blanco", emoji: "⚪", hex: "#FFFFFF", examples: ["Carbonato de calcio"] },
-                { mineral: "Cuarzo", color: "Blanco", emoji: "🤍", hex: "#F5F5F5", examples: ["Arena, cristales"] },
-                { mineral: "Azurita", color: "Azul claro", emoji: "🔵", hex: "#2A52BE", examples: ["Carbonato de cobre"] },
-                { mineral: "Malaquita", color: "Verde claro", emoji: "💚", hex: "#0BDA51", examples: ["Mineral de cobre"] },
-                { mineral: "Rodocrosita", color: "Blanco", emoji: "🌸", hex: "#FFB6C1", examples: ["Carbonato de manganeso"] }
-            ];
-            
-            let content = `
-                <div style="padding:20px;">
-                    <h3 style="margin-bottom:15px;">🎨 Colores de Raya</h3>
-                    <p style="margin-bottom:20px; color:#666;">La raya es el color del polvo de un mineral - Método clave de identificación</p>
-                    
-                    <div style="margin-bottom:20px; padding:15px; background:#f8f9fa; border-radius:8px;">
-                        <strong>¿Cómo realizar la prueba?</strong><br>
-                        1. Usa una placa de porcelana sin esmaltar (raya)<br>
-                        2. Frota el mineral firmemente sobre la placa<br>
-                        3. Observa el color del polvo dejado<br>
-                        4. Compara con la tabla de referencia
-                    </div>
-                    
-                    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:15px; margin-bottom:20px;">
-            `;
-            
-            streakColors.forEach(item => {
-                content += `
-                    <div style="text-align:center; padding:15px; background:white; border-radius:10px; border:2px solid #eee; cursor:pointer; transition:all 0.3s;" 
-                         onmouseover="this.style.borderColor='${item.hex}'" 
-                         onmouseout="this.style.borderColor='#eee'">
-                        <div style="width:60px; height:60px; background:${item.hex}; border-radius:50%; margin:0 auto 10px; border:4px solid white; box-shadow:0 3px 10px rgba(0,0,0,0.1);"></div>
-                        <div style="font-weight:bold; margin-bottom:5px;">${item.mineral}</div>
-                        <div style="color:#666; font-size:0.9rem;">${item.color}</div>
-                        <div style="margin-top:8px; font-size:1.5rem;">${item.emoji}</div>
-                    </div>
-                `;
-            });
-            
-            content += `
-                    </div>
-                    
-                    <div style="padding:15px; background:#e8f4fc; border-radius:8px;">
-                        <strong>Importancia diagnóstica:</strong><br>
-                        • La raya es más confiable que el color del mineral<br>
-                        • Algunos minerales tienen raya diferente a su color<br>
-                        • Ejemplo: La hematita puede ser negra pero su raya es roja<br>
-                        • Es un método rápido y económico de identificación
-                    </div>
-                </div>
-            `;
-            
-            return content;
-        }
-
-        function generateFractureTool() {
-            const fractures = [
-                { 
-                    type: "Concoidea", 
-                    description: "Superficie curva y lisa como concha de mar", 
-                    emoji: "🐚", 
-                    examples: ["Vidrio volcánico", "Cuarzo", "Obsidiana"],
-                    image: "curva"
-                },
-                { 
-                    type: "Astillosa", 
-                    description: "Fractura en astillas largas y puntiagudas", 
-                    emoji: "🪵", 
-                    examples: ["Madera", "Yeso fibroso", "Actinolita"],
-                    image: "astillas"
-                },
-                { 
-                    type: "Irregular", 
-                    description: "Superficie rugosa, desigual e irregular", 
-                    emoji: "🗻", 
-                    examples: ["Rocas masivas", "Cromita", "Magnetita"],
-                    image: "rugosa"
-                },
-                { 
-                    type: "Hojosa", 
-                    description: "Se separa en hojas o láminas delgadas", 
-                    emoji: "📄", 
-                    examples: ["Mica", "Yeso", "Grafito"],
-                    image: "hojas"
-                },
-                { 
-                    type: "Ganchuda", 
-                    description: "Superficie dentada con ganchos metálicos", 
-                    emoji: "🪝", 
-                    examples: ["Cobre nativo", "Plata nativa", "Oro nativo"],
-                    image: "ganchos"
-                },
-                { 
-                    type: "Terrosa", 
-                    description: "Se desmenuza como tierra o arcilla", 
-                    emoji: "🟤", 
-                    examples: ["Limonita", "Bauxita", "Caolín"],
-                    image: "tierra"
-                }
-            ];
-            
-            let content = `
-                <div style="padding:20px;">
-                    <h3 style="margin-bottom:15px;">⚡ Tipos de Fractura</h3>
-                    <p style="margin-bottom:20px; color:#666;">La fractura describe cómo se rompe un mineral cuando no sigue planos de exfoliación</p>
-                    
-                    <div style="margin-bottom:20px; padding:15px; background:#f8f9fa; border-radius:8px;">
-                        <strong>¿Qué observar?</strong><br>
-                        1. Rompe el mineral con un martillo geológico<br>
-                        2. Observa la superficie de fractura<br>
-                        3. Compara con los tipos de referencia<br>
-                        4. Usa lupa de mano para detalles
-                    </div>
-                    
-                    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(160px, 1fr)); gap:15px; margin-bottom:20px;">
-            `;
-            
-            fractures.forEach(fracture => {
-                content += `
-                    <div style="text-align:center; padding:15px; background:white; border-radius:10px; border:2px solid #eee; cursor:pointer; transition:all 0.3s;"
-                         onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.1)'"
-                         onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none'">
-                        <div style="font-size:2.5rem; margin-bottom:10px;">${fracture.emoji}</div>
-                        <div style="font-weight:bold; margin-bottom:8px; color:var(--secondary);">${fracture.type}</div>
-                        <div style="color:#666; font-size:0.9rem; margin-bottom:10px; height:40px;">${fracture.description}</div>
-                        <div style="background:#f8f9fa; padding:8px; border-radius:6px; font-size:0.8rem;">
-                            <strong>Ejemplos:</strong><br>
-                            ${fracture.examples.join(', ')}
-                        </div>
-                    </div>
-                `;
-            });
-            
-            content += `
-                    </div>
-                    
-                    <div style="padding:15px; background:#e8f4fc; border-radius:8px;">
-                        <strong>Diferencia entre fractura y exfoliación:</strong><br>
-                        • <strong>Fractura:</strong> Ruptura irregular, sin planos preferentes<br>
-                        • <strong>Exfoliación:</strong> Ruptura a lo largo de planos cristalográficos<br>
-                        • Algunos minerales tienen ambos (ej: piroxenos)<br>
-                        • La fractura es diagnóstica cuando no hay exfoliación
-                    </div>
-                </div>
-            `;
-            
-            return content;
-        }
-
-        function generateCalculatorTool() {
-            let content = `
-                <div style="padding:20px;">
-                    <h3 style="margin-bottom:15px;">🧮 Calculadora Geológica</h3>
-                    
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px;">
-                        <div style="padding:15px; background:#f8f9fa; border-radius:8px;">
-                            <strong>Conversión de Unidades</strong>
-                            <div style="margin-top:10px;">
-                                <input type="number" id="meters" placeholder="Metros" class="form-control" style="margin-bottom:5px;" oninput="convertUnits()">
-                                <input type="number" id="feet" placeholder="Pies" class="form-control" style="margin-bottom:5px;" oninput="convertUnits()">
-                                <div id="conversionResult" style="font-size:0.9rem; color:#666; margin-top:5px;"></div>
-                            </div>
-                        </div>
-                        
-                        <div style="padding:15px; background:#f8f9fa; border-radius:8px;">
-                            <strong>Cálculo de Pendiente</strong>
-                            <div style="margin-top:10px;">
-                                <input type="number" id="elevation" placeholder="Desnivel (m)" class="form-control" style="margin-bottom:5px;" oninput="calculateSlope()">
-                                <input type="number" id="distance" placeholder="Distancia (m)" class="form-control" style="margin-bottom:5px;" oninput="calculateSlope()">
-                                <div id="slopeResult" style="font-size:0.9rem; color:#666; margin-top:5px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div style="padding:15px; background:#f8f9fa; border-radius:8px; margin-bottom:20px;">
-                        <strong>Fórmulas Geológicas Comunes</strong>
-                        <div style="margin-top:10px; font-size:0.9rem;">
-                            • <strong>Densidad:</strong> ρ = m/V (masa/volumen)<br>
-                            • <strong>Gravedad específica:</strong> SG = ρ_mineral/ρ_agua<br>
-                            • <strong>Porcentaje en peso:</strong> % = (m_elemento/m_total) × 100<br>
-                            • <strong>Rumbo:</strong> Dirección de la línea de máxima pendiente
-                        </div>
-                    </div>
-                    
-                    <div style="padding:15px; background:#e8f4fc; border-radius:8px;">
-                        <strong>Herramientas Rápidas</strong>
-                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px;">
-                            <button class="btn btn-secondary" onclick="calculateStrike()" style="padding:10px;">
-                                <i class="fas fa-compass"></i> Rumbo
-                            </button>
-                            <button class="btn btn-secondary" onclick="calculateDip()" style="padding:10px;">
-                                <i class="fas fa-angle-right"></i> Buzamiento
-                            </button>
+                    <div style="margin-top:25px; padding:20px; background:rgba(232,244,252,0.15); border-radius:15px; border:1px solid rgba(255,255,255,0.1);">
+                        <strong style="color:#f39c12; display:block; margin-bottom:10px;">Herramientas comunes para prueba:</strong>
+                        <div style="color:white; line-height:1.8;">
+                            • Uña (2.5 Mohs)<br>
+                            • Moneda de cobre (3 Mohs)<br>
+                            • Cuchillo de acero (5.5 Mohs)<br>
+                            • Vidrio de ventana (5.5 Mohs)<br>
+                            • Lima de acero (6.5 Mohs)<br>
+                            • Cuarzo (7 Mohs)
                         </div>
                     </div>
                 </div>
@@ -3163,204 +3652,15 @@ AtacamApp v3.0 - Sistema Geológico Inteligente
             return content;
         }
 
-        function convertUnits() {
-            const meters = parseFloat(document.getElementById('meters').value) || 0;
-            const feet = parseFloat(document.getElementById('feet').value) || 0;
-            
-            let result = '';
-            
-            if (meters > 0) {
-                const feetResult = meters * 3.28084;
-                result = `${meters} m = ${feetResult.toFixed(2)} pies`;
-            } else if (feet > 0) {
-                const metersResult = feet * 0.3048;
-                result = `${feet} pies = ${metersResult.toFixed(2)} m`;
-            }
-            
-            document.getElementById('conversionResult').textContent = result;
-        }
-
-        function calculateSlope() {
-            const elevation = parseFloat(document.getElementById('elevation').value) || 0;
-            const distance = parseFloat(document.getElementById('distance').value) || 0;
-            
-            if (distance > 0) {
-                const slopePercent = (elevation / distance) * 100;
-                const slopeDegrees = Math.atan(elevation / distance) * (180 / Math.PI);
-                
-                document.getElementById('slopeResult').innerHTML = `
-                    Pendiente: ${slopePercent.toFixed(1)}%<br>
-                    Ángulo: ${slopeDegrees.toFixed(1)}°
-                `;
-            }
-        }
-
-        function calculateStrike() {
-            showNotification('🧭 Usa la brújula para medir el rumbo de las estructuras', 'info');
-        }
-
-        function calculateDip() {
-            showNotification('📐 Usa el clinómetro para medir el buzamiento', 'info');
-        }
-
-        function generateWeatherTool() {
-            loadWeatherData();
-            
-            const weatherInfo = weatherData ? `
-                <div style="text-align:center; margin-bottom:20px;">
-                    <div style="font-size:3rem;">${weatherData.emoji}</div>
-                    <div style="font-size:2.5rem; font-weight:bold;">${weatherData.temperature}°C</div>
-                    <div style="color:#666;">${weatherData.condition}</div>
-                </div>
-                
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:20px;">
-                    <div style="padding:15px; background:#f8f9fa; border-radius:8px;">
-                        <strong>Humedad</strong><br>
-                        <span style="font-size:1.5rem;">${weatherData.humidity}%</span>
-                    </div>
-                    <div style="padding:15px; background:#f8f9fa; border-radius:8px;">
-                        <strong>Viento</strong><br>
-                        <span style="font-size:1.5rem;">${weatherData.wind} km/h</span>
-                    </div>
-                </div>
-                
-                <div style="background:#e8f4fc; padding:15px; border-radius:8px; margin-bottom:20px;">
-                    <strong>Recomendaciones para trabajo de campo:</strong><br>
-                    ${weatherData.recommendation}
-                </div>
-                
-                <div style="font-size:0.9rem; color:#666; text-align:center;">
-                    <i class="fas fa-satellite"></i> Datos satelitales en tiempo real
-                </div>
-            ` : `
-                <div style="text-align:center; padding:40px;">
-                    <div style="font-size:3rem;">🌤️</div>
-                    <p>Cargando datos climáticos...</p>
-                    <p style="font-size:0.9rem; color:#666;">Usando satélite meteorológico más cercano</p>
-                </div>
-            `;
-            
-            return `
-                <div style="padding:20px;">
-                    <h3 style="margin-bottom:15px;">🌤️ Clima Satelital - Atacama</h3>
-                    ${weatherInfo}
-                    <button class="btn btn-primary" onclick="loadWeatherData(true)" style="margin-top:20px; width:100%;">
-                        <i class="fas fa-sync-alt"></i> Actualizar Datos
-                    </button>
-                </div>
-            `;
-        }
-
-        function loadWeatherData(forceUpdate = false) {
-            if (weatherData && !forceUpdate) return;
-            
-            showNotification('🌤️ Obteniendo datos climáticos satelitales...', 'info');
-            
-            setTimeout(() => {
-                // Datos simulados para Atacama
-                weatherData = {
-                    temperature: Math.round(25 + Math.random() * 10),
-                    condition: "Despejado",
-                    humidity: Math.round(10 + Math.random() * 20),
-                    wind: Math.round(5 + Math.random() * 15),
-                    emoji: "☀️",
-                    recommendation: "Excelente día para trabajo de campo. Usar protector solar factor 50+, llevar 3 litros de agua por persona, y trabajar antes de las 14:00 para evitar horas de mayor calor."
-                };
-                
-                showNotification('✅ Datos climáticos actualizados', 'success');
-            }, 1000);
-        }
-
         // ============================================
-        // FUNCIONES DE ALMACENAMIENTO
+        // INICIALIZACIÓN DE LA APLICACIÓN
         // ============================================
-        function loadSavedData() {
-            try {
-                const saved = localStorage.getItem('atacamapp_data');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    identifiedMinerals = data.minerals || [];
-                    
-                    if (identifiedMinerals.length > 0) {
-                        updateCoverflow();
-                        showNotification(`📂 ${identifiedMinerals.length} muestras cargadas`, 'info');
-                    }
-                }
-            } catch (e) {
-                console.error('Error cargando datos:', e);
-            }
-        }
-
-        function saveToLocalStorage() {
-            const data = {
-                minerals: identifiedMinerals,
-                lastSave: new Date().toISOString()
-            };
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎬 AtacamApp - Iniciando sistema con Glassmorphism...');
             
-            try {
-                localStorage.setItem('atacamapp_data', JSON.stringify(data));
-            } catch (e) {
-                console.error('Error guardando datos:', e);
-            }
-        }
-
-        // ============================================
-        // FUNCIONES ADICIONALES
-        // ============================================
-        function addToCollection(mineralId) {
-            const mineral = atacamaMineralsDB.find(m => m.id === mineralId);
-            if (!mineral) return;
-            
-            const newMineral = {
-                ...mineral,
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                location: realGPSData || {
-                    latitude: -27.3667,
-                    longitude: -70.3333,
-                    accuracy: 50
-                }
-            };
-            
-            identifiedMinerals.unshift(newMineral);
-            updateCoverflow();
-            saveToLocalStorage();
-            
-            showNotification(`✅ ${mineral.emoji} ${mineral.name} agregado a la colección`, 'success');
-            closeModal();
-        }
-
-        function viewOnMap(mineralId) {
-            const mineral = atacamaMineralsDB.find(m => m.id === mineralId);
-            if (!mineral || !map) return;
-            
-            map.setView([mineral.coordinates.lat, mineral.coordinates.lng], 14);
-            
-            L.marker([mineral.coordinates.lat, mineral.coordinates.lng])
-                .addTo(map)
-                .bindPopup(`
-                    <b>${mineral.emoji} ${mineral.name}</b><br>
-                    ${mineral.formula}<br>
-                    ${mineral.locality}
-                `)
-                .openPopup();
-            
-            closeModal();
-            showNotification(`🗺️ Mapa centrado en ${mineral.name}`, 'info');
-        }
-
-        // Inicializar
-        console.log('🚀 AtacamApp 3.0 - Sistema 100% Funcional');
-        console.log('🏜️ Fondo desértico activado');
-        console.log('🧭 Brújula geológica lista');
-        console.log('💎 Escala de Mohs interactiva');
-        console.log('🎨 Colores de raya funcionales');
-        console.log('⚡ Fracturas detalladas');
-        console.log('🌤️ Clima satelital conectado');
-        console.log('🌐 Mindat.org/SIGEX integrado');
-        console.log('📊 Informes con observaciones');
-        console.log('🏔️ Proyección 3D SIGEX activa');
-        console.log('📱 Compatible: Android, iOS, PC, Tablet');
+            // Iniciar splash screen
+            initSplashScreen();
+        });
     </script>
 </body>
 </html>
